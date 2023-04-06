@@ -188,7 +188,7 @@ const ExpenseManage: React.FC = () => {
   const [categorySearchValue, setcategorySearchValue] = useState("");
 
 
-  //edit expense form
+  //edit expense function
   const editExpenses = async (values: {
     _id : string,
     id: string;
@@ -218,7 +218,7 @@ const ExpenseManage: React.FC = () => {
         editForm.reset();
         setEditOpened(false);
         const newData = data.map((item) => {
-          if (item.id === values.id) {
+          if (item._id === values._id) {
             return {
               _id : values._id,
               id: values.id,
@@ -251,6 +251,7 @@ const ExpenseManage: React.FC = () => {
       });
   };
 
+  
   //add expense
   const addExpenses = async (values: {
     name: string;
@@ -434,6 +435,7 @@ const ExpenseManage: React.FC = () => {
           onClick={() => {
             editForm.setValues({
               _id: row._id,
+              id: row.id,
               name: row.name,
               description: row.description,
               category: row.category,
