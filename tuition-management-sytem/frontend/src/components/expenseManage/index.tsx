@@ -433,7 +433,7 @@ const ExpenseManage: React.FC = () => {
           leftIcon={<IconEdit size={14} />}
           onClick={() => {
             editForm.setValues({
-              id: row.id,
+              _id: row._id,
               name: row.name,
               description: row.description,
               category: row.category,
