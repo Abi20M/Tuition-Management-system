@@ -70,9 +70,35 @@ export const getAllHallDetails = async (req, res, next) => {
     });
 };
 
+export const editClassDetails = async (req, res, next) => {
+  const classId = req.params.id;
+
+  const classObj = {
+    name: req.body.name,
+    teacher: req.body.teacher,
+    subject: req.body.subject,
+    day: req.body.day,
+    startTime: req.body.startTime,
+    endTime: req.body.endTime,
+    venue: req.body.venue,
+  };
+
+  await classServices
+    .editClassDetails(classId, classObj)
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+      next();
+    })
+    .catch((error) => {
+      req.handleResponse.errorRespond(res)(error);
+      next();
+    });
+};
+
 module.exports = {
   createClass,
   getAllClasses,
   deleteClass,
   getAllHallDetails,
+  editClassDetails,
 };
