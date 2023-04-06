@@ -1,8 +1,10 @@
-import { model, Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const ParentSchema = new Schema({
+const ParentSchema = new mongoose.Schema({
   id: {
-    type: Schema.Types.ObjectId,
+    type: String,
+    required: true,
+    unique : true,
   },
   name: {
     type: String,
@@ -21,6 +23,9 @@ const ParentSchema = new Schema({
     type: String,
     required: true,
   },
-});
+  
+},{timestamps:true});
 
-export default model("Parent", ParentSchema);
+const Parent = mongoose.model("Parents", ParentSchema);
+
+export default Parent;

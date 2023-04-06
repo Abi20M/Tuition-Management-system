@@ -1,7 +1,7 @@
-import parent from "../models/Parent.model";
-
-
-
+import parent from "../models/parent.model";
+import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken";
+import "dotenv/config";
 
 export const createParent = async (parentObj) => {
     const emailExists = await parent.findOne({ email: parentObj.email});

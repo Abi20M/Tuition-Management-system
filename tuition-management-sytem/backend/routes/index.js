@@ -22,15 +22,14 @@ const Routes = (app) => {
 
   //Parent Routes
   app.post("/parent",protect.adminProtect, parentController.createParent);
-  app.get("/parent",protect.adminOrTeacherProtect,parentController.getAllParents);
   app.get("/parent/:id", protect.adminProtect, parentController.getParent);
   app.put("/parent/:id" , protect.adminProtect, parentController.updateParent);
-  app.delete( "/parent/:id",protect.adminProtect,parentController.deleteParent);
+  app.delete("/parent/:id",protect.adminProtect,parentController.deleteParent);
    
     
     
   //parent login
-  app.post("/parent/login" , parentController.loginParent);
+  // app.post("/parent/login" , parentController.loginParent);
 
 
 

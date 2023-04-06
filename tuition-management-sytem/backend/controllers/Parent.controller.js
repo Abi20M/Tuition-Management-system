@@ -1,15 +1,16 @@
 import parentService from "../services/Parent.service.js";
-import Parent from "../models/Parent.model.js";
-import bcrypt from "bcryptjs";
+import Parent from "../models/parent.model.js";
+import bcrypt from "bcrypt";
 
 export const createParent = async (req, res, next) => {
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
+  //create parent object
   const parent = new Parent({
     name: req.body.name,
     email: req.body.email,
-    password: hashedPassword,
+    password: req.body.password,
     phone: req.body.phone,
   });
 
