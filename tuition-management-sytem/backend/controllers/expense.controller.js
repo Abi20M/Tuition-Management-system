@@ -80,7 +80,7 @@ export const createExpense = async (req, res, next) => {
       amount : req.body.amount,
     }
     await expenseServices
-      .editExpense(id, updatedExpense)
+      .editExpense(id,updatedExpense)
       .then((data) => {
         req.handleResponse.successRespond(res)(data);
         next();

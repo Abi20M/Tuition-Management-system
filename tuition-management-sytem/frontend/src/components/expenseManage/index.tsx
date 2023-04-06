@@ -567,7 +567,7 @@ const ExpenseManage: React.FC = () => {
                     { value: "Other education-related expenses", label: "Other education-related expenses" },
 
                   ]}
-                  {...addForm.getInputProps("category")}
+                  {...editForm.getInputProps("category")}
                 />
           <TextInput
             label="amount"

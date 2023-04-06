@@ -75,10 +75,8 @@ export const deleteExpense = async(id) =>{
 //       throw new Error(err.message);
 //     });
 // };
-export const editExpense = async (id, updatedExpense) => {
-
-  console.log(id);
-  console.log(updatedExpense);
+export const editExpense = async (id,updatedExpense) => {
+  
   return await Expense.findByIdAndUpdate(id, updatedExpense, { new: true });
 };
 
