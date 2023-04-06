@@ -1,5 +1,5 @@
 import parent from "../models/parent.model";
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 

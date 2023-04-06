@@ -137,14 +137,14 @@ const ManageParents: React.FC = () => {
   // fetch parent data
   useEffect(() => {
     const fetchData = async () => {
-      // showNotification({
-      //   id: "loding-data",
-      //   loading: true,
-      //   title: "Loading data",
-      //   message: "parent data is loading..",
-      //   autoClose: false,
-      //   disallowClose: true,
-      // });
+      showNotification({
+        id: "loding-data",
+        loading: true,
+        title: "Loading data",
+        message: "parent data is loading..",
+        autoClose: 3000,
+        disallowClose: true,
+      });
       const result = await getAllParents();
       const data = result.map((item: any) => {
         return {
@@ -565,6 +565,15 @@ const ManageParents: React.FC = () => {
            onChange={handleSearchChange}
            sx={{ minWidth: 600 }}
           />
+
+          <Button
+            variant="gradient"
+            gradient={{ from: "indigo", to: "cyan" }}
+            sx={{ width: "200px", marginRight: "20px" }}
+            onClick={() => setOpened(true)}
+          >
+            Generate Report
+          </Button>
           
           <Button
             variant="gradient"
