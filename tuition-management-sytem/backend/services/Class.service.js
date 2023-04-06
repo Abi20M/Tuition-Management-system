@@ -69,9 +69,15 @@ export const deleteClass = async(id) =>{
 export const getAllHallDetails = async()=>{
   return await Hall.find();
 }
+
+// edit class details
+export const editClassDetails = async(id,editedDetails) =>{
+  return await Class.findByIdAndUpdate(id,editedDetails,{new:true});
+}
 module.exports = {
   createClass,
   getAllClasses,
   deleteClass,
-  getAllHallDetails
+  getAllHallDetails,
+  editClassDetails
 };

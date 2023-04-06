@@ -13,6 +13,8 @@ const Routes = (app) => {
   app.post("/class",protect.adminProtect,classController.createClass);
   app.delete("/class/delete/:id",protect.adminProtect,classController.deleteClass);
   app.get("/halls",protect.adminProtect,classController.getAllHallDetails);
+  app.put("/class/edit/:id",protect.adminProtect,classController.editClassDetails)  
+
 
   //expense Routes
   app.get("/expense",protect.adminProtect,expenseController.getAllExpenses);
