@@ -343,7 +343,7 @@ const ManageStudents: React.FC = () => {
       });
   };
 
-  //add staff
+  //add student
   const addStudent = async (values: {
     name: string;
     email: string;
@@ -691,15 +691,15 @@ const ManageStudents: React.FC = () => {
 
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-      <Modal
+      {/* <Modal
         opened={performanceOpened}
         onClose={() => {
           setPerformanceOpened(false);
         }}
         title="Student Performance"
       >
-        {/* <Line options={options} data={performanceData} />
-      </Modal>
+      <Line options={options} data={performanceData} />
+      </Modal> */}
       <Modal
         opened={opened}
         onClose={() => {
@@ -707,7 +707,7 @@ const ManageStudents: React.FC = () => {
           setOpened(false);
         }}
         title="Add student"
-      > */}
+      > 
         <form onSubmit={addForm.onSubmit((values) => addStudent(values))}>
           <TextInput
             label="Name"
@@ -970,6 +970,7 @@ const ManageStudents: React.FC = () => {
                 >
                   Parent
                 </Th>
+                
                 <th>Action</th>
               </tr>
             </thead>
