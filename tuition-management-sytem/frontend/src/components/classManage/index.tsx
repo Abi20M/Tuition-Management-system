@@ -196,6 +196,8 @@ interface adminName {
     name: string;
   };
 }
+
+
 //prop { data }: TableSortProps
 const ClassManage = ({ user }: adminName) => {
 
@@ -309,6 +311,7 @@ const ClassManage = ({ user }: adminName) => {
 
   // Edit class function
   const editClass = async (values : {
+    _id : string,
     name : string,
     teacher : string,
     subject : string,
@@ -318,6 +321,64 @@ const ClassManage = ({ user }: adminName) => {
     venue : string
   }) =>{
 
+    showNotification({
+      id: "class-edit",
+      title: "Updating....",
+      message: `We are trying to update ${values.name}`,
+      loading: true,
+    });
+
+    await ClassAPI.editClassDetails(values).then((data) =>{
+      
+      updateNotification({
+        id: "class-edit",
+        autoClose: 3000,
+        title: `${values.name} details were edited!`,
+        message: "Class details were edited successfully!",
+        color: "teal",
+        icon: <IconCheck />,
+      });
+
+      editForm.reset();
+      setOpenEditClassModal(false);
+
+      const newData = classDetails.map((item : any) =>{
+        if(item._id === data.data._id){
+          return {
+            _id : data.data._id,
+            id : data.data.id,
+            name : data.data.name,
+            teacher : data.data.teacher,
+            subject : data.data.subject,
+            day : data.data.day,
+            startTime : data.data.startTime,
+            endTime : data.data.endTime,
+            venue : data.data.venue
+          }
+        }else{
+          return item;
+        }
+      })
+      const payload = {
+        sortBy: null,
+        reversed: false,
+        search: "",
+      };
+
+      setClassDetails(newData);
+      setSortedData(sortData(newData,payload));
+
+    }).catch((error) =>{
+
+      updateNotification({
+        id: "class-edit",
+        autoClose: 3000,
+        title: `${values.name} was not edited!`,
+        message: `There is an error while editing ${values.name}!`,
+        color: "red",
+        icon: <IconAlertTriangle />,
+      });
+    })
   }
   // table Rows
   const rows = sortedData.map((row) => (
@@ -368,6 +429,7 @@ const ClassManage = ({ user }: adminName) => {
               href="#"
               onClick={()=> {
                 editForm.setValues({
+                  _id : row._id,
                   name : row.name,
                   day : row.day,
                   teacher : row.teacher,
@@ -600,6 +662,7 @@ const ClassManage = ({ user }: adminName) => {
   const editForm = useForm({
     validateInputOnChange: true,
     initialValues: {
+      _id : "",
       name: "",
       teacher: "",
       subject: "",
@@ -761,7 +824,7 @@ const ClassManage = ({ user }: adminName) => {
         />
         <Group position="right">
           {/* download Report button */}
-          <PDFDownloadLink
+          {/* <PDFDownloadLink
             document={<ClassPDF data={classDetails} user={adminName} />}
             fileName={`CLASSDETAILS_${year}_${month}_${date}`}
           >
@@ -781,7 +844,7 @@ const ClassManage = ({ user }: adminName) => {
                 </Button>
               )
             }
-          </PDFDownloadLink>
+          </PDFDownloadLink> */}
 
           {/* Add Class Modal, This will apear when Add class Button Clicked */}
           <Modal
