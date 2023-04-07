@@ -216,7 +216,7 @@ const ManageStudents: React.FC = () => {
         title: "Loading data",
         message: "Please wait while we load the data",
         autoClose: false,
-        disallowClose: true,
+        disallowClose: false,
       });
       const result = await getAllStudents();
     //   const resultParent = await getAllParents();
@@ -767,7 +767,8 @@ const ManageStudents: React.FC = () => {
               { value: "female", label: "Female" },
             ]}
           />
-          <Select
+
+          {/* <Select
             label="Parent"
             placeholder="Enter Parent"
             {...addForm.getInputProps("parent")}
@@ -775,7 +776,7 @@ const ManageStudents: React.FC = () => {
               return { value: parent.id, label: parent.name };
             })}
             required
-          />
+          /> */}
           <Button
             color="teal"
             sx={{ marginTop: "10px", width: "100%" }}
