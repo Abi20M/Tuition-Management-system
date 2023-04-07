@@ -1,7 +1,7 @@
 import axios from "axios";
 import requestConfigJson from "./requestConfig";
 
-const BASE_URL = "http://localhost:8090";
+const BASE_URL = "http://localhost:3001";
 
 class StudentAPI {
   //get all students
@@ -9,7 +9,16 @@ class StudentAPI {
     return axios.get(`${BASE_URL}/student`, requestConfigJson);
   };
   //add student
-  static addStudent = (values: { name: string }) => {
+  static addStudent = (values: {     
+    name: string;
+    email: string;
+    phone: string;
+    school: string;
+    grade: string;
+    birthDate: string;
+    address: string;
+    gender: string;
+    parent: string; }) => {
     return axios.post(`${BASE_URL}/student`, values, requestConfigJson);
   };
   //delete student
