@@ -197,6 +197,14 @@ const getAllHallDetails = async () => {
     return error;
   }
 };
+
+// get registered student details
+// const getStudentDetails = async() =>{
+//   try{
+//     const rowStudetDetails = await ClassAPI.
+//   }
+// }
+
 //created prop type
 interface adminName {
   user: {
@@ -221,7 +229,9 @@ const ClassManage = ({ user }: adminName) => {
   const [openEditClassModal, setOpenEditClassModal] = useState(false);
   const [openEnrollModal, setOpenEnrollModel] = useState(false);
   const [enrollClassName,setEnrollClassName] = useState("");
-  const [studentDetails, setStudentDetails] = useState<StudentDetails[]>([])
+  const [studentDetails, setStudentDetails] = useState<StudentDetails[]>([]);
+
+
   //set admin name
   const adminName = user.name;
 
@@ -598,6 +608,9 @@ const ClassManage = ({ user }: adminName) => {
         });
       });
 
+      // const newStudentDetails = await getStudentDetails().catch((error)=>{
+
+      // })
       const classes = classDetails.map((item: any) => ({
         name: item.name,
         id: item.id,
@@ -712,7 +725,7 @@ const ClassManage = ({ user }: adminName) => {
         icon={<IconSearch size="0.9rem" stroke={1.5} />}
         value={search}
         onChange={handleSearchChange}
-        sx={{ minWidth: 780 }}
+        sx={{ minWidth: 750 }}
       />
       <Button mt={-15} mr={20}>Enroll Student</Button>
       </Group>    

@@ -14,7 +14,6 @@ const Routes = (app) => {
   app.get("/halls",protect.adminProtect,classController.getAllHallDetails);
   app.put("/class/edit/:id",protect.adminProtect,classController.editClassDetails)  
 
-
   //expense Routes
   app.get("/expense",protect.adminProtect,expenseController.getAllExpenses);
   app.post("/expense",protect.adminProtect,expenseController.createExpense);
