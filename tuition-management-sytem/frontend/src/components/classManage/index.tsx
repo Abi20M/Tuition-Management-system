@@ -107,6 +107,13 @@ interface HallData {
   hallID: String;
   capacity: Number;
 }
+
+interface StudentDetails{
+  SID : string,
+  name : string,
+  email : string
+}
+
 interface TableSortProps {
   data: RowData[];
 }
@@ -214,7 +221,7 @@ const ClassManage = ({ user }: adminName) => {
   const [openEditClassModal, setOpenEditClassModal] = useState(false);
   const [openEnrollModal, setOpenEnrollModel] = useState(false);
   const [enrollClassName,setEnrollClassName] = useState("");
-
+  const [studentDetails, setStudentDetails] = useState<StudentDetails[]>([])
   //set admin name
   const adminName = user.name;
 
@@ -683,7 +690,7 @@ const ClassManage = ({ user }: adminName) => {
     <div>
 
       {/* Enroll Student Modal */}
-      {/* <Modal
+      <Modal
         size={"70%"}
         overlayColor={
           theme.colorScheme === "dark"
@@ -698,17 +705,22 @@ const ClassManage = ({ user }: adminName) => {
       >
         <Box>
         <ScrollArea>
+      <Group mt={20}>    
       <TextInput
         placeholder="Search by any field"
         mb="md"
         icon={<IconSearch size="0.9rem" stroke={1.5} />}
         value={search}
         onChange={handleSearchChange}
+        sx={{ minWidth: 780 }}
       />
-      <Table horizontalSpacing="md" verticalSpacing="xs" miw={700} sx={{ tableLayout: "fixed" }}>
+      <Button mt={-15} mr={20}>Enroll Student</Button>
+      </Group>    
+
+      <Table horizontalSpacing="md" verticalSpacing="xs" miw={700} sx={{ tableLayout: "fixed" }} mt={10}>
         <thead>
           <tr>
-            <Th
+            {/* <Th
               sorted={sortBy === 'name'}
               reversed={reverseSortDirection}
               onSort={() => setSorting('name')}
@@ -728,27 +740,39 @@ const ClassManage = ({ user }: adminName) => {
               onSort={() => setSorting('name')}
             >
               Email
-            </Th>
+            </Th> */}
+            <th>
+              SID
+            </th>
+            <th>
+              Name
+            </th>
+            <th>
+              Email
+            </th>
+            <th>
+              Action
+            </th>
           </tr>
         </thead>
-        <tbody>
+        {/* <tbody>
           {rows.length > 0 ? (
             rows
           ) : (
             <tr>
-              <td colSpan={Object.keys(classDetails[0]).length}>
+              <td colSpan={Object.keys(studentDetails[0]).length}>
                 <Text weight={500} align="center">
                   Nothing found
                 </Text>
               </td>
             </tr>
           )}
-        </tbody>
+        </tbody> */}
       </Table>
 
     </ScrollArea>
     </Box>
-      </Modal> */}
+      </Modal>
 
 
 
