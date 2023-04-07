@@ -2,6 +2,7 @@ import { loginAdmin } from "../controllers/admin.controller";
 import protect from "../middleware/Auth.middleware";
 import classController from "../controllers/class.controller";
 import expenseController from "../controllers/expense.controller";
+import studentController from "../controllers/student.controller";
 
 const Routes = (app) => {
   //normal validation root of the user
@@ -21,7 +22,8 @@ const Routes = (app) => {
   app.delete("/expense/delete/:id",protect.adminProtect,expenseController.deleteExpense);
   app.put("/expense/update/:id",protect.adminProtect,expenseController.editExpense);
 
-
+  //Student Routes
+  app.post("/student", protect.adminProtect, studentController.createStudent);
 
 };
 
