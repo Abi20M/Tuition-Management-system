@@ -3,6 +3,7 @@ import protect from "../middleware/Auth.middleware";
 import classController from "../controllers/class.controller";
 import expenseController from "../controllers/expense.controller";
 import parentController from "../controllers/Parent.controller";
+import studentController from "../controllers/student.controller";
 
 const Routes = (app) => {
   //normal validation root of the user
@@ -34,6 +35,8 @@ const Routes = (app) => {
   // app.post("/parent/login" , parentController.loginParent);
 
 
+  //Student Routes
+  app.post("/student", protect.adminProtect, studentController.createStudent);
 
 };
 
