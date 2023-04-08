@@ -15,7 +15,6 @@ const Routes = (app) => {
   app.get("/halls",protect.adminProtect,classController.getAllHallDetails);
   app.put("/class/edit/:id",protect.adminProtect,classController.editClassDetails)  
 
-
   //expense Routes
   app.get("/expense",protect.adminProtect,expenseController.getAllExpenses);
   app.post("/expense",protect.adminProtect,expenseController.createExpense);
@@ -24,7 +23,7 @@ const Routes = (app) => {
 
   //Student Routes
   app.post("/student", protect.adminProtect, studentController.createStudent);
-
+  app.get("/student",protect.adminProtect, studentController.getAllStudents);
 };
 
 module.exports = Routes;

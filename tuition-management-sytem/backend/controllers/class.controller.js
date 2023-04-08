@@ -95,6 +95,8 @@ export const editClassDetails = async (req, res, next) => {
     });
 };
 
+
+
 module.exports = {
   createClass,
   getAllClasses,
