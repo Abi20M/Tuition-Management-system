@@ -4,15 +4,65 @@ import student from "../models/student.model";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
-// import ClassesModel from "../models/Classes.model";
+
+
+//generate student Id
+const generateStudentId = async () => {
+  //get last student object, if there is a student, then return that student object, otherwise return empty array
+  const lastStudentDetails = await student.find().sort({ _id: -1 }).limit(1);
+  
+  //check if the result array is empty or not, if its empty then return first student Id
+  if (lastStudentDetails.length == 0) {
+    return "STD-001";
+  }
+
+  //if array is not null, last student object id
+  const studentId = lastStudentDetails.map((data) => {
+    return data.id;
+  });
+
+  //then we get the Integer value from the last part of the ID
+  const oldStudentId = parseInt(studentId[0].split("-")[1]);
+
+  const newStudentId = oldStudentId + 1; //then we add 1 to the past value
+
+  //then we return the id according to below conditions
+  if (newStudentId >= 100) {
+    return `STD-${newStudentId}`;
+  } else if (newStudentId >= 10) {
+    return `STD-0${newStudentId}`;
+  } else {
+    return `STD-00${newStudentId}`;
+  }
+};
 
 export const createStudent = async (studentObj) => {
+
   const emailExists = await student.findOne({ email: studentObj.email });
   if (emailExists) {
     throw new Error("Email already exists");
   } else {
+
+          //generate Student Id
+          const stdId = await generateStudentId();
+
+          //create new Student obj with custom student ID
+          const newStudentObj = {
+            id : stdId,
+            name: studentObj.name,
+            email: studentObj.email,
+            password: studentObj.password,
+            phone: studentObj.phone,
+            birthDate:studentObj. birthDate,
+            school: studentObj.school,
+            grade: studentObj.grade,
+            address: studentObj.address,
+            gender: studentObj.gender,
+            parent: studentObj.parent,
+          } 
+
     return await student
-      .create(studentObj)
+      .create(newStudentObj)
       .then(async (data) => {
         await data.save();
         return data;
