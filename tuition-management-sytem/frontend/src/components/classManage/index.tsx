@@ -42,6 +42,7 @@ import { showNotification, updateNotification } from "@mantine/notifications";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { ClassPDF } from "../PDFRender/ClassPDFTemplate";
 import { openConfirmModal } from "@mantine/modals";
+import StudentAPI from "../../API/studentAPI";
 
 const useStyles = createStyles((theme) => ({
   th: {
@@ -108,10 +109,13 @@ interface HallData {
   capacity: Number;
 }
 
-interface StudentDetails{
-  SID : string,
-  name : string,
-  email : string
+interface StudentDetails {
+  _id : string;
+  SID: string;
+  name: string;
+  email: string;
+  grade: string;
+  phone: string;
 }
 
 interface TableSortProps {
@@ -199,11 +203,14 @@ const getAllHallDetails = async () => {
 };
 
 // get registered student details
-// const getStudentDetails = async() =>{
-//   try{
-//     const rowStudetDetails = await ClassAPI.
-//   }
-// }
+const getStudentDetails = async () => {
+  try {
+    const rowStudetDetails = await StudentAPI.getStudents();
+    return rowStudetDetails.data;
+  } catch (error) {
+    return error;
+  }
+};
 
 //created prop type
 interface adminName {
@@ -228,9 +235,9 @@ const ClassManage = ({ user }: adminName) => {
   const [hallDetails, setHallDetails] = useState<HallData[]>([]);
   const [openEditClassModal, setOpenEditClassModal] = useState(false);
   const [openEnrollModal, setOpenEnrollModel] = useState(false);
-  const [enrollClassName,setEnrollClassName] = useState("");
+  const [enrollClassName, setEnrollClassName] = useState("");
   const [studentDetails, setStudentDetails] = useState<StudentDetails[]>([]);
-
+  const [selectEnrollStudent, setSelectEnrollStudent] = useState(false);
 
   //set admin name
   const adminName = user.name;
@@ -427,9 +434,10 @@ const ClassManage = ({ user }: adminName) => {
               icon={<IconLink size={14} />}
               component="a"
               href="#"
-              onClick={() =>{ 
-                setEnrollClassName(row.name)
-                setOpenEnrollModel(true)}}
+              onClick={() => {
+                setEnrollClassName(row.name);
+                setOpenEnrollModel(true);
+              }}
             >
               Enroll
             </Menu.Item>
@@ -475,6 +483,19 @@ const ClassManage = ({ user }: adminName) => {
       </td>
     </tr>
   ));
+
+  // registered student details rows
+
+  const studentRows = studentDetails.map((studentRow : StudentDetails) =>(
+    <tr key={studentRow._id}>
+    <td>{studentRow._id}</td>  
+    <td>{studentRow.name}</td>
+    <td>{studentRow.email}</td>
+    <td>{studentRow.phone}</td>
+    <td>{studentRow.grade}</td>
+    <td><Button color="teal">Enroll Student</Button></td>
+    </tr>
+  ))
 
   // validate add Class Form
   const form = useForm({
@@ -581,6 +602,15 @@ const ClassManage = ({ user }: adminName) => {
         loading: true,
       });
 
+      showNotification({
+        id: "while-fetching-students",
+        disallowClose: false,
+        autoClose: 2000,
+        title: "Fetching Registered Student Details",
+        message: "We are trying to fetch registered student details",
+        loading: true,
+      });
+
       const classDetails = await getAllClasses().catch((error) => {
         updateNotification({
           id: "while-fetching-classes",
@@ -608,9 +638,20 @@ const ClassManage = ({ user }: adminName) => {
         });
       });
 
-      // const newStudentDetails = await getStudentDetails().catch((error)=>{
+      // fetch student data
+      const newStudentDetails = await getStudentDetails().catch((error) => {
+        updateNotification({
+          id: "while-fetching-students",
+          disallowClose: false,
+          autoClose: 2000,
+          title: "Something Went Wrong!",
+          message: "There is an error while fetching students details",
+          color: "red",
+          icon: <IconX />,
+          loading: false,
+        });
+      });
 
-      // })
       const classes = classDetails.map((item: any) => ({
         name: item.name,
         id: item.id,
@@ -629,6 +670,14 @@ const ClassManage = ({ user }: adminName) => {
         capacity: item.capacity,
       }));
 
+      const registeredStudents = newStudentDetails.map((item: any) => ({
+        _id : item._id,
+        name: item.name,
+        email: item.email,
+        grade: item.grade,
+        phone: item.phone,
+      }));
+
       const payload = {
         sortBy: null,
         reversed: false,
@@ -642,12 +691,15 @@ const ClassManage = ({ user }: adminName) => {
       // set halldetails
       setHallDetails(halls);
 
+      // set studentDetails
+      setStudentDetails(registeredStudents);
+
       //this shows success message after class loaded
       setTimeout(() => {
         updateNotification({
           id: "while-fetching-classes",
           disallowClose: false,
-          autoClose: 2300,
+          autoClose: 2000,
           title: "Done",
           message: "Done! Classes are fetched!",
           icon: <IconCheck />,
@@ -658,14 +710,25 @@ const ClassManage = ({ user }: adminName) => {
         updateNotification({
           id: "while-fetching-halls",
           disallowClose: false,
-          autoClose: 2300,
+          autoClose: 2000,
           title: "Done",
           message: "Done! All halls are fetched!",
           icon: <IconCheck />,
           color: "teal",
           loading: false,
         });
-      }, 1000);
+
+        updateNotification({
+          id: "while-fetching-students",
+          disallowClose: false,
+          autoClose: 2000,
+          title: "Done",
+          message: "Done! All registered student details are fetched!",
+          icon: <IconCheck />,
+          color: "teal",
+          loading: false,
+        });
+      }, 500);
     };
     fetch();
   }, []);
@@ -698,10 +761,8 @@ const ClassManage = ({ user }: adminName) => {
     },
   });
 
-
   return (
     <div>
-
       {/* Enroll Student Modal */}
       <Modal
         size={"70%"}
@@ -714,26 +775,37 @@ const ClassManage = ({ user }: adminName) => {
         onClose={() => setOpenEnrollModel(false)}
         overlayOpacity={0.55}
         overlayBlur={3}
-        title = {`Enroll Students into ${enrollClassName}`}
+        title={`Enroll Students into ${enrollClassName}`}
       >
         <Box>
-        <ScrollArea>
-      <Group mt={20}>    
-      <TextInput
-        placeholder="Search by any field"
-        mb="md"
-        icon={<IconSearch size="0.9rem" stroke={1.5} />}
-        value={search}
-        onChange={handleSearchChange}
-        sx={{ minWidth: 750 }}
-      />
-      <Button mt={-15} mr={20}>Enroll Student</Button>
-      </Group>    
-
-      <Table horizontalSpacing="md" verticalSpacing="xs" miw={700} sx={{ tableLayout: "fixed" }} mt={10}>
-        <thead>
-          <tr>
-            {/* <Th
+            <Group mt={20}>
+              <TextInput
+                placeholder="Search by any field"
+                mb="md"
+                icon={<IconSearch size="0.9rem" stroke={1.5} />}
+                value={search}
+                onChange={handleSearchChange}
+                sx={{ minWidth: 750 }}
+              />
+              <Button
+                mt={-15}
+                mr={20}
+                onClick={() => setSelectEnrollStudent(true)}
+              >
+                Enroll Student
+              </Button>
+            </Group>
+            <ScrollArea>
+            <Table
+              horizontalSpacing="md"
+              verticalSpacing="xs"
+              miw={700}
+              sx={{ tableLayout: "fixed" }}
+              mt={10}
+            >
+              <thead>
+                <tr>
+                  {/* <Th
               sorted={sortBy === 'name'}
               reversed={reverseSortDirection}
               onSort={() => setSorting('name')}
@@ -754,21 +826,13 @@ const ClassManage = ({ user }: adminName) => {
             >
               Email
             </Th> */}
-            <th>
-              SID
-            </th>
-            <th>
-              Name
-            </th>
-            <th>
-              Email
-            </th>
-            <th>
-              Action
-            </th>
-          </tr>
-        </thead>
-        {/* <tbody>
+                  <th>SID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              {/* <tbody>
           {rows.length > 0 ? (
             rows
           ) : (
@@ -781,13 +845,90 @@ const ClassManage = ({ user }: adminName) => {
             </tr>
           )}
         </tbody> */}
-      </Table>
-
-    </ScrollArea>
-    </Box>
+            </Table>
+          </ScrollArea>
+        </Box>
       </Modal>
+      
 
-
+      {/* Select Enroll students */}
+      <Modal
+        size={"70%"}
+        overlayColor={
+          theme.colorScheme === "dark"
+            ? theme.colors.dark[9]
+            : theme.colors.gray[2]
+        }
+        opened={selectEnrollStudent}
+        onClose={() => setSelectEnrollStudent(false)}
+        overlayOpacity={0.55}
+        overlayBlur={3}
+      >
+        <TextInput
+                placeholder="Search by any field"
+                mb="md"
+                icon={<IconSearch size="0.9rem" stroke={1.5} />}
+                value={search}
+                onChange={handleSearchChange}
+                sx={{ minWidth: 750 }}
+              />
+            <Box>
+            <ScrollArea>
+            <Table
+              horizontalSpacing="md"
+              verticalSpacing="xs"
+              miw={700}
+              sx={{ tableLayout: "fixed" }}
+              mt={10}
+            >
+              <thead>
+                <tr>
+                  {/* <Th
+              sorted={sortBy === 'name'}
+              reversed={reverseSortDirection}
+              onSort={() => setSorting('name')}
+            >
+              SID
+            </Th>
+            <Th
+              sorted={sortBy === 'name'}
+              reversed={reverseSortDirection}
+              onSort={() => setSorting('name')}
+            >
+              Name
+            </Th>
+            <Th
+              sorted={sortBy === 'name'}
+              reversed={reverseSortDirection}
+              onSort={() => setSorting('name')}
+            >
+              Email
+            </Th> */}
+                  <th>SID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Grade</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              {/* <tbody>
+          {studentRows.length > 0 ? (
+            studentRows
+          ) : (
+            <tr>
+              <td colSpan={Object.keys(studentDetails[0]).length}>
+                <Text weight={500} align="center">
+                  Nothing found
+                </Text>
+              </td>
+            </tr>
+          )}
+        </tbody>  */}
+            </Table>
+          </ScrollArea>
+            </Box>
+      </Modal>
 
       {/* //open edit class modal */}
       <Modal
