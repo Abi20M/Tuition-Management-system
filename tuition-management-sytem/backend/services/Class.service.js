@@ -74,6 +74,8 @@ export const getAllHallDetails = async()=>{
 export const editClassDetails = async(id,editedDetails) =>{
   return await Class.findByIdAndUpdate(id,editedDetails,{new:true});
 }
+
+
 module.exports = {
   createClass,
   getAllClasses,

@@ -70,6 +70,7 @@ export const performanceDataSample = {
 
 //Interface for student data - (Raw data)
 interface RowData {
+  _id : string;
   id: string;
   name: string;
   email: string;
@@ -222,7 +223,8 @@ const ManageStudents: React.FC = () => {
     //   const resultParent = await getAllParents();
       const data = result.map((item: any) => {
         return {
-          id: item._id,
+          _id: item._id,
+          id : item.id,
           name: item.name,
           email: item.email,
           phone: item.phone,
@@ -274,7 +276,8 @@ const ManageStudents: React.FC = () => {
 
   //edit student form
   const editStudent = async (values: {
-    id: string;
+    _id: string;
+    id : string,
     name: string;
     email: string;
     phone: string;
@@ -308,7 +311,8 @@ const ManageStudents: React.FC = () => {
         const newData = data.map((item) => {
           if (item.id === values.id) {
             return {
-              id: values.id,
+              _id: values._id,
+              id : values.id,
               name: values.name,
               email: values.email,
               phone: values.phone,
@@ -378,7 +382,8 @@ const ManageStudents: React.FC = () => {
         const newData = [
           ...data,
           {
-            id: response.data._id,
+            _id: response.data._id,
+            id : response.data.id,
             name: values.name,
             email: values.email,
             phone: values.phone,
@@ -455,7 +460,8 @@ const ManageStudents: React.FC = () => {
   const editForm = useForm({
     validateInputOnChange: true,
     initialValues: {
-      id: "",
+      _id: "",
+      id : "",
       name: "",
       email: "",
       phone: "",
@@ -627,8 +633,8 @@ const ManageStudents: React.FC = () => {
 
   //create rows
   const rows = sortedData.map((row) => (
-    <tr key={row.id}>
-      <td>{row.id.slice(0, 8)}</td>
+    <tr key={row._id}>
+      <td>{row.id}</td>
       <td>{row.name}</td>
       <td>{row.email}</td>
       <td>{row.phone}</td>
@@ -661,7 +667,8 @@ const ManageStudents: React.FC = () => {
           sx={{ margin: "5px", width: "100px" }}
           onClick={() => {
             editForm.setValues({
-              id: row.id,
+              _id: row._id,
+              id : row.id,
               name: row.name,
               email: row.email,
               phone: row.phone,

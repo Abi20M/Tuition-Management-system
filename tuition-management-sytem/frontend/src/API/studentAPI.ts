@@ -8,6 +8,7 @@ class StudentAPI {
   static getStudents = () => {
     return axios.get(`${BASE_URL}/student`, requestConfigJson);
   };
+  
   //add student
   static addStudent = (values: {     
     name: string;
