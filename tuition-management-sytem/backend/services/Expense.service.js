@@ -60,25 +60,8 @@ export const deleteExpense = async(id) =>{
   return await Expense.findByIdAndDelete(id);
 }
 
+export const editExpense = async (id,updatedExpense) => {
 
-// export const editExpense = async (id, newExpenseObj) => {
-//   return await Expense
-//     .findByIdAndUpdate(id, newExpenseObj, { new: true })
-//     .then((data) => {
-//       if (data) {
-//         return data;
-//       } else {
-//         throw new Error("Expense not found");
-//       }
-//     })
-//     .catch((err) => {
-//       throw new Error(err.message);
-//     });
-// };
-export const editExpense = async (id, updatedExpense) => {
-
-  console.log(id);
-  console.log(updatedExpense);
   return await Expense.findByIdAndUpdate(id, updatedExpense, { new: true });
 };
 

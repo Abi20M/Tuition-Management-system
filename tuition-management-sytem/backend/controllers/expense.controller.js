@@ -57,18 +57,6 @@ export const createExpense = async (req, res, next) => {
   };
   
   //update expense
-  // export const editExpense = async (req, res, next) => {
-  //   await expenseServices
-  //     .editExpense(req.params.id, req.body)
-  //     .then((data) => {
-  //       req.handleResponse.successRespond(res)(data);
-  //       next();
-  //     })
-  //     .catch((err) => {
-  //       req.handleResponse.errorRespond(res)(err);
-  //       next();
-  //     });
-  // };
   export const editExpense = async (req, res, next) => {
 
     
@@ -80,7 +68,7 @@ export const createExpense = async (req, res, next) => {
       amount : req.body.amount,
     }
     await expenseServices
-      .editExpense(id, updatedExpense)
+      .editExpense(id,updateDetails)
       .then((data) => {
         req.handleResponse.successRespond(res)(data);
         next();
