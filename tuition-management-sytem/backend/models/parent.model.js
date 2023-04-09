@@ -1,47 +1,26 @@
 import mongoose from "mongoose";
 
-const classSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    required: true,
-    unique : true,
-  },
-  parent : {
-    type : String,
-    required : true
-  },
+const ParentSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
   },
-  subject: {
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
     type: String,
     required: true,
   },
-  day: {
+  phone: {
     type: String,
     required: true,
   },
-  startTime: {
-    type: String,
-    required: true,
-  },
-  venue:{
-    type:String,
-    required : true
-  },
-  endTime:{
-    type: String,
-    required : true
-  },
-  students: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Student",
-    },
-  ],
+  
 },{timestamps:true});
 
-const Parent = mongoose.model("Parents", parentSchema);
+const Parent = mongoose.model("Parents", ParentSchema);
 
 export default Parent;

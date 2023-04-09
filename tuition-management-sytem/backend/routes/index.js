@@ -2,6 +2,7 @@ import { loginAdmin } from "../controllers/admin.controller";
 import protect from "../middleware/Auth.middleware";
 import classController from "../controllers/class.controller";
 import expenseController from "../controllers/expense.controller";
+import parentController from "../controllers/Parent.controller";
 import studentController from "../controllers/student.controller";
 
 const Routes = (app) => {
@@ -20,6 +21,18 @@ const Routes = (app) => {
   app.post("/expense",protect.adminProtect,expenseController.createExpense);
   app.delete("/expense/delete/:id",protect.adminProtect,expenseController.deleteExpense);
   app.put("/expense/update/:id",protect.adminProtect,expenseController.editExpense);
+
+  //Parent Routes
+  app.post("/parent",protect.adminProtect, parentController.createParent);
+  app.get("/parent/:id", protect.adminProtect, parentController.getParent);
+  app.put("/parent/:id" , protect.adminProtect, parentController.updateParent);
+  app.delete("/parent/:id",protect.adminProtect,parentController.deleteParent);
+   
+    
+    
+  //parent login
+  // app.post("/parent/login" , parentController.loginParent);
+
 
   //Student Routes
   app.post("/student", protect.adminProtect, studentController.createStudent);
