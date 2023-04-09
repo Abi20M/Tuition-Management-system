@@ -1,6 +1,7 @@
 import parentService from "../services/Parent.service.js";
 import Parent from "../models/parent.model.js";
 import bcrypt from "bcrypt";
+import mongoose from "mongoose";
 
 export const createParent = async (req, res, next) => {
     const salt = await bcrypt.genSalt(10);
@@ -78,11 +79,23 @@ export const deleteParent = async (req, res, next) => {
     });
 };
 
+//Parent login
+export const loginParent = async (req, res, next) => {
+  await parentService
+    .loginParent(req.body.email, res.body.password)
+    .then((data)=> {
+      req.handleResponse.successRespond(res)(err);
+      next();
+    });
+};
+
 module.exports = {
     createParent,
     getParent,
     getAllParents,
     updateParent,
     deleteParent,
+    loginParent,
+    
 
 };

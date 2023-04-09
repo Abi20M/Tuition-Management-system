@@ -27,6 +27,8 @@ import ParentAPI from "../../API/ParentAPI";
 import { IconCheck, IconAlertTriangle } from "@tabler/icons";
 import { useForm } from "@mantine/form";
 
+
+
 //Interface for parent data - (Raw data)
 interface RowData {
   id: string;
@@ -556,6 +558,7 @@ const ManageParents: React.FC = () => {
           </Button>
         </form>
       </Modal>
+      {/* search button */}
       <Box sx={{ margin: "20px", width: "100%" }}>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <TextInput
@@ -566,14 +569,18 @@ const ManageParents: React.FC = () => {
            sx={{ minWidth: 600 }}
           />
 
+        {/* Report genartion button */}
+
           <Button
             variant="gradient"
             gradient={{ from: "indigo", to: "cyan" }}
-            sx={{ width: "200px", marginRight: "20px" }}
+            sx={{ width: "200px", marginRight: "16px" }}
             onClick={() => setOpened(true)}
           >
             Generate Report
           </Button>
+
+    
           
           <Button
             variant="gradient"
