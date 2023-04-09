@@ -24,7 +24,7 @@ const Routes = (app) => {
 
   //Parent Routes
   app.post("/parent",protect.adminProtect, parentController.createParent);
-  app.get("/parent/:id", protect.adminProtect, parentController.getParent);
+  app.get("/parent", protect.adminProtect, parentController.getAllParents);
   app.put("/parent/:id" , protect.adminProtect, parentController.updateParent);
   app.delete("/parent/:id",protect.adminProtect,parentController.deleteParent);
    
