@@ -897,7 +897,8 @@ const ManageStudents: React.FC = () => {
           <Table
             horizontalSpacing="md"
             verticalSpacing="xs"
-            sx={{ tableLayout: "fixed", width: "100%" }}
+            // sx={{ tableLayout: "fixed", width: "100%" }}
+            sx={{ minWidth:700}}
           >
             <thead>
               <tr>
