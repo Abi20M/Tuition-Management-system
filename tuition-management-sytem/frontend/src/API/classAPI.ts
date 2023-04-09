@@ -90,4 +90,8 @@ export class ClassAPI {
 
         return axios.put(`${BASE_URL}/class/edit/${values._id}`,updatedClassDetails,requestConfig);
     }
+
+    static  enrollStudent = async (studentId : string, classId : string) => {
+        //todo create backend for enroll students
+    }
 }
