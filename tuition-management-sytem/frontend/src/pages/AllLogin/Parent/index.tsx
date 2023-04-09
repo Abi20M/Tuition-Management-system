@@ -17,8 +17,6 @@ import {
   Text,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import financialManage from "../../../assets/financialManage.jpg";
-// import financialManageDark2 from "../../../assets/financialManageDark2.png";
 import LightDarkButton from "../../../components/lightDarkButton";
 import { adminAPI } from "../../../API/adminAPI";
 import { showNotification, updateNotification } from "@mantine/notifications";
@@ -28,7 +26,7 @@ import lightLogo from '../../../assets/logo1.png';
 import parentLogin from "../../../assets/parentLogin.png"
 
 //set the page title
-document.title = "financial manager - Tuition Management System";
+document.title = "Parent manager - Tuition Management System";
 
 //create a Custom style class
 const useStyles = createStyles((theme) => ({
@@ -75,7 +73,7 @@ const validateAdmin = (values: {
           id: "admin-login",
           color: "teal",
           title: "User Verified!",
-          message: "Congrats! You will be redirected Expense Management Protal.",
+          message: "Congrats! You will be redirected Parent Management Protal.",
           icon: <IconCheck size={16} />,
           autoClose: 2000,
         });
@@ -87,7 +85,7 @@ const validateAdmin = (values: {
       //store Role key and value as admin in the localStorage, after 2sec browser will be redirected to the admin Dashboard
       setTimeout(() => {
         localStorage.setItem("role", "admin");
-        window.location.href = "/financial/dashboard";
+        window.location.href = "/parent/dashboard";
       }, 2000);
     })
     .catch((error) => {
