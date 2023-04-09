@@ -893,12 +893,13 @@ const ManageStudents: React.FC = () => {
             Add Student
           </Button>
         </Box>
-        <ScrollArea>
+        <ScrollArea
+        sx={{ height:400, width:1200 , marginLeft:"-100px"}}
+        > 
           <Table
             horizontalSpacing="md"
             verticalSpacing="xs"
             // sx={{ tableLayout: "fixed", width: "100%" }}
-            sx={{ minWidth:700}}
           >
             <thead>
               <tr>
