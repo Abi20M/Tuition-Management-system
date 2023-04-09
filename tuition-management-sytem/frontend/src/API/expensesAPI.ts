@@ -24,6 +24,7 @@ class ExpensesAPI {
   
   //update expense
   static editExpenses = (values: {
+    _id : string,
     id: string;
     name: string;
     description: string;
@@ -31,9 +32,9 @@ class ExpensesAPI {
     amount: string;
   }) => {
    
-    return axios.put(`${BASE_URL}/expense/update/${values.id}`,
+    return axios.put(`${BASE_URL}/expense/update/${values._id}`,
     values,
-      requestConfig
+    requestConfig
     );
   };
 

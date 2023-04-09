@@ -1,7 +1,6 @@
 import { createStyles, Container, Tabs } from "@mantine/core";
 import AdminHeader from "../../components/adminHeader";
-import ExpenseManage from "../../components/expenseManage";
-import WebsiteFooter from "../../components/Footer";
+import ExpenseManage from "../../components/ManageParents";
 
 const useStyles = createStyles((theme) => ({
   tabs: {
@@ -41,13 +40,13 @@ const useStyles = createStyles((theme) => ({
 //create tabs List
 const tabs = [
   "Overview",
-  "Expenses category",
-  "Past Expese Details"
+  "Children",
+  
 ];
 
-export const ExpenseDashboard = () => {
+export const ParentDashboard = () => {
   //change the tab Title
-  document.title = "Expenses Dashboard - Tuition Management System";
+  document.title = "Parent Dashboard - Tuition Management System";
 
   const { classes, theme, cx } = useStyles();
 
@@ -85,10 +84,10 @@ export const ExpenseDashboard = () => {
         <Tabs.List grow>{items}</Tabs.List>
 
         {/* Here you can add your own Component to here */}
-        <Tabs.Panel value="Overview">
+        <Tabs.Panel value="Dashboard">
           <h1>Hello Overview</h1>
         </Tabs.Panel>
-        <Tabs.Panel value="Expenses category">
+        <Tabs.Panel value="Children">
           <ExpenseManage/>
         </Tabs.Panel>
         <Tabs.Panel value="Past Expese Details">
@@ -96,8 +95,6 @@ export const ExpenseDashboard = () => {
         </Tabs.Panel>   
       </Tabs>
     </Container>
-
-    <WebsiteFooter/>
     </div>
   );
 };
