@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import Admin from '../models/admin.model';
+import Admin from "../models/admin.model";
 
 export const adminProtect = async (req,res,next) =>{
     let token;
