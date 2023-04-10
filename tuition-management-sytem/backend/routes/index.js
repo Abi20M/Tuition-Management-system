@@ -4,6 +4,7 @@ import classController from "../controllers/class.controller";
 import expenseController from "../controllers/expense.controller";
 import parentController from "../controllers/Parent.controller";
 import studentController from "../controllers/student.controller";
+import adminController from "../controllers/admin.controller";
 
 const Routes = (app) => {
   //normal validation root of the user
@@ -37,6 +38,13 @@ const Routes = (app) => {
   //Student Routes
   app.post("/student", protect.adminProtect, studentController.createStudent);
   app.get("/student",protect.adminProtect, studentController.getAllStudents);
+
+
+  //Admin Routes
+  app.post("/admin/login", adminController.loginAdmin);
+  app.post("/admin", protect.adminProtect, adminController.createAdmin);
+  app.get("/admin", protect.adminProtect, adminController.getAllAdmins);
+  app.get("/admin/:id", protect.adminProtect, adminController.getAdmin);
 };
 
 module.exports = Routes;
