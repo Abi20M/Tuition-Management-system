@@ -1,17 +1,56 @@
-import Admin from "../models/admin.model";
+import admin from "../models/admin.model";
 import bcrypt from "bcrypt";
 import "dotenv/config";
 import jwt from "jsonwebtoken";
 
+//generate Admin Id
+const generateAdminId = async () => {
+  //get last class object, if there is a class, then return that class object, otherwise return empty array
+  const lastAdminDetails = await admin.find().sort({ _id: -1 }).limit(1);
+  
+  //check if the result array is empty or not, if its empty then return first Admin Id
+  if (lastAdminDetails.length == 0) {
+    return "ADM-001";
+  }
 
+  //if array is not null, last class object id
+  const AdminId = lastAdminDetails.map((data) => {
+    return data.id;
+  });
+
+  //then we get the Integer value from the last part of the ID
+  const oldAdminId = parseInt(AdminId[0].split("-")[1]);
+
+  const newAdminId = oldAdminId + 1; //then we add 1 to the past value
+
+  //then we return the id according to below conditions
+  if (newAdminId >= 100) {
+    return `ADM-${newAdminId}`;
+  } else if (newAdminId >= 10) {
+    return `ADM-0${newAdminId}`;
+  } else {
+    return `ADM-00${newAdminId}`;
+  }
+};
 
 export const createAdmin = async (adminObj) => {
   const emailExists = await admin.findOne({ email: adminObj.email });
   if (emailExists) {
     throw new Error("Email already exists");
   } else {
+
+     //generate the Class ID  
+    const id = await generateAdminId();
+
+    const newAdminObj = {
+      name: adminObj.name,
+      id : id,
+      email: adminObj.email,
+      password: adminObj.password,
+    }
+
     return await admin
-      .create(adminObj)
+      .create(newAdminObj)
       .then(async (data) => {
         await data.save();
         return data;
@@ -79,7 +118,7 @@ export const deleteAdmin = async (id) => {
 };
 
 const adminLogin = async (email, password) => {
-  return await Admin.findOne({ email }).then((data) => {
+  return await admin.findOne({ email }).then((data) => {
     if (data) {
       if (password === data.password) {
 

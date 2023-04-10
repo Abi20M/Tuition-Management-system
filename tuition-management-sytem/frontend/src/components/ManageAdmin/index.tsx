@@ -30,6 +30,7 @@ import { useForm } from "@mantine/form";
 //Interface for admin data - (Raw data)
 interface RowData {
   id: string;
+  customId : string;
   name: string;
   email: string;
 }
@@ -148,11 +149,12 @@ const ManageAdmins: React.FC = () => {
       const data = result.map((item: any) => {
         return {
           id: item._id,
+          customId : item.id,
           name: item.name,
           email: item.email,
-          contactNumber: item.contactNumber,
-          role: item.role,
-          bloodBankId: item.bloodBankId,
+          // contactNumber: item.contactNumber,
+          // role: item.role,
+          // bloodBankId: item.bloodBankId,
         };
       });
       setData(data);
@@ -186,6 +188,7 @@ const ManageAdmins: React.FC = () => {
   //edit admin form
   const editAdmin = async (values: {
     id: string;
+    customId : string,
     name: string;
     email: string;
   }) => {
@@ -213,6 +216,7 @@ const ManageAdmins: React.FC = () => {
           if (item.id === values.id) {
             return {
               id: values.id,
+              customId : values.customId,
               name: values.name,
               email: values.email,
             };
@@ -270,6 +274,7 @@ const ManageAdmins: React.FC = () => {
           ...data,
           {
             id: response.data._id,
+            customId : response.data.id,
             name: values.name,
             email: values.email,
           },
@@ -340,6 +345,7 @@ const ManageAdmins: React.FC = () => {
     validateInputOnChange: true,
     initialValues: {
       id: "",
+      customId : "",
       name: "",
       email: "",
     },
@@ -420,7 +426,7 @@ const ManageAdmins: React.FC = () => {
   //create rows
   const rows = sortedData.map((row) => (
     <tr key={row.id}>
-      <td>{row.id}</td>
+      <td>{row.customId}</td>
       <td>{row.name}</td>
       <td>{row.email}</td>
       <td>
@@ -430,6 +436,7 @@ const ManageAdmins: React.FC = () => {
           onClick={() => {
             editForm.setValues({
               id: row.id,
+              customId : row.customId,
               name: row.name,
               email: row.email,
             });
@@ -502,7 +509,7 @@ const ManageAdmins: React.FC = () => {
             label="ID"
             placeholder="Enter ID"
             disabled
-            {...editForm.getInputProps("id")}
+            {...editForm.getInputProps("customId")}
             required
           />
           <TextInput

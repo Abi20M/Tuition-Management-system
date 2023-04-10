@@ -1,6 +1,6 @@
 import AdminService from "../services/Admin.service";
 import Admin from "../models/admin.model";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 
 
 export const createAdmin = async (req, res, next) => {
@@ -13,7 +13,7 @@ export const createAdmin = async (req, res, next) => {
     password: hashedPassword,
   });
 
-  await adminService
+  await AdminService
     .createAdmin(admin)
     .then((data) => {
       req.handleResponse.successRespond(res)(data);
@@ -39,7 +39,7 @@ export const loginAdmin = async (req, res, next) => {
 
 
 export const getAdmin = async (req, res, next) => {
-  await adminService
+  await AdminService
     .getAdmin(req.params.id)
     .then((data) => {
       req.handleResponse.successRespond(res)(data);
@@ -52,7 +52,7 @@ export const getAdmin = async (req, res, next) => {
 };
 
 export const getAllAdmins = async (req, res, next) => {
-  await adminService
+  await AdminService
     .getAllAdmins()
     .then((data) => {
       req.handleResponse.successRespond(res)(data);
@@ -65,7 +65,7 @@ export const getAllAdmins = async (req, res, next) => {
 };
 
 export const updateAdmin = async (req, res, next) => {
-  await adminService
+  await AdminService
     .updateAdmin(req.params.id, req.body)
     .then((data) => {
       req.handleResponse.successRespond(res)(data);
@@ -78,7 +78,7 @@ export const updateAdmin = async (req, res, next) => {
 };
 
 export const deleteAdmin = async (req, res, next) => {
-  await adminService
+  await AdminService
     .deleteAdmin(req.params.id)
     .then((data) => {
       req.handleResponse.successRespond(res)(data);
@@ -91,7 +91,7 @@ export const deleteAdmin = async (req, res, next) => {
 };
 
 export const verifyAdmin = async (req, res, next) => {
-  await adminService
+  await AdminService
     .verifyAdmin(req.body.token)
     .then((data) => {
       req.handleResponse.successRespond(res)(data);

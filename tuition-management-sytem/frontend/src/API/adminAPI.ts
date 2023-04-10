@@ -1,23 +1,22 @@
-import axios from 'axios';
+import axios from "axios";
 import requestConfigJson from "./requestConfig";
 
-
-const BASE_URL = "http://localhost:3001"
+const BASE_URL = "http://localhost:3001";
 
 export class adminAPI {
-    //Admin Login
-    static loginAdmin = (email : string, password : string)=>{
-    
-        let credentials = {
-            email: email,
-            password : password
-        }
-        return axios.post(`${BASE_URL}/admin/login`,credentials);
+  //Admin Login
+  static loginAdmin = (email: string, password: string) => {
+    let credentials = {
+      email: email,
+      password: password,
     };
-    //get all admins
+    return axios.post(`${BASE_URL}/admin/login`, credentials);
+  };
+  //get all admins
   static getAdmins = () => {
     return axios.get(`${BASE_URL}/admin`, requestConfigJson);
   };
+
   //add admin
   static addAdmin = (values: {
     name: string;
@@ -31,7 +30,13 @@ export class adminAPI {
     return axios.delete(`${BASE_URL}/admin/${id}`, requestConfigJson);
   };
   //update admin
-  static editAdmin = (values: { id: string; name: string; email: string }) => {
+  static editAdmin = (values: {
+    id: string;
+    customId: string;
+    name: string;
+    email: string;
+  }) => {
+
     let admin = {
       name: values.name,
       email: values.email,
@@ -53,4 +58,3 @@ export class adminAPI {
 }
 
 export default adminAPI;
-

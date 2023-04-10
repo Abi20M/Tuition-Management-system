@@ -9,7 +9,12 @@ import adminController from "../controllers/admin.controller";
 const Routes = (app) => {
   //normal validation root of the user
   app.post("/admin/login", loginAdmin);
-
+  app.post("/admin", protect.adminProtect, adminController.createAdmin);
+  app.get("/admin", protect.adminProtect, adminController.getAllAdmins);
+  app.get("/admin/:id", protect.adminProtect, adminController.getAdmin);
+  app.put("/admin/:id",protect.adminProtect,adminController.updateAdmin);
+  app.delete("/admin/:id",protect.adminProtect, adminController.deleteAdmin);
+  
   //class Routes
   app.get("/class",protect.adminProtect,classController.getAllClasses);
   app.post("/class",protect.adminProtect,classController.createClass);
@@ -39,12 +44,6 @@ const Routes = (app) => {
   app.post("/student", protect.adminProtect, studentController.createStudent);
   app.get("/student",protect.adminProtect, studentController.getAllStudents);
 
-
-  //Admin Routes
-  app.post("/admin/login", adminController.loginAdmin);
-  app.post("/admin", protect.adminProtect, adminController.createAdmin);
-  app.get("/admin", protect.adminProtect, adminController.getAllAdmins);
-  app.get("/admin/:id", protect.adminProtect, adminController.getAdmin);
 };
 
 module.exports = Routes;
