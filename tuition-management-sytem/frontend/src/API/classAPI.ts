@@ -91,7 +91,17 @@ export class ClassAPI {
         return axios.put(`${BASE_URL}/class/edit/${values._id}`,updatedClassDetails,requestConfig);
     }
 
+    static getClassById = async (classId : string) => {
+        return axios.get(`${BASE_URL}/class/${classId}`,requestConfig);
+    }
+
     static  enrollStudent = async (studentId : string, classId : string) => {
-        //todo create backend for enroll students
+
+        const enrollDetail = {
+            student : studentId,
+            class : classId
+        }
+
+        return axios.post(`${BASE_URL}/enroll`,enrollDetail,requestConfig);
     }
 }

@@ -43,6 +43,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import { ClassPDF } from "../PDFRender/ClassPDFTemplate";
 import { openConfirmModal } from "@mantine/modals";
 import StudentAPI from "../../API/studentAPI";
+import { isConstructorDeclaration } from "typescript";
 
 const useStyles = createStyles((theme) => ({
   th: {
@@ -213,6 +214,16 @@ const getStudentDetails = async () => {
   }
 };
 
+// get enrolled student details
+const fethClassDetailsById = async (classId: string) => {
+  return ClassAPI.getClassById(classId)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      return error;
+    });
+};
 //created prop type
 interface adminName {
   user: {
@@ -233,6 +244,7 @@ const ClassManage = ({ user }: adminName) => {
   const [daySearchValue, setDaySearchValue] = useState("");
   const { classes, cx } = useStyles();
   const theme = useMantineTheme();
+
   const [hallDetails, setHallDetails] = useState<HallData[]>([]);
   const [openEditClassModal, setOpenEditClassModal] = useState(false);
   const [openEnrollModal, setOpenEnrollModel] = useState(false);
@@ -240,6 +252,8 @@ const ClassManage = ({ user }: adminName) => {
   const [selectedEnrollClassId, setSelectedEnrollClassId] = useState("");
   const [studentDetails, setStudentDetails] = useState<StudentDetails[]>([]);
   const [selectEnrollStudent, setSelectEnrollStudent] = useState(false);
+  const [enrolledStudents, setEnrolledStudents] = useState([]);
+
   //set admin name
   const adminName = user.name;
 
@@ -403,10 +417,71 @@ const ClassManage = ({ user }: adminName) => {
 
   // Enroll student
   const enrollStudent = (studentObjId: string, classId: string) => {
-    ClassAPI.enrollStudent(studentObjId, classId).then((data) => {
-      //todo handle the respoonse for enrolling student here
+    showNotification({
+      id: "class-enroll",
+      title: "Enrolling....",
+      message: `We are trying to enroll student into ${enrollClassName}`,
+      loading: true,
     });
+
+    ClassAPI.enrollStudent(studentObjId, classId)
+      .then((data) => {
+        // const newClassObj = data.data.students;
+        updateNotification({
+          id: "class-enroll",
+          title: "Success",
+          message: `We are successfully enrolled student into ${enrollClassName}`,
+          icon: <IconCheck />,
+          color: "teal",
+        });
+      })
+      .catch((error) => {
+        updateNotification({
+          id: "class-enroll",
+          title: "Failed",
+          message: `There was an error while enrolling student into ${enrollClassName}`,
+          icon: <IconX />,
+          color: "red",
+        });
+      });
   };
+
+  //get Enrolled Students details
+  const getEnrollmentStudentDetails = async (classId : string) =>{
+
+    const result = await fethClassDetailsById(classId);
+
+    setEnrolledStudents(result);
+  }
+
+  //enrolled Students row
+  const enrolledStudentRows = enrolledStudents.map(
+    (student: {
+      email: string;
+      _id: string;
+      grade: string;
+      phone: string;
+      name: string;
+      id: string;
+    }) => (
+      <tr key={student._id}>
+        <td>{student.id}</td>
+        <td>{student.name}</td>
+        <td>{student.email}</td>
+        <td>{student.phone}</td>
+        <td>
+          <Button
+            color="red"
+            leftIcon={<IconX size={16} />}
+            ml={-30}
+            //todo unenroll button
+          >
+            Unenroll Student
+          </Button>
+        </td>
+      </tr>
+    )
+  );
 
   // table Rows
   const rows = sortedData.map((row) => (
@@ -446,6 +521,7 @@ const ClassManage = ({ user }: adminName) => {
               onClick={() => {
                 setEnrollClassName(row.name);
                 setSelectedEnrollClassId(row._id);
+                getEnrollmentStudentDetails(row._id);
                 setOpenEnrollModel(true);
               }}
             >
@@ -515,6 +591,8 @@ const ClassManage = ({ user }: adminName) => {
       </td>
     </tr>
   ));
+
+
 
   // validate add Class Form
   const form = useForm({
@@ -795,7 +873,10 @@ const ClassManage = ({ user }: adminName) => {
             : theme.colors.gray[2]
         }
         opened={openEnrollModal}
-        onClose={() => setOpenEnrollModel(false)}
+        onClose={() => {
+          setOpenEnrollModel(false);
+          setEnrolledStudents([]);
+        }}
         overlayOpacity={0.55}
         overlayBlur={3}
         title={`Enroll Students into ${enrollClassName}`}
@@ -855,22 +936,23 @@ const ClassManage = ({ user }: adminName) => {
                   <th>SID</th>
                   <th>Name</th>
                   <th>Email</th>
+                  <th>Phone</th>
                   <th>Action</th>
                 </tr>
               </thead>
-              {/* <tbody>
-          {rows.length > 0 ? (
-            rows
-          ) : (
-            <tr>
-              <td colSpan={Object.keys(studentDetails[0]).length}>
-                <Text weight={500} align="center">
-                  Nothing found
-                </Text>
-              </td>
-            </tr>
-          )}
-        </tbody> */}
+              <tbody>
+                {enrolledStudentRows.length > 0 ? (
+                  enrolledStudentRows
+                ) : (
+                  <tr>
+                    <td>
+                      <Text weight={500} align="center">
+                        No Item Found
+                      </Text>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
             </Table>
           </ScrollArea>
         </Box>
