@@ -27,6 +27,22 @@ export const createClass = async (req, res, next) => {
     });
 };
 
+// Get class by id
+export const getEnrolledStudentDetails = async (req, res, next) => {
+  const classId = req.params.id;
+
+  await classServices
+    .getEnrolledStudentsData(classId)
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+      next();
+    })
+    .catch((error) => {
+      req.handleResponse.errorRespond(res)(error);
+      next();
+    });
+};
+
 //get all class Details
 export const getAllClasses = async (req, res, next) => {
   await classServices
@@ -95,7 +111,23 @@ export const editClassDetails = async (req, res, next) => {
     });
 };
 
+export const enrollStudent = async (req, res, next) => {
+  const enrollStudent = {
+    studentID: req.body.student,
+    classId: req.body.class,
+  };
 
+  classServices
+    .enrollStudent(enrollStudent)
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+      next();
+    })
+    .catch((error) => {
+      req.handleResponse.errorRespond(res)(error);
+      next();
+    });
+};
 
 module.exports = {
   createClass,
@@ -103,4 +135,6 @@ module.exports = {
   deleteClass,
   getAllHallDetails,
   editClassDetails,
+  enrollStudent,
+  getEnrolledStudentDetails,
 };

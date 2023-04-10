@@ -17,10 +17,12 @@ const Routes = (app) => {
   
   //class Routes
   app.get("/class",protect.adminProtect,classController.getAllClasses);
+  app.get("/class/:id",protect.adminProtect,classController.getEnrolledStudentDetails);
   app.post("/class",protect.adminProtect,classController.createClass);
   app.delete("/class/delete/:id",protect.adminProtect,classController.deleteClass);
   app.get("/halls",protect.adminProtect,classController.getAllHallDetails);
-  app.put("/class/edit/:id",protect.adminProtect,classController.editClassDetails)  
+  app.put("/class/edit/:id",protect.adminProtect,classController.editClassDetails);
+  app.post("/enroll",protect.adminProtect, classController.enrollStudent)  
 
   //expense Routes
   app.get("/expense",protect.adminProtect,expenseController.getAllExpenses);
