@@ -4,17 +4,25 @@ import classController from "../controllers/class.controller";
 import expenseController from "../controllers/expense.controller";
 import parentController from "../controllers/Parent.controller";
 import studentController from "../controllers/student.controller";
+import adminController from "../controllers/admin.controller";
 
 const Routes = (app) => {
   //normal validation root of the user
   app.post("/admin/login", loginAdmin);
-
+  app.post("/admin", protect.adminProtect, adminController.createAdmin);
+  app.get("/admin", protect.adminProtect, adminController.getAllAdmins);
+  app.get("/admin/:id", protect.adminProtect, adminController.getAdmin);
+  app.put("/admin/:id",protect.adminProtect,adminController.updateAdmin);
+  app.delete("/admin/:id",protect.adminProtect, adminController.deleteAdmin);
+  
   //class Routes
   app.get("/class",protect.adminProtect,classController.getAllClasses);
+  app.get("/class/:id",protect.adminProtect,classController.getEnrolledStudentDetails);
   app.post("/class",protect.adminProtect,classController.createClass);
   app.delete("/class/delete/:id",protect.adminProtect,classController.deleteClass);
   app.get("/halls",protect.adminProtect,classController.getAllHallDetails);
-  app.put("/class/edit/:id",protect.adminProtect,classController.editClassDetails)  
+  app.put("/class/edit/:id",protect.adminProtect,classController.editClassDetails);
+  app.post("/enroll",protect.adminProtect, classController.enrollStudent)  
 
   //expense Routes
   app.get("/expense",protect.adminProtect,expenseController.getAllExpenses);
@@ -37,6 +45,7 @@ const Routes = (app) => {
   //Student Routes
   app.post("/student", protect.adminProtect, studentController.createStudent);
   app.get("/student",protect.adminProtect, studentController.getAllStudents);
+
 };
 
 module.exports = Routes;
