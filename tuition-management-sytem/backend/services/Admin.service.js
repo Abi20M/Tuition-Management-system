@@ -48,7 +48,7 @@ export const createAdmin = async (adminObj) => {
       email: adminObj.email,
       password: adminObj.password,
       telephone: adminObj.telephone,
-      password: adminObj.password,
+      address: adminObj.address,
     }
 
     return await admin

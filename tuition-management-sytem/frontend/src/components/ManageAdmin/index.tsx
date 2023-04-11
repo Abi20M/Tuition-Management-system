@@ -372,6 +372,9 @@ const ManageAdmins: React.FC = () => {
         )
           ? null
           : "Invalid email",
+
+      telephone: (value) =>
+          value.length < 11 ? "Telephone must have at least 10 numbers" : null,
     },
   });
 
@@ -396,6 +399,9 @@ const ManageAdmins: React.FC = () => {
           : "Invalid email",
       password: (value) =>
         value.length < 8 ? "Password must have at least 8 characters" : null,
+
+      telephone: (value) =>
+        value.length < 11 ? "Telephone must have at least 10 numbers" : null,
     },
   });
 
@@ -455,6 +461,8 @@ const ManageAdmins: React.FC = () => {
               customId : row.customId,
               name: row.name,
               email: row.email,
+              telephone: row.telephone,
+              address: row.address,
             });
             setEditOpened(true);
           }}
