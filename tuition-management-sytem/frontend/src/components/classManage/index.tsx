@@ -224,6 +224,7 @@ const fethClassDetailsById = async (classId: string) => {
       return error;
     });
 };
+
 //created prop type
 interface adminName {
   user: {
@@ -453,6 +454,51 @@ const ClassManage = ({ user }: adminName) => {
     setEnrolledStudents(result);
   };
 
+  // UnEnroll Students
+  const removeEnrollStudent = async (studentId: string, classId: string) => {
+    showNotification({
+      id: "student-unenroll",
+      title: "Unenrolling....",
+      message: `We are trying to unenroll student from ${enrollClassName}`,
+      loading: true,
+    });
+
+    ClassAPI.unEnrollStudent(studentId, classId)
+      .then((response) => {
+        setEnrolledStudents(
+          enrolledStudents.filter(
+            (student: {
+              email: string;
+              _id: string;
+              grade: string;
+              phone: string;
+              name: string;
+              id: string;
+            }) => {
+              return student._id !== studentId;
+            }
+          )
+        );
+
+        updateNotification({
+          id: "student-unenroll",
+          title: "Success",
+          message: `We are successfully enrolled student into ${enrollClassName}`,
+          icon: <IconCheck />,
+          color: "teal",
+        });
+      })
+      .catch((err) => {
+        updateNotification({
+          id: "student-unenroll",
+          title: "Failed",
+          message: `There was an error while enrolling student into ${enrollClassName}`,
+          icon: <IconX />,
+          color: "red",
+        });
+      });
+  };
+
   //enrolled Students row
   const enrolledStudentRows = enrolledStudents.map(
     (student: {
@@ -473,7 +519,9 @@ const ClassManage = ({ user }: adminName) => {
             color="red"
             leftIcon={<IconX size={16} />}
             ml={-30}
-            //todo unenroll button
+            onClick={() =>
+              removeEnrollStudent(student._id, selectedEnrollClassId)
+            }
           >
             Unenroll Student
           </Button>
@@ -610,7 +658,6 @@ const ClassManage = ({ user }: adminName) => {
         </tr>
       );
     }
-    
   });
 
   // validate add Class Form
