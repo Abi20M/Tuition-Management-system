@@ -33,6 +33,8 @@ interface RowData {
   customId : string;
   name: string;
   email: string;
+  telephone: string;
+  address:string;
 }
 
 //Get all admin records from the database
@@ -152,6 +154,8 @@ const ManageAdmins: React.FC = () => {
           customId : item.id,
           name: item.name,
           email: item.email,
+          telephone: item.String,
+          address: item.string,
           // contactNumber: item.contactNumber,
           // role: item.role,
           // bloodBankId: item.bloodBankId,
@@ -191,6 +195,8 @@ const ManageAdmins: React.FC = () => {
     customId : string,
     name: string;
     email: string;
+    telephone: string;
+    address:string;
   }) => {
     showNotification({
       id: "edit-admin",
@@ -219,6 +225,8 @@ const ManageAdmins: React.FC = () => {
               customId : values.customId,
               name: values.name,
               email: values.email,
+              telephone: values.telephone,
+              address: values.address,
             };
           } else {
             return item;
@@ -249,6 +257,8 @@ const ManageAdmins: React.FC = () => {
     name: string;
     email: string;
     password: string;
+    telephone: string;
+    address:string;
   }) => {
     showNotification({
       id: "add-admin",
@@ -277,6 +287,8 @@ const ManageAdmins: React.FC = () => {
             customId : response.data.id,
             name: values.name,
             email: values.email,
+            telephone: values.telephone,
+            address:values.address,
           },
         ];
         const payload = {
@@ -348,6 +360,8 @@ const ManageAdmins: React.FC = () => {
       customId : "",
       name: "",
       email: "",
+      telephone: "",
+      address: "",
     },
     validate: {
       name: (value) =>
@@ -368,6 +382,8 @@ const ManageAdmins: React.FC = () => {
       name: "",
       email: "",
       password: "",
+      telephone: "",
+      address:"",
     },
     validate: {
       name: (value) =>
@@ -522,6 +538,20 @@ const ManageAdmins: React.FC = () => {
             label="Email"
             placeholder="Enter email"
             {...editForm.getInputProps("email")}
+            required
+          />
+
+          <TextInput
+            label="Telephone"
+            placeholder="Enter telephone"
+            {...editForm.getInputProps("telephone")}
+            required
+          />
+
+          <TextInput
+            label="Address"
+            placeholder="Enter address"
+            {...editForm.getInputProps("address")}
             required
           />
           <Button

@@ -20,6 +20,18 @@ const adminSchema = new mongoose.Schema({
         type: String,
         required : true,
         min : 6
+    },
+
+
+    telephone:{
+        type : String,
+        required : true,
+        unique : true
+    },
+
+    address:{
+        type : String,
+        required : true
     }
 },{timestamps:true});//timestamps gives some data about when its created
 
