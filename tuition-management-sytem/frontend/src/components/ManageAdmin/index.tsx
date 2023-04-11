@@ -375,9 +375,6 @@ const ManageAdmins: React.FC = () => {
 
       telephone: (value) =>
           value.length < 11 ? "Telephone must have at least 10 numbers" : null,
-  
-      address: (value) =>
-          value.length < 10 ? "Address must have at least 10 letters" : null,
     },
   });
 
@@ -405,9 +402,6 @@ const ManageAdmins: React.FC = () => {
 
       telephone: (value) =>
         value.length < 11 ? "Telephone must have at least 10 numbers" : null,
-
-      address: (value) =>
-        value.length < 10 ? "Address must have at least 10 letters" : null,
     },
   });
 
