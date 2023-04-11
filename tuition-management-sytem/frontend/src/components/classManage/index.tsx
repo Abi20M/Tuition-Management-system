@@ -943,8 +943,6 @@ const ClassManage = ({ user }: adminName) => {
           setOpenEnrollModel(false);
           setEnrolledStudents([]);
         }}
-        overlayOpacity={0.55}
-        overlayBlur={3}
         title={`Enroll Students into ${enrollClassName}`}
       >
         <Box>
@@ -1033,9 +1031,11 @@ const ClassManage = ({ user }: adminName) => {
             : theme.colors.gray[2]
         }
         opened={selectEnrollStudent}
-        onClose={() => setSelectEnrollStudent(false)}
-        overlayOpacity={0.55}
-        overlayBlur={3}
+        onClose={() => {
+          setSelectEnrollStudent(false);
+          getEnrollmentStudentDetails(selectedEnrollClassId);
+        }}
+
       >
         <TextInput
           placeholder="Search by any field"
