@@ -447,12 +447,11 @@ const ClassManage = ({ user }: adminName) => {
   };
 
   //get Enrolled Students details
-  const getEnrollmentStudentDetails = async (classId : string) =>{
-
+  const getEnrollmentStudentDetails = async (classId: string) => {
     const result = await fethClassDetailsById(classId);
 
     setEnrolledStudents(result);
-  }
+  };
 
   //enrolled Students row
   const enrolledStudentRows = enrolledStudents.map(
@@ -516,8 +515,6 @@ const ClassManage = ({ user }: adminName) => {
               lh={0}
               color={"blue"}
               icon={<IconLink size={14} />}
-              component="a"
-              href="#"
               onClick={() => {
                 setEnrollClassName(row.name);
                 setSelectedEnrollClassId(row._id);
@@ -534,8 +531,6 @@ const ClassManage = ({ user }: adminName) => {
               lh={0}
               color={"green"}
               icon={<IconEdit size={14} />}
-              component="a"
-              href="#"
               onClick={() => {
                 editForm.setValues({
                   _id: row._id,
@@ -558,8 +553,6 @@ const ClassManage = ({ user }: adminName) => {
               lh={0}
               color={"red"}
               icon={<IconTrash size={14} />}
-              component="a"
-              href="#"
               onClick={() => openDeleteModal(row.name, row._id)}
             >
               Delete{" "}
@@ -571,28 +564,54 @@ const ClassManage = ({ user }: adminName) => {
   ));
 
   // registered student details rows
+  const studentRows = studentDetails.map((studentRow: StudentDetails) => {
+    var count = 0;
+    enrolledStudents.map((student: StudentDetails) => {
+      if (studentRow._id === student._id) {
+        count++;
+      }
+    });
 
-  const studentRows = studentDetails.map((studentRow: StudentDetails) => (
-    <tr key={studentRow._id}>
-      <td>{studentRow.id}</td>
-      <td>{studentRow.name}</td>
-      <td>{studentRow.email}</td>
-      <td>{studentRow.phone}</td>
-      <td>{studentRow.grade}</td>
-      <td>
-        <Button
-          color="teal"
-          leftIcon={<IconPlus size={16} />}
-          ml={-30}
-          onClick={() => enrollStudent(studentRow._id, selectedEnrollClassId)}
-        >
-          Enroll Student
-        </Button>
-      </td>
-    </tr>
-  ));
-
-
+    if (count === 1) {
+      return (
+        <tr key={studentRow._id}>
+          <td>{studentRow.id}</td>
+          <td>{studentRow.name}</td>
+          <td>{studentRow.email}</td>
+          <td>{studentRow.phone}</td>
+          <td>{studentRow.grade}</td>
+          <td>
+            <Button leftIcon={<IconCheck size={16} />} ml={-30} disabled>
+              Already Enrolled
+            </Button>
+          </td>
+        </tr>
+      );
+    } else {
+      return (
+        <tr key={studentRow._id}>
+          <td>{studentRow.id}</td>
+          <td>{studentRow.name}</td>
+          <td>{studentRow.email}</td>
+          <td>{studentRow.phone}</td>
+          <td>{studentRow.grade}</td>
+          <td>
+            <Button
+              color="teal"
+              leftIcon={<IconPlus size={16} />}
+              ml={-30}
+              onClick={() =>
+                enrollStudent(studentRow._id, selectedEnrollClassId)
+              }
+            >
+              Enroll Student
+            </Button>
+          </td>
+        </tr>
+      );
+    }
+    
+  });
 
   // validate add Class Form
   const form = useForm({
@@ -960,7 +979,7 @@ const ClassManage = ({ user }: adminName) => {
 
       {/* Select Enroll students */}
       <Modal
-        size={"70%"}
+        size={"auto"}
         overlayColor={
           theme.colorScheme === "dark"
             ? theme.colors.dark[9]
@@ -977,7 +996,7 @@ const ClassManage = ({ user }: adminName) => {
           icon={<IconSearch size="0.9rem" stroke={1.5} />}
           value={search}
           onChange={handleSearchChange}
-          sx={{ minWidth: 750 }}
+          sx={{ minWidth: "750" }}
         />
         <Box>
           <ScrollArea
