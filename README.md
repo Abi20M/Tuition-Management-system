@@ -26,4 +26,3 @@ Sysro Tuition Management System include the MERN stack, which is comprised of Mo
 | React | A JavaScript library used for building interactive user interfaces and web applications |
 | Node.js | A server-side runtime environment that enables the development of scalable and high-performance applications with JavaScript |
 
-Note - The student's github account should be given in brackets e.g. (asiriRepos), this ideally should be your student id 
