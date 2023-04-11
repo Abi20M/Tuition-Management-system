@@ -113,7 +113,6 @@ interface HallData {
 interface StudentDetails {
   _id: string;
   id: string;
-  SID: string;
   name: string;
   email: string;
   grade: string;
@@ -253,7 +252,7 @@ const ClassManage = ({ user }: adminName) => {
   const [selectedEnrollClassId, setSelectedEnrollClassId] = useState("");
   const [studentDetails, setStudentDetails] = useState<StudentDetails[]>([]);
   const [selectEnrollStudent, setSelectEnrollStudent] = useState(false);
-  const [enrolledStudents, setEnrolledStudents] = useState([]);
+  const [enrolledStudents, setEnrolledStudents] = useState<StudentDetails[]>([]);
 
   //set admin name
   const adminName = user.name;
@@ -611,6 +610,7 @@ const ClassManage = ({ user }: adminName) => {
     </tr>
   ));
 
+  //todo Create this function real time when admin enrolled student into the class, then the system update that student as a enrolled student
   // registered student details rows
   const studentRows = studentDetails.map((studentRow: StudentDetails) => {
     var count = 0;
@@ -648,9 +648,17 @@ const ClassManage = ({ user }: adminName) => {
               color="teal"
               leftIcon={<IconPlus size={16} />}
               ml={-30}
-              onClick={() =>
-                enrollStudent(studentRow._id, selectedEnrollClassId)
-              }
+              onClick={() =>{
+                enrollStudent(studentRow._id, selectedEnrollClassId);
+                enrolledStudents.push({
+                  _id : studentRow._id,
+                  id : studentRow.id,
+                  name : studentRow.name,
+                  email : studentRow.email,
+                  phone : studentRow.phone,
+                  grade : studentRow.grade
+                })
+              }}
             >
               Enroll Student
             </Button>
@@ -1033,7 +1041,6 @@ const ClassManage = ({ user }: adminName) => {
         opened={selectEnrollStudent}
         onClose={() => {
           setSelectEnrollStudent(false);
-          getEnrollmentStudentDetails(selectedEnrollClassId);
         }}
 
       >
