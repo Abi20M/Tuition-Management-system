@@ -11,6 +11,8 @@ export const createAdmin = async (req, res, next) => {
     name: req.body.name,
     email: req.body.email,
     password: hashedPassword,
+    telephone: req.body.telephone,
+    address: req.body.address,
   });
 
   await AdminService
