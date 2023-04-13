@@ -120,10 +120,9 @@ export const deleteAdmin = async (id) => {
 };
 
 const adminLogin = async (email, password) => {
-  return await admin.findOne({ email }).then((data) => {
+   await admin.findOne({ email }).then((data) => {
     if (data) {
-      if (password === data.password) {
-
+      if (bcrypt.compareSync(password, data.password)) {
         //create access token if the password is correct
         const acessToken = jwt.sign(
           {
