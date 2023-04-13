@@ -236,14 +236,14 @@ const ManageStudents: React.FC = () => {
           parent: item.parent,
         };
       });
-    //   const dataParent = resultParent.map((item: any) => {
-    //     return {
-    //       id: item._id,
-    //       name: item.name,
-    //       email: item.email,
-    //       phone: item.phone,
-    //     };
-    //   });
+      // const dataParent = resultParent.map((item: any) => {
+      //   return {
+      //     id: item._id,
+      //     name: item.name,
+      //     email: item.email,
+      //     phone: item.phone,
+      //   };
+      // });
 
       setData(data);
     //   setParents(dataParent);
@@ -913,14 +913,6 @@ const ManageStudents: React.FC = () => {
 
         </Box>
         <ScrollArea
-<<<<<<< Updated upstream
-        sx={{ height:400, width:1200 , marginLeft:"-100px"}}
-        > 
-          <Table
-            horizontalSpacing="md"
-            verticalSpacing="xs"
-            // sx={{ tableLayout: "fixed", width: "100%" }}
-=======
         
         sx={{height:700,width:1800,marginLeft:-425,marginBottom:-163}}
         
@@ -929,7 +921,6 @@ const ManageStudents: React.FC = () => {
             horizontalSpacing="md"
             verticalSpacing="xs"
             sx={{  minWidth: 700}}
->>>>>>> Stashed changes
           >
             <thead>
               <tr>
