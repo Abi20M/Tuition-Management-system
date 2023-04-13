@@ -650,14 +650,14 @@ const ClassManage = ({ user }: adminName) => {
               ml={-30}
               onClick={() =>{
                 enrollStudent(studentRow._id, selectedEnrollClassId);
-                enrolledStudents.push({
+                setEnrolledStudents(prevState => ([...prevState,{
                   _id : studentRow._id,
                   id : studentRow.id,
                   name : studentRow.name,
                   email : studentRow.email,
                   phone : studentRow.phone,
                   grade : studentRow.grade
-                })
+                }]))
               }}
             >
               Enroll Student
