@@ -113,8 +113,11 @@ export const editClassDetails = async (req, res, next) => {
 
 export const enrollStudent = async (req, res, next) => {
   const enrollStudent = {
-    studentID: req.body.student,
-    classId: req.body.class,
+    studentID: req.body.studentid,
+    studentName : req.body.studentname,
+    studentEmail : req.body.studentemail,
+    classId: req.body.classid,
+    className : req.body.classname
   };
 
   classServices
