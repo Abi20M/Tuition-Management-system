@@ -134,10 +134,13 @@ export const enrollStudent = async (req, res, next) => {
 
 export const unEnrollStudent = (req, res, next) => {
   const stdId = req.body.studentId;
+  const studentName = req.body.studentName;
+  const studentEmail = req.body.studentEmail;
   const classId = req.body.classId;
+  const className = req.body.className;
 
   classServices
-    .unEnrollStudent(stdId, classId)
+    .unEnrollStudent(stdId, studentName, studentEmail, classId, className)
     .then((data) => {
       req.handleResponse.successRespond(res)(data);
       next();

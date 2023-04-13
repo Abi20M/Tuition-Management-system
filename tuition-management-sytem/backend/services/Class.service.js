@@ -103,9 +103,12 @@ export const getEnrolledStudentsData = async (classID) => {
     });
 };
 
-export const unEnrollStudent = async (studentId, clssId) => {
+export const unEnrollStudent = async (studentId, studentName, studentEmail, classId, className) => {
+
+  await classMails.sendUnenrollEmail(studentName, studentEmail,className);
+  
   return await Class.findByIdAndUpdate(
-    { _id: clssId },
+    { _id: classId },
     { $pull: { students: studentId } },
     { new: true }
   )

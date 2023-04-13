@@ -108,11 +108,14 @@ export class ClassAPI {
         return axios.put(`${BASE_URL}/enroll`,enrollDetails,requestConfig);
     }
 
-    static unEnrollStudent = async (studentId : string, classId : string) =>{
+    static unEnrollStudent = async (studentId : string, studentName : string, studentEmail : string, classId : string, className : string) =>{
 
         const unEnrollDetails = {
             studentId : studentId,
+            studentName : studentName,
+            studentEmail : studentEmail,
             classId : classId,
+            className : className
         }
         return axios.put(`${BASE_URL}/class/unenroll`,unEnrollDetails,requestConfig);
     } 
