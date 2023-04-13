@@ -45,6 +45,17 @@ const Routes = (app) => {
   //Student Routes
   app.post("/student", protect.adminProtect, studentController.createStudent);
   app.get("/student",protect.adminProtect, studentController.getAllStudents);
+  app.get("/student/:id", protect.adminProtect, studentController.getStudent);
+  app.put(
+    "/student/:id",
+    protect.adminProtect,
+    studentController.updateStudent
+  );
+  app.delete(
+    "/student/:id",
+    protect.adminProtect,
+    studentController.deleteStudent
+  );
 
 };
 
