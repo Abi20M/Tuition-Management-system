@@ -1,7 +1,6 @@
 import Class from "../models/class.model";
 import Hall from "../models/hall.model";
 
-
 //generate Class Id
 const generateClassId = async () => {
   //get last class object, if there is a class, then return that class object, otherwise return empty array
@@ -86,16 +85,37 @@ export const enrollStudent = async (enrollmentData) => {
 };
 
 export const getEnrolledStudentsData = async (classID) => {
-  return await Class.findById(classID).populate("students").then((data) =>{
-    if(data) {
-      return data.students;
-    }else{
-      throw new Error("Class not found")
-    }
-  }).catch((err) =>{
-    throw new Error(err.messasge);
-  });
+  return await Class.findById(classID)
+    .populate("students")
+    .then((data) => {
+      if (data) {
+        return data.students;
+      } else {
+        throw new Error("Class not found");
+      }
+    })
+    .catch((err) => {
+      throw new Error(err.messasge);
+    });
+};
 
+export const unEnrollStudent = async (studentId, clssId) => {
+  return await Class.findByIdAndUpdate(
+    { _id: clssId },
+    { $pull: { students: studentId } },
+    { new: true }
+  )
+    .populate("students")
+    .then((data) => {
+      if (data) {
+        return data.students;
+      } else {
+        throw new Error("Class not found");
+      }
+    })
+    .catch((err) => {
+      throw new Error(err.messasge);
+    });
 };
 module.exports = {
   createClass,
@@ -105,4 +125,5 @@ module.exports = {
   editClassDetails,
   enrollStudent,
   getEnrolledStudentsData,
+  unEnrollStudent,
 };
