@@ -1,5 +1,7 @@
 import Class from "../models/class.model";
 import Hall from "../models/hall.model";
+import Student from '../models/student.model';
+import classMails from '../Mails/class.mails';
 
 //generate Class Id
 const generateClassId = async () => {
@@ -77,6 +79,8 @@ export const editClassDetails = async (id, editedDetails) => {
 };
 
 export const enrollStudent = async (enrollmentData) => {
+
+  classMails.sendEnrollEmail(enrollmentData.studentName,enrollmentData.studentEmail,enrollmentData.className);
   return await Class.findByIdAndUpdate(
     { _id: enrollmentData.classId },
     { $push: { students: enrollmentData.studentID } },

@@ -416,7 +416,7 @@ const ClassManage = ({ user }: adminName) => {
   };
 
   // Enroll student
-  const enrollStudent = (studentObjId: string, classId: string) => {
+  const enrollStudent = (studentObjId: string,studentEmail : string, studentName : string, classId: string,className : string) => {
     showNotification({
       id: "class-enroll",
       title: "Enrolling....",
@@ -424,7 +424,7 @@ const ClassManage = ({ user }: adminName) => {
       loading: true,
     });
 
-    ClassAPI.enrollStudent(studentObjId, classId)
+    ClassAPI.enrollStudent(studentObjId,studentEmail, studentName, classId, className)
       .then((data) => {
         // const newClassObj = data.data.students;
         updateNotification({
@@ -649,7 +649,7 @@ const ClassManage = ({ user }: adminName) => {
               leftIcon={<IconPlus size={16} />}
               ml={-30}
               onClick={() =>{
-                enrollStudent(studentRow._id, selectedEnrollClassId);
+                enrollStudent(studentRow._id, studentRow.email,studentRow.name, selectedEnrollClassId,enrollClassName);
                 setEnrolledStudents(prevState => ([...prevState,{
                   _id : studentRow._id,
                   id : studentRow.id,
