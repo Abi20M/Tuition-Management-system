@@ -31,14 +31,13 @@ export const createAdmin = async (req, res, next) => {
 export const loginAdmin = async (req, res, next) => {
 
   await AdminService.adminLogin(req.body.email, req.body.password)
-
-    // .then((data) => {
-    //   req.handleResponse.successRespond(res)(data);
-    //   next();
-    // })
-    // .catch((error) => {
-    //   req.handleResponse.errorRespond(res)(error);
-    // });
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+      next();
+    })
+    .catch((error) => {
+      req.handleResponse.errorRespond(res)(error);
+    });
 };
 
 
