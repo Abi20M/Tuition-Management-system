@@ -90,4 +90,33 @@ export class ClassAPI {
 
         return axios.put(`${BASE_URL}/class/edit/${values._id}`,updatedClassDetails,requestConfig);
     }
+
+    static getClassById = async (classId : string) => {
+        return axios.get(`${BASE_URL}/class/${classId}`,requestConfig);
+    }
+
+    static  enrollStudent = async (studentId : string,studentEmail : string, studentName : string, classId : string, className : string) => {
+
+        const enrollDetails = {
+            studentid : studentId,
+            studentname : studentName,
+            studentemail : studentEmail,
+            classid : classId,
+            classname : className
+        }
+
+        return axios.put(`${BASE_URL}/enroll`,enrollDetails,requestConfig);
+    }
+
+    static unEnrollStudent = async (studentId : string, studentName : string, studentEmail : string, classId : string, className : string) =>{
+
+        const unEnrollDetails = {
+            studentId : studentId,
+            studentName : studentName,
+            studentEmail : studentEmail,
+            classId : classId,
+            className : className
+        }
+        return axios.put(`${BASE_URL}/class/unenroll`,unEnrollDetails,requestConfig);
+    } 
 }

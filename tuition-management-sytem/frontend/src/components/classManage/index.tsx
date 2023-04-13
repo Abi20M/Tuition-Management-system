@@ -43,6 +43,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import { ClassPDF } from "../PDFRender/ClassPDFTemplate";
 import { openConfirmModal } from "@mantine/modals";
 import StudentAPI from "../../API/studentAPI";
+import { isConstructorDeclaration } from "typescript";
 
 const useStyles = createStyles((theme) => ({
   th: {
@@ -110,8 +111,8 @@ interface HallData {
 }
 
 interface StudentDetails {
-  _id : string;
-  SID: string;
+  _id: string;
+  id: string;
   name: string;
   email: string;
   grade: string;
@@ -212,6 +213,17 @@ const getStudentDetails = async () => {
   }
 };
 
+// get enrolled student details
+const fethClassDetailsById = async (classId: string) => {
+  return ClassAPI.getClassById(classId)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      return error;
+    });
+};
+
 //created prop type
 interface adminName {
   user: {
@@ -232,12 +244,15 @@ const ClassManage = ({ user }: adminName) => {
   const [daySearchValue, setDaySearchValue] = useState("");
   const { classes, cx } = useStyles();
   const theme = useMantineTheme();
+
   const [hallDetails, setHallDetails] = useState<HallData[]>([]);
   const [openEditClassModal, setOpenEditClassModal] = useState(false);
   const [openEnrollModal, setOpenEnrollModel] = useState(false);
   const [enrollClassName, setEnrollClassName] = useState("");
+  const [selectedEnrollClassId, setSelectedEnrollClassId] = useState("");
   const [studentDetails, setStudentDetails] = useState<StudentDetails[]>([]);
   const [selectEnrollStudent, setSelectEnrollStudent] = useState(false);
+  const [enrolledStudents, setEnrolledStudents] = useState<StudentDetails[]>([]);
 
   //set admin name
   const adminName = user.name;
@@ -399,6 +414,122 @@ const ClassManage = ({ user }: adminName) => {
         });
       });
   };
+
+  // Enroll student
+  const enrollStudent = (studentObjId: string,studentEmail : string, studentName : string, classId: string,className : string) => {
+    showNotification({
+      id: "class-enroll",
+      title: "Enrolling....",
+      message: `We are trying to enroll student into ${enrollClassName}`,
+      loading: true,
+    });
+
+    ClassAPI.enrollStudent(studentObjId,studentEmail, studentName, classId, className)
+      .then((data) => {
+        // const newClassObj = data.data.students;
+        updateNotification({
+          id: "class-enroll",
+          title: "Success",
+          message: `We are successfully enrolled student into ${enrollClassName}`,
+          icon: <IconCheck />,
+          color: "teal",
+        });
+      })
+      .catch((error) => {
+        updateNotification({
+          id: "class-enroll",
+          title: "Failed",
+          message: `There was an error while enrolling student into ${enrollClassName}`,
+          icon: <IconX />,
+          color: "red",
+        });
+      });
+  };
+
+  //get Enrolled Students details
+  const getEnrollmentStudentDetails = async (classId: string) => {
+    const result = await fethClassDetailsById(classId);
+
+    setEnrolledStudents(result);
+  };
+
+  // UnEnroll Students
+
+  const removeEnrollStudent = async (studentId: string, studentName : string, studentEmail : string, classId: string, className : string) => {
+    showNotification({
+      id: "student-unenroll",
+      title: "Unenrolling....",
+      message: `We are trying to unenroll student from ${enrollClassName}`,
+      loading: true,
+    });
+
+    ClassAPI.unEnrollStudent(studentId, studentName, studentEmail ,classId, className)
+      .then((response) => {
+        setEnrolledStudents(
+          enrolledStudents.filter(
+            (student: {
+              email: string;
+              _id: string;
+              grade: string;
+              phone: string;
+              name: string;
+              id: string;
+            }) => {
+              return student._id !== studentId;
+            }
+          )
+        );
+
+        updateNotification({
+          id: "student-unenroll",
+          title: "Success",
+          message: `We are successfully enrolled student into ${enrollClassName}`,
+          icon: <IconCheck />,
+          color: "teal",
+        });
+      })
+      .catch((err) => {
+        updateNotification({
+          id: "student-unenroll",
+          title: "Failed",
+          message: `There was an error while enrolling student into ${enrollClassName}`,
+          icon: <IconX />,
+          color: "red",
+        });
+      });
+  };
+
+  //enrolled Students row
+  const enrolledStudentRows = enrolledStudents.map(
+    (student: {
+      email: string;
+      _id: string;
+      grade: string;
+      phone: string;
+      name: string;
+      id: string;
+    }) => (
+      <tr key={student._id}>
+        <td>{student.id}</td>
+        <td>{student.name}</td>
+        <td>{student.email}</td>
+        <td>{student.phone}</td>
+        <td>
+          <Button
+            color="red"
+            leftIcon={<IconX size={16} />}
+            ml={-30}
+            onClick={() =>
+              removeEnrollStudent(student._id, student.name, student.email, selectedEnrollClassId, enrollClassName)
+            }
+          >
+            Unenroll Student
+          </Button>
+        </td>
+      </tr>
+    )
+  );
+
   // table Rows
   const rows = sortedData.map((row) => (
     <tr key={row._id}>
@@ -432,10 +563,10 @@ const ClassManage = ({ user }: adminName) => {
               lh={0}
               color={"blue"}
               icon={<IconLink size={14} />}
-              component="a"
-              href="#"
               onClick={() => {
                 setEnrollClassName(row.name);
+                setSelectedEnrollClassId(row._id);
+                getEnrollmentStudentDetails(row._id);
                 setOpenEnrollModel(true);
               }}
             >
@@ -448,8 +579,6 @@ const ClassManage = ({ user }: adminName) => {
               lh={0}
               color={"green"}
               icon={<IconEdit size={14} />}
-              component="a"
-              href="#"
               onClick={() => {
                 editForm.setValues({
                   _id: row._id,
@@ -472,8 +601,6 @@ const ClassManage = ({ user }: adminName) => {
               lh={0}
               color={"red"}
               icon={<IconTrash size={14} />}
-              component="a"
-              href="#"
               onClick={() => openDeleteModal(row.name, row._id)}
             >
               Delete{" "}
@@ -484,18 +611,63 @@ const ClassManage = ({ user }: adminName) => {
     </tr>
   ));
 
+  //todo Create this function real time when admin enrolled student into the class, then the system update that student as a enrolled student
   // registered student details rows
+  const studentRows = studentDetails.map((studentRow: StudentDetails) => {
+    var count = 0;
+    enrolledStudents.map((student: StudentDetails) => {
+      if (studentRow._id === student._id) {
+        count++;
+      }
+    });
 
-  const studentRows = studentDetails.map((studentRow : StudentDetails) =>(
-    <tr key={studentRow._id}>
-    <td>{studentRow._id}</td>  
-    <td>{studentRow.name}</td>
-    <td>{studentRow.email}</td>
-    <td>{studentRow.phone}</td>
-    <td>{studentRow.grade}</td>
-    <td><Button color="teal">Enroll Student</Button></td>
-    </tr>
-  ))
+    if (count === 1) {
+      return (
+        <tr key={studentRow._id}>
+          <td>{studentRow.id}</td>
+          <td>{studentRow.name}</td>
+          <td>{studentRow.email}</td>
+          <td>{studentRow.phone}</td>
+          <td>{studentRow.grade}</td>
+          <td>
+            <Button leftIcon={<IconCheck size={16} />} ml={-30} disabled>
+              Already Enrolled
+            </Button>
+          </td>
+        </tr>
+      );
+    } else {
+      return (
+        <tr key={studentRow._id}>
+          <td>{studentRow.id}</td>
+          <td>{studentRow.name}</td>
+          <td>{studentRow.email}</td>
+          <td>{studentRow.phone}</td>
+          <td>{studentRow.grade}</td>
+          <td>
+            <Button
+              color="teal"
+              leftIcon={<IconPlus size={16} />}
+              ml={-30}
+              onClick={() =>{
+                enrollStudent(studentRow._id, studentRow.email,studentRow.name, selectedEnrollClassId,enrollClassName);
+                setEnrolledStudents(prevState => ([...prevState,{
+                  _id : studentRow._id,
+                  id : studentRow.id,
+                  name : studentRow.name,
+                  email : studentRow.email,
+                  phone : studentRow.phone,
+                  grade : studentRow.grade
+                }]))
+              }}
+            >
+              Enroll Student
+            </Button>
+          </td>
+        </tr>
+      );
+    }
+  });
 
   // validate add Class Form
   const form = useForm({
@@ -638,20 +810,6 @@ const ClassManage = ({ user }: adminName) => {
         });
       });
 
-      // fetch student data
-      const newStudentDetails = await getStudentDetails().catch((error) => {
-        updateNotification({
-          id: "while-fetching-students",
-          disallowClose: false,
-          autoClose: 2000,
-          title: "Something Went Wrong!",
-          message: "There is an error while fetching students details",
-          color: "red",
-          icon: <IconX />,
-          loading: false,
-        });
-      });
-
       const classes = classDetails.map((item: any) => ({
         name: item.name,
         id: item.id,
@@ -670,14 +828,6 @@ const ClassManage = ({ user }: adminName) => {
         capacity: item.capacity,
       }));
 
-      const registeredStudents = newStudentDetails.map((item: any) => ({
-        _id : item._id,
-        name: item.name,
-        email: item.email,
-        grade: item.grade,
-        phone: item.phone,
-      }));
-
       const payload = {
         sortBy: null,
         reversed: false,
@@ -690,9 +840,6 @@ const ClassManage = ({ user }: adminName) => {
 
       // set halldetails
       setHallDetails(halls);
-
-      // set studentDetails
-      setStudentDetails(registeredStudents);
 
       //this shows success message after class loaded
       setTimeout(() => {
@@ -733,6 +880,35 @@ const ClassManage = ({ user }: adminName) => {
     fetch();
   }, []);
 
+  //fetch Registered Students
+  const fetchRegisteredStudents = async () => {
+    // fetch student data
+    const newStudentDetails = await getStudentDetails().catch((error) => {
+      updateNotification({
+        id: "while-fetching-students",
+        disallowClose: false,
+        autoClose: 2000,
+        title: "Something Went Wrong!",
+        message: "There is an error while fetching students details",
+        color: "red",
+        icon: <IconX />,
+        loading: false,
+      });
+    });
+
+    const registeredStudents = newStudentDetails.map((item: any) => ({
+      _id: item._id,
+      id: item.id,
+      name: item.name,
+      email: item.email,
+      grade: item.grade,
+      phone: item.phone,
+    }));
+
+    // set studentDetails
+    setStudentDetails(registeredStudents);
+  };
+
   //get current Full Date
   const today = new Date();
 
@@ -772,108 +948,34 @@ const ClassManage = ({ user }: adminName) => {
             : theme.colors.gray[2]
         }
         opened={openEnrollModal}
-        onClose={() => setOpenEnrollModel(false)}
-        overlayOpacity={0.55}
-        overlayBlur={3}
+        onClose={() => {
+          setOpenEnrollModel(false);
+          setEnrolledStudents([]);
+        }}
         title={`Enroll Students into ${enrollClassName}`}
       >
         <Box>
-            <Group mt={20}>
-              <TextInput
-                placeholder="Search by any field"
-                mb="md"
-                icon={<IconSearch size="0.9rem" stroke={1.5} />}
-                value={search}
-                onChange={handleSearchChange}
-                sx={{ minWidth: 750 }}
-              />
-              <Button
-                mt={-15}
-                mr={20}
-                onClick={() => setSelectEnrollStudent(true)}
-              >
-                Enroll Student
-              </Button>
-            </Group>
-            <ScrollArea>
-            <Table
-              horizontalSpacing="md"
-              verticalSpacing="xs"
-              miw={700}
-              sx={{ tableLayout: "fixed" }}
-              mt={10}
+          <Group mt={20}>
+            <TextInput
+              placeholder="Search by any field"
+              mb="md"
+              icon={<IconSearch size="0.9rem" stroke={1.5} />}
+              value={search}
+              onChange={handleSearchChange}
+              sx={{ minWidth: 750 }}
+            />
+            <Button
+              mt={-15}
+              mr={20}
+              onClick={() => {
+                fetchRegisteredStudents();
+                setSelectEnrollStudent(true);
+              }}
             >
-              <thead>
-                <tr>
-                  {/* <Th
-              sorted={sortBy === 'name'}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting('name')}
-            >
-              SID
-            </Th>
-            <Th
-              sorted={sortBy === 'name'}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting('name')}
-            >
-              Name
-            </Th>
-            <Th
-              sorted={sortBy === 'name'}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting('name')}
-            >
-              Email
-            </Th> */}
-                  <th>SID</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              {/* <tbody>
-          {rows.length > 0 ? (
-            rows
-          ) : (
-            <tr>
-              <td colSpan={Object.keys(studentDetails[0]).length}>
-                <Text weight={500} align="center">
-                  Nothing found
-                </Text>
-              </td>
-            </tr>
-          )}
-        </tbody> */}
-            </Table>
-          </ScrollArea>
-        </Box>
-      </Modal>
-      
-
-      {/* Select Enroll students */}
-      <Modal
-        size={"70%"}
-        overlayColor={
-          theme.colorScheme === "dark"
-            ? theme.colors.dark[9]
-            : theme.colors.gray[2]
-        }
-        opened={selectEnrollStudent}
-        onClose={() => setSelectEnrollStudent(false)}
-        overlayOpacity={0.55}
-        overlayBlur={3}
-      >
-        <TextInput
-                placeholder="Search by any field"
-                mb="md"
-                icon={<IconSearch size="0.9rem" stroke={1.5} />}
-                value={search}
-                onChange={handleSearchChange}
-                sx={{ minWidth: 750 }}
-              />
-            <Box>
-            <ScrollArea>
+              Enroll Student
+            </Button>
+          </Group>
+          <ScrollArea>
             <Table
               horizontalSpacing="md"
               verticalSpacing="xs"
@@ -908,26 +1010,90 @@ const ClassManage = ({ user }: adminName) => {
                   <th>Name</th>
                   <th>Email</th>
                   <th>Phone</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {enrolledStudentRows.length > 0 ? (
+                  enrolledStudentRows
+                ) : (
+                  <tr>
+                    <td>
+                      <Text weight={500} align="center">
+                        No Item Found
+                      </Text>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+          </ScrollArea>
+        </Box>
+      </Modal>
+
+      {/* Select Enroll students */}
+      <Modal
+        size={"auto"}
+        overlayColor={
+          theme.colorScheme === "dark"
+            ? theme.colors.dark[9]
+            : theme.colors.gray[2]
+        }
+        opened={selectEnrollStudent}
+        onClose={() => {
+          setSelectEnrollStudent(false);
+        }}
+
+      >
+        <TextInput
+          placeholder="Search by any field"
+          mb="md"
+          icon={<IconSearch size="0.9rem" stroke={1.5} />}
+          value={search}
+          onChange={handleSearchChange}
+          sx={{ minWidth: "750" }}
+        />
+        <Box>
+          <ScrollArea
+            sx={{ height: 400 }}
+            onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
+          >
+            <Table
+              horizontalSpacing="xl"
+              verticalSpacing="sm"
+              highlightOnHover
+              miw={700}
+              sx={{ tableLayout: "fixed" }}
+              mt={10}
+            >
+              <thead
+                className={cx(classes.header, { [classes.scrolled]: scrolled })}
+              >
+                <tr>
+                  <th>SID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
                   <th>Grade</th>
                   <th>Action</th>
                 </tr>
               </thead>
-              {/* <tbody>
-          {studentRows.length > 0 ? (
-            studentRows
-          ) : (
-            <tr>
-              <td colSpan={Object.keys(studentDetails[0]).length}>
-                <Text weight={500} align="center">
-                  Nothing found
-                </Text>
-              </td>
-            </tr>
-          )}
-        </tbody>  */}
+              <tbody>
+                {studentRows.length > 0 ? (
+                  studentRows
+                ) : (
+                  <tr>
+                    <td>
+                      <Text weight={500} align="center">
+                        No items found
+                      </Text>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
             </Table>
           </ScrollArea>
-            </Box>
+        </Box>
       </Modal>
 
       {/* //open edit class modal */}
