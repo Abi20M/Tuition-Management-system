@@ -454,7 +454,8 @@ const ClassManage = ({ user }: adminName) => {
   };
 
   // UnEnroll Students
-  const removeEnrollStudent = async (studentId: string, classId: string) => {
+
+  const removeEnrollStudent = async (studentId: string, studentName : string, studentEmail : string, classId: string, className : string) => {
     showNotification({
       id: "student-unenroll",
       title: "Unenrolling....",
@@ -462,7 +463,7 @@ const ClassManage = ({ user }: adminName) => {
       loading: true,
     });
 
-    ClassAPI.unEnrollStudent(studentId, classId)
+    ClassAPI.unEnrollStudent(studentId, studentName, studentEmail ,classId, className)
       .then((response) => {
         setEnrolledStudents(
           enrolledStudents.filter(
@@ -519,7 +520,7 @@ const ClassManage = ({ user }: adminName) => {
             leftIcon={<IconX size={16} />}
             ml={-30}
             onClick={() =>
-              removeEnrollStudent(student._id, selectedEnrollClassId)
+              removeEnrollStudent(student._id, student.name, student.email, selectedEnrollClassId, enrollClassName)
             }
           >
             Unenroll Student
