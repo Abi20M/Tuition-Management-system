@@ -41,8 +41,8 @@ const useStyles = createStyles((theme) => ({
 //create tabs List
 const tabs = [
   "Overview",
-  "Expenses category",
-  "Past Expese Details"
+  "Manage Expenses",
+  "Past Expenses Details"
 ];
 
 export const ExpenseDashboard = () => {
@@ -82,16 +82,17 @@ export const ExpenseDashboard = () => {
           tab: classes.tab,
         }}
       >
+        
         <Tabs.List grow>{items}</Tabs.List>
 
         {/* Here you can add your own Component to here */}
         <Tabs.Panel value="Overview">
           <h1>Hello Overview</h1>
         </Tabs.Panel>
-        <Tabs.Panel value="Expenses category">
+        <Tabs.Panel value="Manage Expenses">
           <ExpenseManage/>
         </Tabs.Panel>
-        <Tabs.Panel value="Past Expese Details">
+        <Tabs.Panel value="Past Expenses Details">
           <h1>Hello Past details</h1>
         </Tabs.Panel>   
       </Tabs>
