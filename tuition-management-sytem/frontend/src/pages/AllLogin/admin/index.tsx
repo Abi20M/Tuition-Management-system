@@ -70,8 +70,6 @@ const validateAdmin = (values: {
   adminAPI
     .loginAdmin(values.email, values.password)
     .then((response) => {
-      console.log(response);
-      console.log(response.data.accessToken);
       //show success Notification
       setTimeout(() => {
         updateNotification({
