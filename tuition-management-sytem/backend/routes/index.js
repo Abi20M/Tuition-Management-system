@@ -33,7 +33,7 @@ const Routes = (app) => {
 
   //teacher Routes
   app.get("/teacher",protect.adminProtect,teacherController.getAllTeacher);
-  app.post("/teacher",protect.adminProtect,expenseController.createTeacher);
+  app.post("/teacher",protect.adminProtect,teacherController.createTeacher);
   app.delete("/teacher/delete/:id",protect.adminProtect,teacherController.deleteTeacher);
   app.put("/teacher/update/:id",protect.adminProtect,teacherController.editTeacher);
 

@@ -9,6 +9,7 @@ export const createTeacher = async (req, res, next) => {
     const teacherObj = new Teacher({
       name: req.body.name,
       email: req.body.email,
+      password: req.body.password,
       phone: req.body.phone,
     });
   

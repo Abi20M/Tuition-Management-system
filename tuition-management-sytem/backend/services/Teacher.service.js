@@ -1,6 +1,6 @@
 import teacher from "../models/teacher.model";
-import classes from "../models/Classes.model";
-import student from "../models/Student.model";
+import Class from "../models/class.model";
+import student from "../models/student.model";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
@@ -37,7 +37,7 @@ export const getTeacher = async (id) => {
     });
 };
 
-export const getAllTeachers = async () => {
+export const getAllTeacher = async () => {
   return await teacher
     .find()
     .then((data) => {
@@ -161,7 +161,7 @@ export const getStudents = async (id) => {
 module.exports = {
   createTeacher,
   getTeacher,
-  getAllTeachers,
+  getAllTeacher,
   updateTeacher,
   deleteTeacher,
   loginTeacher,
