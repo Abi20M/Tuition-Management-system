@@ -25,10 +25,13 @@ import { openConfirmModal } from "@mantine/modals";
 import { showNotification, updateNotification } from "@mantine/notifications";
 import TeacherAPI from "../../API/teacherAPI";
 import { IconCheck, IconAlertTriangle } from "@tabler/icons";
+// import { PDFDownloadLink } from "@react-pdf/renderer";
+// import { ClassPDF } from "../PDFRender/ClassPDFTemplate";
 import { useForm } from "@mantine/form";
 
 //Interface for teacher data - (Raw data)
 interface RowData {
+  
   id: string;
   name: string;
   email: string;

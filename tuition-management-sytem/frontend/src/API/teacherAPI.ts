@@ -2,7 +2,7 @@ import axios from "axios";
 import requestConfig from "./requestConfig";
 
 
-const BASE_URL = "http://localhost:3001";
+const BASE_URL = "http://localhost:8090";
 
 class TeacherAPI {
   //get all teachers

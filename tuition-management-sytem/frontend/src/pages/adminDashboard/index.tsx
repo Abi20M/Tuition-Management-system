@@ -4,6 +4,8 @@ import ClassManage from "../../components/classManage";
 import WebsiteFooter from "../../components/Footer";
 import ManageParents from "../../components/ManageParents";
 import ManageStudents from "../../components/ManageStudents";
+import ManageTeachers from "../../components/ManageTeacher";
+//import ManageTeacher from "../../components/ManageTeacher";
 
 const useStyles = createStyles((theme) => ({
   tabs: {
@@ -100,7 +102,7 @@ export const AdminDashboard = () => {
           <h1>Hello Adminstrators</h1>
         </Tabs.Panel>
         <Tabs.Panel value="Teachers">
-          <h1>Hello Teachers</h1>
+        <ManageTeachers/>
         </Tabs.Panel>
         <Tabs.Panel value="Students">
           <ManageStudents/>
