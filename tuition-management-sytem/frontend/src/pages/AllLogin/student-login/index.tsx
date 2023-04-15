@@ -27,9 +27,9 @@ import {
   import LightDarkButton from "../../../components/lightDarkButton";
   import { adminAPI } from "../../../API/adminAPI";
   import { showNotification, updateNotification } from "@mantine/notifications";
-  import { IconAlertTriangle, IconCheck } from "@tabler/icons";
   import DarkLogo from "../../../assets/darkMainLogo.png";
   import lightLogo from '../../../assets/logo1.png';
+import { IconAlertTriangle, IconCheck } from "@tabler/icons";
   
   //set the page title
   document.title = "Admin Login - Tuition Management System";

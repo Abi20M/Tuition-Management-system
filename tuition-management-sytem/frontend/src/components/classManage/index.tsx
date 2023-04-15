@@ -42,6 +42,8 @@ import { showNotification, updateNotification } from "@mantine/notifications";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { ClassPDF } from "../PDFRender/ClassPDFTemplate";
 import { openConfirmModal } from "@mantine/modals";
+import StudentAPI from "../../API/studentAPI";
+import { isConstructorDeclaration } from "typescript";
 
 const useStyles = createStyles((theme) => ({
   th: {
@@ -103,10 +105,20 @@ interface RowData {
 }
 
 interface HallData {
-  _id : String,
-  hallID : String,
-  capacity : Number
+  _id: String;
+  hallID: String;
+  capacity: Number;
 }
+
+interface StudentDetails {
+  _id: string;
+  id: string;
+  name: string;
+  email: string;
+  grade: string;
+  phone: string;
+}
+
 interface TableSortProps {
   data: RowData[];
 }
@@ -182,23 +194,45 @@ const getAllClasses = async () => {
 
 //get hall details function
 
-const getAllHallDetails = async () =>{
-  try{
+const getAllHallDetails = async () => {
+  try {
     const rowHallDetails = await ClassAPI.getAllHallDetails();
     return rowHallDetails.data;
-  }catch(error){
+  } catch (error) {
     return error;
   }
-}
+};
+
+// get registered student details
+const getStudentDetails = async () => {
+  try {
+    const rowStudetDetails = await StudentAPI.getStudents();
+    return rowStudetDetails.data;
+  } catch (error) {
+    return error;
+  }
+};
+
+// get enrolled student details
+const fethClassDetailsById = async (classId: string) => {
+  return ClassAPI.getClassById(classId)
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      return error;
+    });
+};
+
 //created prop type
 interface adminName {
   user: {
     name: string;
   };
 }
+
 //prop { data }: TableSortProps
 const ClassManage = ({ user }: adminName) => {
-
   const [classDetails, setClassDetails] = useState<RowData[]>([]); //set class details
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -210,9 +244,15 @@ const ClassManage = ({ user }: adminName) => {
   const [daySearchValue, setDaySearchValue] = useState("");
   const { classes, cx } = useStyles();
   const theme = useMantineTheme();
+
   const [hallDetails, setHallDetails] = useState<HallData[]>([]);
   const [openEditClassModal, setOpenEditClassModal] = useState(false);
-
+  const [openEnrollModal, setOpenEnrollModel] = useState(false);
+  const [enrollClassName, setEnrollClassName] = useState("");
+  const [selectedEnrollClassId, setSelectedEnrollClassId] = useState("");
+  const [studentDetails, setStudentDetails] = useState<StudentDetails[]>([]);
+  const [selectEnrollStudent, setSelectEnrollStudent] = useState(false);
+  const [enrolledStudents, setEnrolledStudents] = useState<StudentDetails[]>([]);
 
   //set admin name
   const adminName = user.name;
@@ -235,7 +275,6 @@ const ClassManage = ({ user }: adminName) => {
       })
     );
   };
-
 
   // delete class modal
   const openDeleteModal = (name: string, id: string) =>
@@ -306,19 +345,191 @@ const ClassManage = ({ user }: adminName) => {
       });
   };
 
-
   // Edit class function
-  const editClass = async (values : {
-    name : string,
-    teacher : string,
-    subject : string,
-    day : string,
-    startTime : Date,
-    endTime : Date,
-    venue : string
-  }) =>{
+  const editClass = async (values: {
+    _id: string;
+    name: string;
+    teacher: string;
+    subject: string;
+    day: string;
+    startTime: Date;
+    endTime: Date;
+    venue: string;
+  }) => {
+    showNotification({
+      id: "class-edit",
+      title: "Updating....",
+      message: `We are trying to update ${values.name}`,
+      loading: true,
+    });
 
-  }
+    await ClassAPI.editClassDetails(values)
+      .then((data) => {
+        updateNotification({
+          id: "class-edit",
+          autoClose: 3000,
+          title: `${values.name} details were edited!`,
+          message: "Class details were edited successfully!",
+          color: "teal",
+          icon: <IconCheck />,
+        });
+
+        editForm.reset();
+        setOpenEditClassModal(false);
+
+        const newData = classDetails.map((item: any) => {
+          if (item._id === data.data._id) {
+            return {
+              _id: data.data._id,
+              id: data.data.id,
+              name: data.data.name,
+              teacher: data.data.teacher,
+              subject: data.data.subject,
+              day: data.data.day,
+              startTime: data.data.startTime,
+              endTime: data.data.endTime,
+              venue: data.data.venue,
+            };
+          } else {
+            return item;
+          }
+        });
+        const payload = {
+          sortBy: null,
+          reversed: false,
+          search: "",
+        };
+
+        setClassDetails(newData);
+        setSortedData(sortData(newData, payload));
+      })
+      .catch((error) => {
+        updateNotification({
+          id: "class-edit",
+          autoClose: 3000,
+          title: `${values.name} was not edited!`,
+          message: `There is an error while editing ${values.name}!`,
+          color: "red",
+          icon: <IconAlertTriangle />,
+        });
+      });
+  };
+
+  // Enroll student
+  const enrollStudent = (studentObjId: string,studentEmail : string, studentName : string, classId: string,className : string) => {
+    showNotification({
+      id: "class-enroll",
+      title: "Enrolling....",
+      message: `We are trying to enroll student into ${enrollClassName}`,
+      loading: true,
+    });
+
+    ClassAPI.enrollStudent(studentObjId,studentEmail, studentName, classId, className)
+      .then((data) => {
+        // const newClassObj = data.data.students;
+        updateNotification({
+          id: "class-enroll",
+          title: "Success",
+          message: `We are successfully enrolled student into ${enrollClassName}`,
+          icon: <IconCheck />,
+          color: "teal",
+        });
+      })
+      .catch((error) => {
+        updateNotification({
+          id: "class-enroll",
+          title: "Failed",
+          message: `There was an error while enrolling student into ${enrollClassName}`,
+          icon: <IconX />,
+          color: "red",
+        });
+      });
+  };
+
+  //get Enrolled Students details
+  const getEnrollmentStudentDetails = async (classId: string) => {
+    const result = await fethClassDetailsById(classId);
+
+    setEnrolledStudents(result);
+  };
+
+  // UnEnroll Students
+
+  const removeEnrollStudent = async (studentId: string, studentName : string, studentEmail : string, classId: string, className : string) => {
+    showNotification({
+      id: "student-unenroll",
+      title: "Unenrolling....",
+      message: `We are trying to unenroll student from ${enrollClassName}`,
+      loading: true,
+    });
+
+    ClassAPI.unEnrollStudent(studentId, studentName, studentEmail ,classId, className)
+      .then((response) => {
+        setEnrolledStudents(
+          enrolledStudents.filter(
+            (student: {
+              email: string;
+              _id: string;
+              grade: string;
+              phone: string;
+              name: string;
+              id: string;
+            }) => {
+              return student._id !== studentId;
+            }
+          )
+        );
+
+        updateNotification({
+          id: "student-unenroll",
+          title: "Success",
+          message: `We are successfully enrolled student into ${enrollClassName}`,
+          icon: <IconCheck />,
+          color: "teal",
+        });
+      })
+      .catch((err) => {
+        updateNotification({
+          id: "student-unenroll",
+          title: "Failed",
+          message: `There was an error while enrolling student into ${enrollClassName}`,
+          icon: <IconX />,
+          color: "red",
+        });
+      });
+  };
+
+  //enrolled Students row
+  const enrolledStudentRows = enrolledStudents.map(
+    (student: {
+      email: string;
+      _id: string;
+      grade: string;
+      phone: string;
+      name: string;
+      id: string;
+    }) => (
+      <tr key={student._id}>
+        <td>{student.id}</td>
+        <td>{student.name}</td>
+        <td>{student.email}</td>
+        <td>{student.phone}</td>
+        <td>
+          <Button
+            color="red"
+            leftIcon={<IconX size={16} />}
+            ml={-30}
+            onClick={() =>
+              removeEnrollStudent(student._id, student.name, student.email, selectedEnrollClassId, enrollClassName)
+            }
+          >
+            Unenroll Student
+          </Button>
+        </td>
+      </tr>
+    )
+  );
+
   // table Rows
   const rows = sortedData.map((row) => (
     <tr key={row._id}>
@@ -352,8 +563,12 @@ const ClassManage = ({ user }: adminName) => {
               lh={0}
               color={"blue"}
               icon={<IconLink size={14} />}
-              component="a"
-              href="#"
+              onClick={() => {
+                setEnrollClassName(row.name);
+                setSelectedEnrollClassId(row._id);
+                getEnrollmentStudentDetails(row._id);
+                setOpenEnrollModel(true);
+              }}
             >
               Enroll
             </Menu.Item>
@@ -364,19 +579,19 @@ const ClassManage = ({ user }: adminName) => {
               lh={0}
               color={"green"}
               icon={<IconEdit size={14} />}
-              component="a"
-              href="#"
-              onClick={()=> {
+              onClick={() => {
                 editForm.setValues({
-                  name : row.name,
-                  day : row.day,
-                  teacher : row.teacher,
-                  subject : row.subject,
-                  startTime : new Date(), 
-                  endTime : new Date(),
-                  venue : row.venue
-                })
-                setOpenEditClassModal(true)}}
+                  _id: row._id,
+                  name: row.name,
+                  day: row.day,
+                  teacher: row.teacher,
+                  subject: row.subject,
+                  startTime: new Date(),
+                  endTime: new Date(),
+                  venue: row.venue,
+                });
+                setOpenEditClassModal(true);
+              }}
             >
               Edit
             </Menu.Item>
@@ -386,8 +601,6 @@ const ClassManage = ({ user }: adminName) => {
               lh={0}
               color={"red"}
               icon={<IconTrash size={14} />}
-              component="a"
-              href="#"
               onClick={() => openDeleteModal(row.name, row._id)}
             >
               Delete{" "}
@@ -397,6 +610,64 @@ const ClassManage = ({ user }: adminName) => {
       </td>
     </tr>
   ));
+
+  //todo Create this function real time when admin enrolled student into the class, then the system update that student as a enrolled student
+  // registered student details rows
+  const studentRows = studentDetails.map((studentRow: StudentDetails) => {
+    var count = 0;
+    enrolledStudents.map((student: StudentDetails) => {
+      if (studentRow._id === student._id) {
+        count++;
+      }
+    });
+
+    if (count === 1) {
+      return (
+        <tr key={studentRow._id}>
+          <td>{studentRow.id}</td>
+          <td>{studentRow.name}</td>
+          <td>{studentRow.email}</td>
+          <td>{studentRow.phone}</td>
+          <td>{studentRow.grade}</td>
+          <td>
+            <Button leftIcon={<IconCheck size={16} />} ml={-30} disabled>
+              Already Enrolled
+            </Button>
+          </td>
+        </tr>
+      );
+    } else {
+      return (
+        <tr key={studentRow._id}>
+          <td>{studentRow.id}</td>
+          <td>{studentRow.name}</td>
+          <td>{studentRow.email}</td>
+          <td>{studentRow.phone}</td>
+          <td>{studentRow.grade}</td>
+          <td>
+            <Button
+              color="teal"
+              leftIcon={<IconPlus size={16} />}
+              ml={-30}
+              onClick={() =>{
+                enrollStudent(studentRow._id, studentRow.email,studentRow.name, selectedEnrollClassId,enrollClassName);
+                setEnrolledStudents(prevState => ([...prevState,{
+                  _id : studentRow._id,
+                  id : studentRow.id,
+                  name : studentRow.name,
+                  email : studentRow.email,
+                  phone : studentRow.phone,
+                  grade : studentRow.grade
+                }]))
+              }}
+            >
+              Enroll Student
+            </Button>
+          </td>
+        </tr>
+      );
+    }
+  });
 
   // validate add Class Form
   const form = useForm({
@@ -493,14 +764,23 @@ const ClassManage = ({ user }: adminName) => {
         message: "We are trying to fetch classes details",
         loading: true,
       });
-      
+
       showNotification({
         id: "while-fetching-halls",
-        disallowClose : false,
-        autoClose : 2000,
-        title : "Fetching Hall Details",
-        message : "We are trying to fetch hall details",
-        loading : true
+        disallowClose: false,
+        autoClose: 2000,
+        title: "Fetching Hall Details",
+        message: "We are trying to fetch hall details",
+        loading: true,
+      });
+
+      showNotification({
+        id: "while-fetching-students",
+        disallowClose: false,
+        autoClose: 2000,
+        title: "Fetching Registered Student Details",
+        message: "We are trying to fetch registered student details",
+        loading: true,
       });
 
       const classDetails = await getAllClasses().catch((error) => {
@@ -517,16 +797,16 @@ const ClassManage = ({ user }: adminName) => {
       });
 
       //getting hall details and when error is occured show an ERROR message
-      const hallDetails = await getAllHallDetails().catch((error)=>{
+      const hallDetails = await getAllHallDetails().catch((error) => {
         updateNotification({
           id: "while-fetching-halls",
-          disallowClose : false,
-          autoClose : 2000,
-          title : "Something Went Wrong!",
-          message : "There is an error while fetching hall details",
-          color : "red",
-          icon : <IconX/>,
-          loading : false
+          disallowClose: false,
+          autoClose: 2000,
+          title: "Something Went Wrong!",
+          message: "There is an error while fetching hall details",
+          color: "red",
+          icon: <IconX />,
+          loading: false,
         });
       });
 
@@ -542,10 +822,10 @@ const ClassManage = ({ user }: adminName) => {
         endTime: item.endTime,
       }));
 
-      const halls  = hallDetails.map((item : any) =>({
-        _id : item._id,
-        hallID : item.hallID,
-        capacity : item.capacity,
+      const halls = hallDetails.map((item: any) => ({
+        _id: item._id,
+        hallID: item.hallID,
+        capacity: item.capacity,
       }));
 
       const payload = {
@@ -556,17 +836,17 @@ const ClassManage = ({ user }: adminName) => {
 
       setClassDetails(classes);
       setSortedData(sortData(classes, payload));
-      setLoading(false)
+      setLoading(false);
 
       // set halldetails
-      setHallDetails(halls)
+      setHallDetails(halls);
 
       //this shows success message after class loaded
       setTimeout(() => {
         updateNotification({
           id: "while-fetching-classes",
           disallowClose: false,
-          autoClose: 2300,
+          autoClose: 2000,
           title: "Done",
           message: "Done! Classes are fetched!",
           icon: <IconCheck />,
@@ -577,17 +857,57 @@ const ClassManage = ({ user }: adminName) => {
         updateNotification({
           id: "while-fetching-halls",
           disallowClose: false,
-          autoClose: 2300,
+          autoClose: 2000,
           title: "Done",
           message: "Done! All halls are fetched!",
           icon: <IconCheck />,
           color: "teal",
           loading: false,
         });
-      }, 1000);
+
+        updateNotification({
+          id: "while-fetching-students",
+          disallowClose: false,
+          autoClose: 2000,
+          title: "Done",
+          message: "Done! All registered student details are fetched!",
+          icon: <IconCheck />,
+          color: "teal",
+          loading: false,
+        });
+      }, 500);
     };
     fetch();
   }, []);
+
+  //fetch Registered Students
+  const fetchRegisteredStudents = async () => {
+    // fetch student data
+    const newStudentDetails = await getStudentDetails().catch((error) => {
+      updateNotification({
+        id: "while-fetching-students",
+        disallowClose: false,
+        autoClose: 2000,
+        title: "Something Went Wrong!",
+        message: "There is an error while fetching students details",
+        color: "red",
+        icon: <IconX />,
+        loading: false,
+      });
+    });
+
+    const registeredStudents = newStudentDetails.map((item: any) => ({
+      _id: item._id,
+      id: item.id,
+      name: item.name,
+      email: item.email,
+      grade: item.grade,
+      phone: item.phone,
+    }));
+
+    // set studentDetails
+    setStudentDetails(registeredStudents);
+  };
 
   //get current Full Date
   const today = new Date();
@@ -596,10 +916,10 @@ const ClassManage = ({ user }: adminName) => {
   const month = today.getMonth() + 1;
   const date = today.getDate();
 
-
   const editForm = useForm({
     validateInputOnChange: true,
     initialValues: {
+      _id: "",
       name: "",
       teacher: "",
       subject: "",
@@ -618,134 +938,287 @@ const ClassManage = ({ user }: adminName) => {
   });
 
   return (
-
     <div>
+      {/* Enroll Student Modal */}
+      <Modal
+        size={"70%"}
+        overlayColor={
+          theme.colorScheme === "dark"
+            ? theme.colors.dark[9]
+            : theme.colors.gray[2]
+        }
+        opened={openEnrollModal}
+        onClose={() => {
+          setOpenEnrollModel(false);
+          setEnrolledStudents([]);
+        }}
+        title={`Enroll Students into ${enrollClassName}`}
+      >
+        <Box>
+          <Group mt={20}>
+            <TextInput
+              placeholder="Search by any field"
+              mb="md"
+              icon={<IconSearch size="0.9rem" stroke={1.5} />}
+              value={search}
+              onChange={handleSearchChange}
+              sx={{ minWidth: 750 }}
+            />
+            <Button
+              mt={-15}
+              mr={20}
+              onClick={() => {
+                fetchRegisteredStudents();
+                setSelectEnrollStudent(true);
+              }}
+            >
+              Enroll Student
+            </Button>
+          </Group>
+          <ScrollArea>
+            <Table
+              horizontalSpacing="md"
+              verticalSpacing="xs"
+              miw={700}
+              sx={{ tableLayout: "fixed" }}
+              mt={10}
+            >
+              <thead>
+                <tr>
+                  {/* <Th
+              sorted={sortBy === 'name'}
+              reversed={reverseSortDirection}
+              onSort={() => setSorting('name')}
+            >
+              SID
+            </Th>
+            <Th
+              sorted={sortBy === 'name'}
+              reversed={reverseSortDirection}
+              onSort={() => setSorting('name')}
+            >
+              Name
+            </Th>
+            <Th
+              sorted={sortBy === 'name'}
+              reversed={reverseSortDirection}
+              onSort={() => setSorting('name')}
+            >
+              Email
+            </Th> */}
+                  <th>SID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {enrolledStudentRows.length > 0 ? (
+                  enrolledStudentRows
+                ) : (
+                  <tr>
+                    <td>
+                      <Text weight={500} align="center">
+                        No Item Found
+                      </Text>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+          </ScrollArea>
+        </Box>
+      </Modal>
+
+      {/* Select Enroll students */}
+      <Modal
+        size={"auto"}
+        overlayColor={
+          theme.colorScheme === "dark"
+            ? theme.colors.dark[9]
+            : theme.colors.gray[2]
+        }
+        opened={selectEnrollStudent}
+        onClose={() => {
+          setSelectEnrollStudent(false);
+        }}
+
+      >
+        <TextInput
+          placeholder="Search by any field"
+          mb="md"
+          icon={<IconSearch size="0.9rem" stroke={1.5} />}
+          value={search}
+          onChange={handleSearchChange}
+          sx={{ minWidth: "750" }}
+        />
+        <Box>
+          <ScrollArea
+            sx={{ height: 400 }}
+            onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
+          >
+            <Table
+              horizontalSpacing="xl"
+              verticalSpacing="sm"
+              highlightOnHover
+              miw={700}
+              sx={{ tableLayout: "fixed" }}
+              mt={10}
+            >
+              <thead
+                className={cx(classes.header, { [classes.scrolled]: scrolled })}
+              >
+                <tr>
+                  <th>SID</th>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Grade</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {studentRows.length > 0 ? (
+                  studentRows
+                ) : (
+                  <tr>
+                    <td>
+                      <Text weight={500} align="center">
+                        No items found
+                      </Text>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </Table>
+          </ScrollArea>
+        </Box>
+      </Modal>
 
       {/* //open edit class modal */}
       <Modal
-            overlayColor={
-              theme.colorScheme === "dark"
-                ? theme.colors.dark[9]
-                : theme.colors.gray[2]
-            }
-            opened={openEditClassModal}
-            onClose={() => setOpenEditClassModal(false)}
-            overlayOpacity={0.55}
-            overlayBlur={3}
-            title="Edit a Class"
-            sx={{ marginTop: "-20px" }}
-          >
-            <Box>
-              <form onSubmit={editForm.onSubmit((values) => editClass(values))}>
-                {/* get class name */}
-                <TextInput
-                  required
-                  withAsterisk
-                  label="Class Name"
-                  placeholder="Enter Class Name"
-                  {...editForm.getInputProps("name")}
-                  mb={10}
-                />
+        overlayColor={
+          theme.colorScheme === "dark"
+            ? theme.colors.dark[9]
+            : theme.colors.gray[2]
+        }
+        opened={openEditClassModal}
+        onClose={() => setOpenEditClassModal(false)}
+        overlayOpacity={0.55}
+        overlayBlur={3}
+        title="Edit a Class"
+        sx={{ marginTop: "-20px" }}
+      >
+        <Box>
+          <form onSubmit={editForm.onSubmit((values) => editClass(values))}>
+            {/* get class name */}
+            <TextInput
+              required
+              withAsterisk
+              label="Class Name"
+              placeholder="Enter Class Name"
+              {...editForm.getInputProps("name")}
+              mb={10}
+            />
 
-                {/* get teacher name */}
-                <TextInput
-                  required
-                  withAsterisk
-                  label="Teacher"
-                  placeholder="Enter teacher Name"
-                  {...editForm.getInputProps("teacher")}
-                  mb={10}
-                />
+            {/* get teacher name */}
+            <TextInput
+              required
+              withAsterisk
+              label="Teacher"
+              placeholder="Enter teacher Name"
+              {...editForm.getInputProps("teacher")}
+              mb={10}
+            />
 
-                {/* get subject name */}
-                <TextInput
-                  required
-                  withAsterisk
-                  label="Subject"
-                  placeholder="Enter subject Name"
-                  {...editForm.getInputProps("subject")}
-                  mb={10}
-                />
+            {/* get subject name */}
+            <TextInput
+              required
+              withAsterisk
+              label="Subject"
+              placeholder="Enter subject Name"
+              {...editForm.getInputProps("subject")}
+              mb={10}
+            />
 
-                {/* get Day */}
-                <Select
-                  mb={10}
-                  label="Day"
-                  withAsterisk
-                  searchable
-                  placeholder="Select Day"
-                  onSearchChange={setDaySearchValue}
-                  searchValue={daySearchValue}
-                  nothingFound="Not Found"
-                  data={[
-                    { value: "Monday", label: "Monday" },
-                    { value: "Tuesday", label: "Tuesday" },
-                    { value: "Wednesday", label: "Wednesday" },
-                    { value: "Thursday", label: "Thursday" },
-                    { value: "Friday", label: "Friday" },
-                    { value: "Saturday", label: "Saturday" },
-                    { value: "Sunday", label: "Sunday" },
-                  ]}
-                  {...editForm.getInputProps("day")}
-                />
+            {/* get Day */}
+            <Select
+              mb={10}
+              label="Day"
+              withAsterisk
+              searchable
+              placeholder="Select Day"
+              onSearchChange={setDaySearchValue}
+              searchValue={daySearchValue}
+              nothingFound="Not Found"
+              data={[
+                { value: "Monday", label: "Monday" },
+                { value: "Tuesday", label: "Tuesday" },
+                { value: "Wednesday", label: "Wednesday" },
+                { value: "Thursday", label: "Thursday" },
+                { value: "Friday", label: "Friday" },
+                { value: "Saturday", label: "Saturday" },
+                { value: "Sunday", label: "Sunday" },
+              ]}
+              {...editForm.getInputProps("day")}
+            />
 
-                {/* Get Start Time */}
-                <TimeInput
-                  label="Start Time"
-                  format="12"
-                  withAsterisk
-                  clearable
-                  rightSection={<IconClock size="1rem" stroke={1.5} />}
-                  maw={400}
-                  mx="auto"
-                  required
-                  {...editForm.getInputProps("startTime")}
-                />
+            {/* Get Start Time */}
+            <TimeInput
+              label="Start Time"
+              format="12"
+              withAsterisk
+              clearable
+              rightSection={<IconClock size="1rem" stroke={1.5} />}
+              maw={400}
+              mx="auto"
+              required
+              {...editForm.getInputProps("startTime")}
+            />
 
-                {/* Class End Time */}
-                <TimeInput
-                  label="End time"
-                  format="12"
-                  withAsterisk
-                  required
-                  clearable
-                  rightSection={<IconClock size="1rem" stroke={1.5} />}
-                  maw={400}
-                  mx="auto"
-                  {...editForm.getInputProps("endTime")}
-                />
-                
-              
-                {/* select Venue/hall */}
-                <Select
-                  label="Venue"
-                  placeholder="Pick one"
-                  searchable
-                  required
-                  clearable
-                  withAsterisk 
-                  nothingFound="No Hall"
-                  data={hallDetails.map((data:any)=>{
-                    return(
-                      
-                      {value : data.hallID, label : data.hallID, group: "Capacity:  " + data.capacity.toString()}
-                    )
-                    
-                  })} 
-                  defaultValue={editForm.values.venue}
-                  {...editForm.getInputProps("venue")}
-                  mb={10}
-                />
+            {/* Class End Time */}
+            <TimeInput
+              label="End time"
+              format="12"
+              withAsterisk
+              required
+              clearable
+              rightSection={<IconClock size="1rem" stroke={1.5} />}
+              maw={400}
+              mx="auto"
+              {...editForm.getInputProps("endTime")}
+            />
 
-                <Group position="center" grow mt={20} mb={5}>
-                  <Button color={"green"} type={"submit"}>
-                    Edit Class
-                  </Button>
-                </Group>
-              </form>
-            </Box>
-          </Modal>
+            {/* select Venue/hall */}
+            <Select
+              label="Venue"
+              placeholder="Pick one"
+              searchable
+              required
+              clearable
+              withAsterisk
+              nothingFound="No Hall"
+              data={hallDetails.map((data: any) => {
+                return {
+                  value: data.hallID,
+                  label: data.hallID,
+                  group: "Capacity:  " + data.capacity.toString(),
+                };
+              })}
+              defaultValue={editForm.values.venue}
+              {...editForm.getInputProps("venue")}
+              mb={10}
+            />
 
+            <Group position="center" grow mt={20} mb={5}>
+              <Button color={"green"} type={"submit"}>
+                Edit Class
+              </Button>
+            </Group>
+          </form>
+        </Box>
+      </Modal>
 
       <Box
         sx={{ display: "flex", justifyContent: "space-between" }}
@@ -876,8 +1349,7 @@ const ClassManage = ({ user }: adminName) => {
                   mx="auto"
                   {...form.getInputProps("endTime")}
                 />
-                
-              
+
                 {/* select Venue/hall */}
                 <Select
                   label="Venue"
@@ -888,15 +1360,14 @@ const ClassManage = ({ user }: adminName) => {
                   withAsterisk
                   nothingFound="No Hall"
                   defaultValue={editForm.values.venue}
-                  data={hallDetails.map((data:any)=>{
-                    return(
-                      
-                      {value : data.hallID, label : data.hallID, group: "Capacity:  " + data.capacity.toString()}
-                    )
-                    
-                  })} 
+                  data={hallDetails.map((data: any) => {
+                    return {
+                      value: data.hallID,
+                      label: data.hallID,
+                      group: "Capacity:  " + data.capacity.toString(),
+                    };
+                  })}
                   {...form.getInputProps("venue")}
-                  
                   mb={10}
                 />
 
@@ -1016,7 +1487,6 @@ const ClassManage = ({ user }: adminName) => {
           </tbody>
         </Table>
       </ScrollArea>
-
     </div>
   );
 };
