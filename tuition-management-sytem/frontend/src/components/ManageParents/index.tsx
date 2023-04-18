@@ -569,7 +569,9 @@ const ManageParents: React.FC = () => {
            sx={{ minWidth: 600 }}
           />
 
-        {/* Report genartion button */}
+    
+          {/* download Report button */}
+         
 
           <Button
             variant="gradient"
