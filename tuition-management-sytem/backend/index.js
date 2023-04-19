@@ -6,9 +6,7 @@ import errorHandler from "./middleware/errorHandler";
 import DB_Connect from "./utils/index";
 import Routes from "./routes/index";
 import responseHandler from './utils/response.handlers';
-import { classDetails, Hall1 } from "./testData";
-import Class from "./models/class.model";
-import Hall from "./models/hall.model";
+
 //initialize express
 const app = express();
 
@@ -60,7 +58,5 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on PORT ${PORT}!`);
   DB_Connect; //database connection
   Routes(app); //import routes
-  // Admin.insertMany(adminData);//manually injected admin data(one Object)
-  // Class.insertMany(classDetails);//manually injected class data(one Object)
-  // Hall.insertMany(Hall1);
+
 });

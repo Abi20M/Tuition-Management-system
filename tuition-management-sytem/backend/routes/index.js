@@ -22,8 +22,8 @@ const Routes = (app) => {
   app.delete("/class/delete/:id",protect.adminProtect,classController.deleteClass);
   app.get("/halls",protect.adminProtect,classController.getAllHallDetails);
   app.put("/class/edit/:id",protect.adminProtect,classController.editClassDetails);
-  app.post("/enroll",protect.adminProtect, classController.enrollStudent)  
-
+  app.put("/enroll",protect.adminProtect, classController.enrollStudent)  
+  app.put("/class/unenroll",protect.adminProtect,classController.unEnrollStudent);
   //expense Routes
   app.get("/expense",protect.adminProtect,expenseController.getAllExpenses);
   app.post("/expense",protect.adminProtect,expenseController.createExpense);
@@ -32,7 +32,7 @@ const Routes = (app) => {
 
   //Parent Routes
   app.post("/parent",protect.adminProtect, parentController.createParent);
-  app.get("/parent/:id", protect.adminProtect, parentController.getParent);
+  app.get("/parent", protect.adminProtect, parentController.getAllParents);
   app.put("/parent/:id" , protect.adminProtect, parentController.updateParent);
   app.delete("/parent/:id",protect.adminProtect,parentController.deleteParent);
    

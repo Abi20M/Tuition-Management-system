@@ -113,7 +113,6 @@ interface HallData {
 interface StudentDetails {
   _id: string;
   id: string;
-  SID: string;
   name: string;
   email: string;
   grade: string;
@@ -224,6 +223,7 @@ const fethClassDetailsById = async (classId: string) => {
       return error;
     });
 };
+
 //created prop type
 interface adminName {
   user: {
@@ -252,7 +252,7 @@ const ClassManage = ({ user }: adminName) => {
   const [selectedEnrollClassId, setSelectedEnrollClassId] = useState("");
   const [studentDetails, setStudentDetails] = useState<StudentDetails[]>([]);
   const [selectEnrollStudent, setSelectEnrollStudent] = useState(false);
-  const [enrolledStudents, setEnrolledStudents] = useState([]);
+  const [enrolledStudents, setEnrolledStudents] = useState<StudentDetails[]>([]);
 
   //set admin name
   const adminName = user.name;
@@ -416,7 +416,7 @@ const ClassManage = ({ user }: adminName) => {
   };
 
   // Enroll student
-  const enrollStudent = (studentObjId: string, classId: string) => {
+  const enrollStudent = (studentObjId: string,studentEmail : string, studentName : string, classId: string,className : string) => {
     showNotification({
       id: "class-enroll",
       title: "Enrolling....",
@@ -424,7 +424,7 @@ const ClassManage = ({ user }: adminName) => {
       loading: true,
     });
 
-    ClassAPI.enrollStudent(studentObjId, classId)
+    ClassAPI.enrollStudent(studentObjId,studentEmail, studentName, classId, className)
       .then((data) => {
         // const newClassObj = data.data.students;
         updateNotification({
@@ -447,12 +447,57 @@ const ClassManage = ({ user }: adminName) => {
   };
 
   //get Enrolled Students details
-  const getEnrollmentStudentDetails = async (classId : string) =>{
-
+  const getEnrollmentStudentDetails = async (classId: string) => {
     const result = await fethClassDetailsById(classId);
 
     setEnrolledStudents(result);
-  }
+  };
+
+  // UnEnroll Students
+
+  const removeEnrollStudent = async (studentId: string, studentName : string, studentEmail : string, classId: string, className : string) => {
+    showNotification({
+      id: "student-unenroll",
+      title: "Unenrolling....",
+      message: `We are trying to unenroll student from ${enrollClassName}`,
+      loading: true,
+    });
+
+    ClassAPI.unEnrollStudent(studentId, studentName, studentEmail ,classId, className)
+      .then((response) => {
+        setEnrolledStudents(
+          enrolledStudents.filter(
+            (student: {
+              email: string;
+              _id: string;
+              grade: string;
+              phone: string;
+              name: string;
+              id: string;
+            }) => {
+              return student._id !== studentId;
+            }
+          )
+        );
+
+        updateNotification({
+          id: "student-unenroll",
+          title: "Success",
+          message: `We are successfully enrolled student into ${enrollClassName}`,
+          icon: <IconCheck />,
+          color: "teal",
+        });
+      })
+      .catch((err) => {
+        updateNotification({
+          id: "student-unenroll",
+          title: "Failed",
+          message: `There was an error while enrolling student into ${enrollClassName}`,
+          icon: <IconX />,
+          color: "red",
+        });
+      });
+  };
 
   //enrolled Students row
   const enrolledStudentRows = enrolledStudents.map(
@@ -474,7 +519,9 @@ const ClassManage = ({ user }: adminName) => {
             color="red"
             leftIcon={<IconX size={16} />}
             ml={-30}
-            //todo unenroll button
+            onClick={() =>
+              removeEnrollStudent(student._id, student.name, student.email, selectedEnrollClassId, enrollClassName)
+            }
           >
             Unenroll Student
           </Button>
@@ -516,8 +563,6 @@ const ClassManage = ({ user }: adminName) => {
               lh={0}
               color={"blue"}
               icon={<IconLink size={14} />}
-              component="a"
-              href="#"
               onClick={() => {
                 setEnrollClassName(row.name);
                 setSelectedEnrollClassId(row._id);
@@ -534,8 +579,6 @@ const ClassManage = ({ user }: adminName) => {
               lh={0}
               color={"green"}
               icon={<IconEdit size={14} />}
-              component="a"
-              href="#"
               onClick={() => {
                 editForm.setValues({
                   _id: row._id,
@@ -558,8 +601,6 @@ const ClassManage = ({ user }: adminName) => {
               lh={0}
               color={"red"}
               icon={<IconTrash size={14} />}
-              component="a"
-              href="#"
               onClick={() => openDeleteModal(row.name, row._id)}
             >
               Delete{" "}
@@ -570,29 +611,63 @@ const ClassManage = ({ user }: adminName) => {
     </tr>
   ));
 
+  //todo Create this function real time when admin enrolled student into the class, then the system update that student as a enrolled student
   // registered student details rows
+  const studentRows = studentDetails.map((studentRow: StudentDetails) => {
+    var count = 0;
+    enrolledStudents.map((student: StudentDetails) => {
+      if (studentRow._id === student._id) {
+        count++;
+      }
+    });
 
-  const studentRows = studentDetails.map((studentRow: StudentDetails) => (
-    <tr key={studentRow._id}>
-      <td>{studentRow.id}</td>
-      <td>{studentRow.name}</td>
-      <td>{studentRow.email}</td>
-      <td>{studentRow.phone}</td>
-      <td>{studentRow.grade}</td>
-      <td>
-        <Button
-          color="teal"
-          leftIcon={<IconPlus size={16} />}
-          ml={-30}
-          onClick={() => enrollStudent(studentRow._id, selectedEnrollClassId)}
-        >
-          Enroll Student
-        </Button>
-      </td>
-    </tr>
-  ));
-
-
+    if (count === 1) {
+      return (
+        <tr key={studentRow._id}>
+          <td>{studentRow.id}</td>
+          <td>{studentRow.name}</td>
+          <td>{studentRow.email}</td>
+          <td>{studentRow.phone}</td>
+          <td>{studentRow.grade}</td>
+          <td>
+            <Button leftIcon={<IconCheck size={16} />} ml={-30} disabled>
+              Already Enrolled
+            </Button>
+          </td>
+        </tr>
+      );
+    } else {
+      return (
+        <tr key={studentRow._id}>
+          <td>{studentRow.id}</td>
+          <td>{studentRow.name}</td>
+          <td>{studentRow.email}</td>
+          <td>{studentRow.phone}</td>
+          <td>{studentRow.grade}</td>
+          <td>
+            <Button
+              color="teal"
+              leftIcon={<IconPlus size={16} />}
+              ml={-30}
+              onClick={() =>{
+                enrollStudent(studentRow._id, studentRow.email,studentRow.name, selectedEnrollClassId,enrollClassName);
+                setEnrolledStudents(prevState => ([...prevState,{
+                  _id : studentRow._id,
+                  id : studentRow.id,
+                  name : studentRow.name,
+                  email : studentRow.email,
+                  phone : studentRow.phone,
+                  grade : studentRow.grade
+                }]))
+              }}
+            >
+              Enroll Student
+            </Button>
+          </td>
+        </tr>
+      );
+    }
+  });
 
   // validate add Class Form
   const form = useForm({
@@ -877,8 +952,6 @@ const ClassManage = ({ user }: adminName) => {
           setOpenEnrollModel(false);
           setEnrolledStudents([]);
         }}
-        overlayOpacity={0.55}
-        overlayBlur={3}
         title={`Enroll Students into ${enrollClassName}`}
       >
         <Box>
@@ -960,16 +1033,17 @@ const ClassManage = ({ user }: adminName) => {
 
       {/* Select Enroll students */}
       <Modal
-        size={"70%"}
+        size={"auto"}
         overlayColor={
           theme.colorScheme === "dark"
             ? theme.colors.dark[9]
             : theme.colors.gray[2]
         }
         opened={selectEnrollStudent}
-        onClose={() => setSelectEnrollStudent(false)}
-        overlayOpacity={0.55}
-        overlayBlur={3}
+        onClose={() => {
+          setSelectEnrollStudent(false);
+        }}
+
       >
         <TextInput
           placeholder="Search by any field"
@@ -977,7 +1051,7 @@ const ClassManage = ({ user }: adminName) => {
           icon={<IconSearch size="0.9rem" stroke={1.5} />}
           value={search}
           onChange={handleSearchChange}
-          sx={{ minWidth: 750 }}
+          sx={{ minWidth: "750" }}
         />
         <Box>
           <ScrollArea

@@ -113,8 +113,11 @@ export const editClassDetails = async (req, res, next) => {
 
 export const enrollStudent = async (req, res, next) => {
   const enrollStudent = {
-    studentID: req.body.student,
-    classId: req.body.class,
+    studentID: req.body.studentid,
+    studentName : req.body.studentname,
+    studentEmail : req.body.studentemail,
+    classId: req.body.classid,
+    className : req.body.classname
   };
 
   classServices
@@ -129,6 +132,24 @@ export const enrollStudent = async (req, res, next) => {
     });
 };
 
+export const unEnrollStudent = (req, res, next) => {
+  const stdId = req.body.studentId;
+  const studentName = req.body.studentName;
+  const studentEmail = req.body.studentEmail;
+  const classId = req.body.classId;
+  const className = req.body.className;
+
+  classServices
+    .unEnrollStudent(stdId, studentName, studentEmail, classId, className)
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+      next();
+    })
+    .catch((error) => {
+      req.handleResponse.errorRespond(res)(error);
+      next();
+    });
+};
 module.exports = {
   createClass,
   getAllClasses,
@@ -137,4 +158,5 @@ module.exports = {
   editClassDetails,
   enrollStudent,
   getEnrolledStudentDetails,
+  unEnrollStudent,
 };

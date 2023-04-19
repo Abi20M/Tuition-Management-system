@@ -47,6 +47,8 @@ export const createAdmin = async (adminObj) => {
       id : id,
       email: adminObj.email,
       password: adminObj.password,
+      telephone: adminObj.telephone,
+      address: adminObj.address,
     }
 
     return await admin
@@ -118,10 +120,9 @@ export const deleteAdmin = async (id) => {
 };
 
 const adminLogin = async (email, password) => {
-  return await admin.findOne({ email }).then((data) => {
+   return await admin.findOne({ email }).then((data) => {
     if (data) {
-      if (password === data.password) {
-
+      if (bcrypt.compareSync(password, data.password)) {
         //create access token if the password is correct
         const acessToken = jwt.sign(
           {
@@ -140,6 +141,8 @@ const adminLogin = async (email, password) => {
           adminId : data.adminId,
           email: data.email,
           name: data.name,
+          telephone: data.telephone,
+          address: data.address,
           accessToken: acessToken,
         };
         return newAdminObj;//return new Object with accessToken

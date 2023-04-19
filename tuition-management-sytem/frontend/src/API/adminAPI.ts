@@ -22,6 +22,8 @@ export class adminAPI {
     name: string;
     email: string;
     password: string;
+    telephone: string;
+    address:string;
   }) => {
     return axios.post(`${BASE_URL}/admin`, values, requestConfigJson);
   };
@@ -35,6 +37,8 @@ export class adminAPI {
     customId: string;
     name: string;
     email: string;
+    telephone: string;
+    address:string;
   }) => {
 
     let admin = {
