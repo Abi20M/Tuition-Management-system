@@ -27,7 +27,7 @@ import { openConfirmModal } from "@mantine/modals";
 import { showNotification, updateNotification } from "@mantine/notifications";
 import StudentAPI from "../../API/studentAPI";
 import  {adminAPI}  from "../../API/adminAPI";
-// import ParentAPI from "../../API/ParentAPI";
+import ParentAPI from "../../API/ParentAPI";
 
 import { IconCheck, IconAlertTriangle } from "@tabler/icons";
 import { useForm } from "@mantine/form";
@@ -99,11 +99,11 @@ const getAllStudents = async () => {
 };
 
 // //Get all parent records from the database
-// const getAllParents = async () => {
-//   const response = await ParentAPI.getParents();
-//   const data = await response.data;
-//   return data;
-// };
+const getAllParents = async () => {
+  const response = await ParentAPI.getParents();
+  const data = await response.data;
+  return data;
+};
 
 // //Get all exams from the database
 // const getExamsByStudentId = async (id: string) => {
@@ -220,7 +220,7 @@ const ManageStudents: React.FC = () => {
         disallowClose: false,
       });
       const result = await getAllStudents();
-    //   const resultParent = await getAllParents();
+      const resultParent = await getAllParents();
       const data = result.map((item: any) => {
         return {
           _id: item._id,
@@ -236,17 +236,17 @@ const ManageStudents: React.FC = () => {
           parent: item.parent,
         };
       });
-      // const dataParent = resultParent.map((item: any) => {
-      //   return {
-      //     id: item._id,
-      //     name: item.name,
-      //     email: item.email,
-      //     phone: item.phone,
-      //   };
-      // });
+      const dataParent = resultParent.map((item: any) => {
+        return {
+          id: item._id,
+          name: item.name,
+          email: item.email,
+          phone: item.phone,
+        };
+      });
 
       setData(data);
-    //   setParents(dataParent);
+      setParents(dataParent);
       setLoading(false);
       const payload = {
         sortBy: null,
@@ -775,7 +775,7 @@ const ManageStudents: React.FC = () => {
             ]}
           />
 
-          {/* <Select
+          <Select
             label="Parent"
             placeholder="Enter Parent"
             {...addForm.getInputProps("parent")}
@@ -783,7 +783,7 @@ const ManageStudents: React.FC = () => {
               return { value: parent.id, label: parent.name };
             })}
             required
-          /> */}
+          />
           <Button
             color="teal"
             sx={{ marginTop: "10px", width: "100%" }}
