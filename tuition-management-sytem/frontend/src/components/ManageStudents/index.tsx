@@ -435,7 +435,7 @@ const ManageStudents: React.FC = () => {
           icon: <IconCheck size={16} />,
           autoClose: 5000,
         });
-        const newData = data.filter((item) => item.id !== id);
+        const newData = data.filter((item) => item._id !== id);
         const payload = {
           sortBy: null,
           reversed: false,
@@ -687,7 +687,7 @@ const ManageStudents: React.FC = () => {
         <Button
           color="red"
           leftIcon={<IconTrash size={14} />}
-          onClick={() => openDeleteModal(row.id)}
+          onClick={() => openDeleteModal(row._id)}
           sx={{ margin: "5px", width: "100px" }}
         >
           Delete
@@ -882,15 +882,25 @@ const ManageStudents: React.FC = () => {
         </form>
       </Modal>
       <Box sx={{ margin: "20px", width: "100%" }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between",marginBottom:10 }}>
           <TextInput
             placeholder="Search by any field"
             mb="md"
             icon={<IconSearch size={14} stroke={1.5} />}
             value={search}
             onChange={handleSearchChange}
-            sx={{ width: "300px" }}
+            sx={{ width: "600px" }}
           />
+
+<Button
+            variant="gradient"
+            gradient={{ from: "indigo", to: "cyan" }}
+            sx={{ width: "200px", marginRight: "20px",marginLeft:20}}
+            // onClick={() => setOpened(true)}
+          >
+            Generate Report
+          </Button>
+
           <Button
             variant="gradient"
             gradient={{ from: "indigo", to: "cyan" }}
@@ -899,12 +909,27 @@ const ManageStudents: React.FC = () => {
           >
             Add Student
           </Button>
+
+
         </Box>
-        <ScrollArea>
+        <ScrollArea
+<<<<<<< Updated upstream
+        sx={{ height:400, width:1200 , marginLeft:"-100px"}}
+        > 
           <Table
             horizontalSpacing="md"
             verticalSpacing="xs"
-            sx={{ tableLayout: "fixed", width: "100%" }}
+            // sx={{ tableLayout: "fixed", width: "100%" }}
+=======
+        
+        sx={{height:700,width:1800,marginLeft:-425,marginBottom:-163}}
+        
+        >
+          <Table
+            horizontalSpacing="md"
+            verticalSpacing="xs"
+            sx={{  minWidth: 700}}
+>>>>>>> Stashed changes
           >
             <thead>
               <tr>

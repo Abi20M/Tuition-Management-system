@@ -99,35 +99,35 @@ export const getAllStudents = async () => {
     });
 };
 
-// export const updateStudent = async (id, studentObj) => {
-//   return await student
-//     .findByIdAndUpdate(id, studentObj, { new: true })
-//     .then((data) => {
-//       if (data) {
-//         return data;
-//       } else {
-//         throw new Error("Student not found");
-//       }
-//     })
-//     .catch((err) => {
-//       throw new Error(err.message);
-//     });
-// };
+export const updateStudent = async (id, studentObj) => {
+  return await student
+    .findByIdAndUpdate(id, studentObj, { new: true })
+    .then((data) => {
+      if (data) {
+        return data;
+      } else {
+        throw new Error("Student not found");
+      }
+    })
+    .catch((err) => {
+      throw new Error(err.message);
+    });
+};
 
-// export const deleteStudent = async (id) => {
-//   return await student
-//     .findByIdAndDelete(id)
-//     .then((data) => {
-//       if (data) {
-//         return data;
-//       } else {
-//         throw new Error("Student not found");
-//       }
-//     })
-//     .catch((err) => {
-//       throw new Error(err.message);
-//     });
-// };
+export const deleteStudent = async (id) => {
+  return await student
+    .findByIdAndDelete(id)
+    .then((data) => {
+      if (data) {
+        return data;
+      } else {
+        throw new Error("Student not found");
+      }
+    })
+    .catch((err) => {
+      throw new Error(err.message);
+    });
+};
 
 // export const loginStudent = async (email, password) => {
 //   return await student
@@ -191,8 +191,8 @@ module.exports = {
   createStudent,
   getStudent,
   getAllStudents,
-//   updateStudent,
-//   deleteStudent,
+  updateStudent,
+  deleteStudent,
 //   loginStudent,
 //   verifyStudent,
 //   getExamsByStudentId,
