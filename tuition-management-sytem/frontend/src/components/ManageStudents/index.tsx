@@ -942,7 +942,7 @@ const ManageStudents: React.FC = () => {
         </Box>
         <ScrollArea
 
-          sx={{ height: 700, width: 1800, marginLeft: -425, marginBottom: -163 }}
+          sx={{ height: 700, width: 1500, marginLeft:-300, marginBottom: -163 }}
 
         >
           <Table
