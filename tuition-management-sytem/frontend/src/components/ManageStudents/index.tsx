@@ -13,6 +13,8 @@ import {
   Modal,
   PasswordInput,
   Select,
+  Menu,
+  ActionIcon,
 } from "@mantine/core";
 import { keys } from "@mantine/utils";
 import {
@@ -21,18 +23,20 @@ import {
   IconChevronUp,
   IconSearch,
   IconChartBar,
+  IconDots,
+  IconLink,
 } from "@tabler/icons";
 import { IconEdit, IconTrash } from "@tabler/icons";
 import { openConfirmModal } from "@mantine/modals";
 import { showNotification, updateNotification } from "@mantine/notifications";
 import StudentAPI from "../../API/studentAPI";
-import  {adminAPI}  from "../../API/adminAPI";
+import { adminAPI } from "../../API/adminAPI";
 import ParentAPI from "../../API/ParentAPI";
 
 import { IconCheck, IconAlertTriangle } from "@tabler/icons";
 import { useForm } from "@mantine/form";
 
- 
+
 
 
 export const options = {
@@ -70,7 +74,7 @@ export const performanceDataSample = {
 
 //Interface for student data - (Raw data)
 interface RowData {
-  _id : string;
+  _id: string;
   id: string;
   name: string;
   email: string;
@@ -224,7 +228,7 @@ const ManageStudents: React.FC = () => {
       const data = result.map((item: any) => {
         return {
           _id: item._id,
-          id : item.id,
+          id: item.id,
           name: item.name,
           email: item.email,
           phone: item.phone,
@@ -277,7 +281,7 @@ const ManageStudents: React.FC = () => {
   //edit student form
   const editStudent = async (values: {
     _id: string;
-    id : string,
+    id: string,
     name: string;
     email: string;
     phone: string;
@@ -312,7 +316,7 @@ const ManageStudents: React.FC = () => {
           if (item.id === values.id) {
             return {
               _id: values._id,
-              id : values.id,
+              id: values.id,
               name: values.name,
               email: values.email,
               phone: values.phone,
@@ -383,7 +387,7 @@ const ManageStudents: React.FC = () => {
           ...data,
           {
             _id: response.data._id,
-            id : response.data.id,
+            id: response.data.id,
             name: values.name,
             email: values.email,
             phone: values.phone,
@@ -461,7 +465,7 @@ const ManageStudents: React.FC = () => {
     validateInputOnChange: true,
     initialValues: {
       _id: "",
-      id : "",
+      id: "",
       name: "",
       email: "",
       phone: "",
@@ -580,30 +584,30 @@ const ManageStudents: React.FC = () => {
       disallowClose: true,
     });
 
-      // const resultExams = await getExamsByStudentId(id);
-      // const exams = resultExams.map((item: any) => ({
-      //   id: item._id,
-      //   name: item.name,
-      //   description: item.description,
-      //   subject: item.subject,
-      //   date: item.date,
-      //   time: item.time,
-      //   marks: item.marks,
-      // }));
+    // const resultExams = await getExamsByStudentId(id);
+    // const exams = resultExams.map((item: any) => ({
+    //   id: item._id,
+    //   name: item.name,
+    //   description: item.description,
+    //   subject: item.subject,
+    //   date: item.date,
+    //   time: item.time,
+    //   marks: item.marks,
+    // }));
 
-      // //get the last 6 exams
-      // const lastSixExams = exams.slice(Math.max(exams.length - 6, 0));
-      // //get the last 6 exams marks of logged in student
-      // const studentID = id;
-      // const studentMarks = [0, 0, 0, 0, 0, 0];
+    // //get the last 6 exams
+    // const lastSixExams = exams.slice(Math.max(exams.length - 6, 0));
+    // //get the last 6 exams marks of logged in student
+    // const studentID = id;
+    // const studentMarks = [0, 0, 0, 0, 0, 0];
 
-      // for (let i = 0; i < lastSixExams.length; i++) {
-      //   for (let j = 0; j < lastSixExams[i].marks.length; j++) {
-      //     if (lastSixExams[i].marks[j].id === studentID) {
-      //       studentMarks[i] = lastSixExams[i].marks[j].marks;
-      //     }
-      //   }
-      // }
+    // for (let i = 0; i < lastSixExams.length; i++) {
+    //   for (let j = 0; j < lastSixExams[i].marks.length; j++) {
+    //     if (lastSixExams[i].marks[j].id === studentID) {
+    //       studentMarks[i] = lastSixExams[i].marks[j].marks;
+    //     }
+    //   }
+    // }
 
     //   //reverse the array to show the latest exam first
     //   studentMarks.reverse();
@@ -651,47 +655,71 @@ const ManageStudents: React.FC = () => {
         })}
       </td>
       <td>
-        <Button
-          color="green"
-          leftIcon={<IconChartBar size={16} />}
-          sx={{ margin: "5px", width: "100px" }}
-          onClick={() => {
-            loadStudentPerformance(row.id);
-          }}
+        <Menu
+          position="bottom"
+          shadow="md"
+          width={150}
+          withArrow
+          arrowPosition="center"
+          transition={"slide-up"}
+          transitionDuration={100}
         >
-          Performance
-        </Button>
-        <Button
-          color="teal"
-          leftIcon={<IconEdit size={14} />}
-          sx={{ margin: "5px", width: "100px" }}
-          onClick={() => {
-            editForm.setValues({
-              _id: row._id,
-              id : row.id,
-              name: row.name,
-              email: row.email,
-              phone: row.phone,
-              school: row.school,
-              grade: row.grade,
-              birthDate: row.birthDate.slice(0, 10),
-              gender: row.gender,
-              address: row.address,
-              parent: row.parent,
-            });
-            setEditOpened(true);
-          }}
-        >
-          Edit
-        </Button>
-        <Button
-          color="red"
-          leftIcon={<IconTrash size={14} />}
-          onClick={() => openDeleteModal(row._id)}
-          sx={{ margin: "5px", width: "100px" }}
-        >
-          Delete
-        </Button>
+          <Menu.Target>
+            <ActionIcon>
+              <IconDots size={20} />
+            </ActionIcon>
+          </Menu.Target>
+
+          <Menu.Dropdown>
+            {/* <Menu.Label>Enroll Students</Menu.Label> */}
+            <Menu.Item
+              lh={0}
+              color={"blue"}
+              icon={<IconLink size={14} />}
+              onClick={() => {
+                loadStudentPerformance(row.id);
+              }}
+            >
+              Performance
+            </Menu.Item>
+
+            <Menu.Divider />
+            {/* <Menu.Label>Edit Class Details</Menu.Label> */}
+            <Menu.Item
+              lh={0}
+              color={"green"}
+              icon={<IconEdit size={14} />}
+              onClick={() => {
+                editForm.setValues({
+                  _id: row._id,
+                  id: row.id,
+                  name: row.name,
+                  email: row.email,
+                  phone: row.phone,
+                  school: row.school,
+                  grade: row.grade,
+                  birthDate: row.birthDate.slice(0, 10),
+                  gender: row.gender,
+                  address: row.address,
+                  parent: row.parent,
+                });
+                setEditOpened(true);
+              }}
+            >
+              Edit
+            </Menu.Item>
+            <Menu.Divider />
+            {/* <Menu.Label>Delete Class Details</Menu.Label> */}
+            <Menu.Item
+              lh={0}
+              color={"red"}
+              icon={<IconTrash size={14} />}
+              onClick={() => openDeleteModal(row._id)}
+            >
+              Delete{" "}
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
       </td>
     </tr>
   ));
@@ -714,7 +742,7 @@ const ManageStudents: React.FC = () => {
           setOpened(false);
         }}
         title="Add student"
-      > 
+      >
         <form onSubmit={addForm.onSubmit((values) => addStudent(values))}>
           <TextInput
             label="Name"
@@ -882,7 +910,7 @@ const ManageStudents: React.FC = () => {
         </form>
       </Modal>
       <Box sx={{ margin: "20px", width: "100%" }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between",marginBottom:10 }}>
+        <Box sx={{ display: "flex", justifyContent: "space-between", marginBottom: 10 }}>
           <TextInput
             placeholder="Search by any field"
             mb="md"
@@ -892,11 +920,11 @@ const ManageStudents: React.FC = () => {
             sx={{ width: "600px" }}
           />
 
-<Button
+          <Button
             variant="gradient"
             gradient={{ from: "indigo", to: "cyan" }}
-            sx={{ width: "200px", marginRight: "20px",marginLeft:20}}
-            // onClick={() => setOpened(true)}
+            sx={{ width: "200px", marginRight: "20px", marginLeft: 20 }}
+          // onClick={() => setOpened(true)}
           >
             Generate Report
           </Button>
@@ -913,14 +941,14 @@ const ManageStudents: React.FC = () => {
 
         </Box>
         <ScrollArea
-        
-        sx={{height:700,width:1800,marginLeft:-425,marginBottom:-163}}
-        
+
+          sx={{ height: 700, width: 1800, marginLeft: -425, marginBottom: -163 }}
+
         >
           <Table
             horizontalSpacing="md"
             verticalSpacing="xs"
-            sx={{  minWidth: 700}}
+            sx={{ minWidth: 700 }}
           >
             <thead>
               <tr>
@@ -994,7 +1022,7 @@ const ManageStudents: React.FC = () => {
                 >
                   Parent
                 </Th>
-                
+
                 <th>Action</th>
               </tr>
             </thead>
