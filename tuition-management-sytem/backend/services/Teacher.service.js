@@ -5,13 +5,53 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 
+//generate Teacher Id
+const generateTeacherId = async () => {
+  //get last class object, if there is a teacher, then return that class object, otherwise return empty array
+  const lastTeacherDetails = await teacher.find().sort({ _id: -1 }).limit(1);
+  
+  //check if the result array is empty or not, if its empty then return first Teacher Id
+  if (lastTeacherDetails.length == 0) {
+    return "TCH-001";
+  }
+
+  //if array is not null, last class object id
+  const TeacherId = lastTeacherDetails.map((data) => {
+    return data.id;
+  });
+
+  //then we get the Integer value from the last part of the ID
+  const oldTeacherId = parseInt(TeacherId[0].split("-")[1]);
+
+  const newTeacherId = oldTeacherId + 1; //then we add 1 to the past value
+
+  //then we return the id according to below conditions
+  if (newTeacherId >= 100) {
+    return `TCH-${newTeacherId}`;
+  } else if (newTeacherId >= 10) {
+    return `TCH-0${newTeacherId}`;
+  } else {
+    return `TCH-00${newTeacherId}`;
+  }
+};
+
 export const createTeacher = async (teacherObj) => {
   const emailExists = await teacher.findOne({ email: teacherObj.email });
   if (emailExists) {
     throw new Error("Email already exists");
   } else {
+
+    const customTeacherId = await generateTeacherId();
+
+    const newTeacherObj ={
+      id : customTeacherId,
+      name:  teacherObj.name,
+      email:  teacherObj.email,
+      password:  teacherObj.password,
+      phone: teacherObj.phone,
+    }
     return await teacher
-      .create(teacherObj)
+      .create(newTeacherObj)
       .then(async (data) => {
         await data.save();
         return data;

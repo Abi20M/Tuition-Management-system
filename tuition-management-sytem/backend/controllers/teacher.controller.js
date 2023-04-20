@@ -66,7 +66,7 @@ export const createTeacher = async (req, res, next) => {
       phone : req.body.phone,
     }
     await teacherServices
-      .editExpense(id, updatedTeacher)
+      .updateTeacher(id, updateDetails)
       .then((data) => {
         req.handleResponse.successRespond(res)(data);
         next();
