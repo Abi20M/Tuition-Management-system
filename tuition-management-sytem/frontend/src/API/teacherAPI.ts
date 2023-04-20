@@ -24,6 +24,7 @@ class TeacherAPI {
   };
   //update teacher
   static editTeacher = (values: {
+    _id : string,
     id: string;
     name: string;
     email: string;
@@ -31,9 +32,11 @@ class TeacherAPI {
   }) => {
     let teacher = {
       name: values.name,
+      email: values.email,
+      phone: values.phone
     };
     return axios.put(
-      `${BASE_URL}/teacher/${values.id}`,
+      `${BASE_URL}/teacher/${values._id}`,
       teacher,
       requestConfig
     );
