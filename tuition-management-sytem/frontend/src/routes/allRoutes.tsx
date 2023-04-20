@@ -8,12 +8,15 @@ import Page404 from "../pages/Page404";
 import AdminPrivateRoute from "./adminPrivateRoute";
 import ExpensePrivateRoute from "./expensePrivateRoute";
 import ParentPrivateRoute from "./ParentPrivateRoute";
+import TeacherPrivateRoute from "./TeacherPrivateRoute";
 
 
+//import { TeacherDashboard } from "../pages/teacherDashboard";
 import { ParentDashboard } from "../pages/parentDashboard";
 import {ExpenseDashboard} from "../pages/expenseDashboard/index";
 import { StudentLoginPage } from "../pages/AllLogin/student-login";
 import { ParentLogin } from "../pages/AllLogin/Parent";
+import { TeacherLogin } from "../pages/AllLogin/Teacher";
 
 export const AllRoutes = () => {
   return (
@@ -24,6 +27,7 @@ export const AllRoutes = () => {
         <Route path = "financial/login" element={<FinancialManagerLoginPage />} />
         <Route path="/student/login" element={<StudentLoginPage />} />
         <Route path = "parent/login" element={<ParentLogin/>} />
+        <Route path = "teacher/login" element={<TeacherLogin/>} />
         <Route path="/logout" element={<Logout />} />
       
         <Route path="*" element={<Page404/>}/>
@@ -42,8 +46,14 @@ export const AllRoutes = () => {
 
         </Route>  
 
+        {/* <Route path = "/teacher/" element = {<TeacherPrivateRoute/>}>
+          <Route path = "/teacher/dashboard" element={<TeacherDashboard/>} />
+
+        </Route>   */}
+
               
       </Routes>
     </Router>
   );
 };
+

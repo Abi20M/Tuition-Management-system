@@ -89,7 +89,7 @@ interface RowData {
 
 //Interface for parent data - (Raw data)
 interface RowDataParent {
-  _id : string,
+  _id: string,
   id: string;
   name: string;
   email: string;
@@ -225,7 +225,9 @@ const ManageStudents: React.FC = () => {
         disallowClose: false,
       });
       const result = await getAllStudents();
+
       const resultParent = await getAllParents();
+
       const data = result.map((item: any) => {
         return {
           _id: item._id,
@@ -241,10 +243,11 @@ const ManageStudents: React.FC = () => {
           parent: item.parent,
         };
       });
+
       const dataParent = resultParent.map((item: any) => {
         return {
           _id: item._id,
-          id : item.id,
+          id: item.id,
           name: item.name,
           email: item.email,
           phone: item.phone,
@@ -253,6 +256,7 @@ const ManageStudents: React.FC = () => {
 
       setData(data);
       setParents(dataParent);
+
       setLoading(false);
       const payload = {
         sortBy: null,
@@ -280,6 +284,23 @@ const ManageStudents: React.FC = () => {
   const [opened, setOpened] = useState(false);
   const [editOpened, setEditOpened] = useState(false);
 
+
+  const fetchParentDetails = async () => {
+
+    const resultParent = await getAllParents();
+
+    const dataParent = resultParent.map((item: any) => {
+      return {
+        _id: item._id,
+        id: item.id,
+        name: item.name,
+        email: item.email,
+        phone: item.phone,
+      };
+    });
+
+    setParents(dataParent);
+  }
   //edit student form
   const editStudent = async (values: {
     _id: string;
@@ -651,7 +672,7 @@ const ManageStudents: React.FC = () => {
       <td>{row.address}</td>
       <td>
         {parents.map((parentObj: RowDataParent) => {
-          if (parentObj.id === row.parent) {
+          if (parentObj._id === row.parent) {
             return parentObj.name;
           }
         })}
@@ -706,6 +727,7 @@ const ManageStudents: React.FC = () => {
                   parent: row.parent,
                 });
                 setEditOpened(true);
+                fetchParentDetails();
               }}
             >
               Edit
@@ -898,7 +920,7 @@ const ManageStudents: React.FC = () => {
             defaultValue={editForm.values.parent}
             {...editForm.getInputProps("parent")}
             data={parents.map((parent: RowDataParent) => {
-              return { value: parent.id, label: parent.name };
+              return { value: parent._id, label: parent.name };
             })}
             required
           />
@@ -936,7 +958,10 @@ const ManageStudents: React.FC = () => {
             variant="gradient"
             gradient={{ from: "indigo", to: "cyan" }}
             sx={{ width: "200px", marginRight: "20px" }}
-            onClick={() => setOpened(true)}
+            onClick={() => {
+              setOpened(true);
+              fetchParentDetails();
+            }}
           >
             Add Student
           </Button>
@@ -945,7 +970,7 @@ const ManageStudents: React.FC = () => {
         </Box>
         <ScrollArea
 
-          sx={{ height: 700, width: 1500, marginLeft:-300, marginBottom: -163 }}
+          sx={{ height: 700, width: 1500, marginLeft: -300, marginBottom: -163 }}
 
         >
           <Table
