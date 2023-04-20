@@ -28,6 +28,7 @@ class StudentAPI {
   };
   //update student
   static editStudent = (values: {
+    _id : string,
     id: string;
     name: string;
     email: string;
@@ -40,6 +41,7 @@ class StudentAPI {
     parent: string;
   }) => {
     let student = {
+      id : values.id,
       name: values.name,
       email: values.email,
       phone: values.phone,
@@ -51,7 +53,7 @@ class StudentAPI {
       parent: values.parent,
     };
     return axios.put(
-      `${BASE_URL}/student/${values.id}`,
+      `${BASE_URL}/student/${values._id}`,
       student,
       requestConfigJson
     );
