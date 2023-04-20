@@ -89,6 +89,7 @@ interface RowData {
 
 //Interface for parent data - (Raw data)
 interface RowDataParent {
+  _id : string,
   id: string;
   name: string;
   email: string;
@@ -242,7 +243,8 @@ const ManageStudents: React.FC = () => {
       });
       const dataParent = resultParent.map((item: any) => {
         return {
-          id: item._id,
+          _id: item._id,
+          id : item.id,
           name: item.name,
           email: item.email,
           phone: item.phone,
@@ -808,7 +810,7 @@ const ManageStudents: React.FC = () => {
             placeholder="Enter Parent"
             {...addForm.getInputProps("parent")}
             data={parents.map((parent: RowDataParent) => {
-              return { value: parent.id, label: parent.name };
+              return { value: parent._id, label: parent.name };
             })}
             required
           />
@@ -893,6 +895,7 @@ const ManageStudents: React.FC = () => {
           <Select
             label="Parent"
             placeholder="Enter Parent"
+            defaultValue={editForm.values.parent}
             {...editForm.getInputProps("parent")}
             data={parents.map((parent: RowDataParent) => {
               return { value: parent.id, label: parent.name };
