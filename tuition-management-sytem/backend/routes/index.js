@@ -39,7 +39,7 @@ const Routes = (app) => {
 
   //Parent Routes
   app.post("/parent",protect.adminProtect, parentController.createParent);
-  app.get("/parent/:id", protect.adminProtect, parentController.getParent);
+  app.get("/parent", protect.adminProtect, parentController.getAllParents);
   app.put("/parent/:id" , protect.adminProtect, parentController.updateParent);
   app.delete("/parent/:id",protect.adminProtect,parentController.deleteParent);
    
@@ -52,6 +52,17 @@ const Routes = (app) => {
   //Student Routes
   app.post("/student", protect.adminProtect, studentController.createStudent);
   app.get("/student",protect.adminProtect, studentController.getAllStudents);
+  app.get("/student/:id", protect.adminProtect, studentController.getStudent);
+  app.put(
+    "/student/:id",
+    protect.adminProtect,
+    studentController.updateStudent
+  );
+  app.delete(
+    "/student/:id",
+    protect.adminProtect,
+    studentController.deleteStudent
+  );
 
 };
 
