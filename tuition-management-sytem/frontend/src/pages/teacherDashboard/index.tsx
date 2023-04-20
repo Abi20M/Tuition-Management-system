@@ -1,12 +1,7 @@
 import { createStyles, Container, Tabs } from "@mantine/core";
 import AdminHeader from "../../components/adminHeader";
-import ClassManage from "../../components/classManage";
+import ExpenseManage from "../../components/ManageTeacher";
 import WebsiteFooter from "../../components/Footer";
-import ManageParents from "../../components/ManageParents";
-import ManageStudents from "../../components/ManageStudents";
-import ManageTeachers from "../../components/ManageTeacher";
-//import ManageTeacher from "../../components/ManageTeacher";
-import ManageAdmins from "../../components/ManageAdmin";
 
 const useStyles = createStyles((theme) => ({
   tabs: {
@@ -17,6 +12,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   tabsList: {
+    
     borderBottom: "0 !important",
   },
 
@@ -45,20 +41,14 @@ const useStyles = createStyles((theme) => ({
 
 //create tabs List
 const tabs = [
-  "Dashboard",
-  "Adminstrators",
-  "Teachers",
-  "Students",
-  "Parents",
-  "Classes",
-  "Subjects",
-  "Fees",
-  "Exam"
+  "Overview",
+  "Expenses category",
+  "Past Expese Details"
 ];
 
-export const AdminDashboard = () => {
+export const ExpenseDashboard = () => {
   //change the tab Title
-  document.title = "Admin Dashboard - Tuition Management System";
+  document.title = "Expenses Dashboard - Tuition Management System";
 
   const { classes, theme, cx } = useStyles();
 
@@ -85,7 +75,7 @@ export const AdminDashboard = () => {
     {/* Tabs */}
     <Container>
       <Tabs
-        defaultValue="Dashboard"
+        defaultValue="Overview"
         variant="outline"
         classNames={{
           root: classes.tabs,
@@ -96,38 +86,20 @@ export const AdminDashboard = () => {
         <Tabs.List grow>{items}</Tabs.List>
 
         {/* Here you can add your own Component to here */}
-        <Tabs.Panel value="Dashboard">
-          <h1>Hello Dashboard</h1>
+        <Tabs.Panel value="Overview">
+          <h1>Hello Overview</h1>
         </Tabs.Panel>
-        <Tabs.Panel value="Adminstrators">
-          <ManageAdmins/>
+        <Tabs.Panel value="Expenses category">
+          <ExpenseManage/>
         </Tabs.Panel>
-        <Tabs.Panel value="Teachers">
-        <ManageTeachers/>
-        </Tabs.Panel>
-        <Tabs.Panel value="Students">
-          <ManageStudents/>
-        </Tabs.Panel>
-        <Tabs.Panel value="Parents">
-          <ManageParents/>
-          
-        </Tabs.Panel>
-        <Tabs.Panel value="Classes">
-          <ClassManage user={user}/>
-        </Tabs.Panel>
-        <Tabs.Panel value="Subjects">
-          <h1>Hello Subjects</h1>
-        </Tabs.Panel>
-        <Tabs.Panel value="Fees">
-          <h1>Fees Management</h1>
-        </Tabs.Panel>
-        <Tabs.Panel value="Exam">
-          <h1>Hello Exam Management</h1>
-        </Tabs.Panel>
+        <Tabs.Panel value="Past Expese Details">
+          <h1>Hello Past details</h1>
+        </Tabs.Panel>   
       </Tabs>
     </Container>
-    
+
     <WebsiteFooter/>
     </div>
   );
 };
+
