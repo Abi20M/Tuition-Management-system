@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 const generateAdminId = async () => {
   //get last class object, if there is a class, then return that class object, otherwise return empty array
   const lastAdminDetails = await admin.find().sort({ _id: -1 }).limit(1);
-  
+
   //check if the result array is empty or not, if its empty then return first Admin Id
   if (lastAdminDetails.length == 0) {
     return "ADM-001";
@@ -38,18 +38,17 @@ export const createAdmin = async (adminObj) => {
   if (emailExists) {
     throw new Error("Email already exists");
   } else {
-
-     //generate the Class ID  
+    //generate the Class ID
     const id = await generateAdminId();
 
     const newAdminObj = {
       name: adminObj.name,
-      id : id,
+      id: id,
       email: adminObj.email,
       password: adminObj.password,
       telephone: adminObj.telephone,
       address: adminObj.address,
-    }
+    };
 
     return await admin
       .create(newAdminObj)
@@ -120,7 +119,7 @@ export const deleteAdmin = async (id) => {
 };
 
 const adminLogin = async (email, password) => {
-   return await admin.findOne({ email }).then((data) => {
+  return await admin.findOne({ email }).then((data) => {
     if (data) {
       if (bcrypt.compareSync(password, data.password)) {
         //create access token if the password is correct
@@ -138,15 +137,14 @@ const adminLogin = async (email, password) => {
         //create new Object
         const newAdminObj = {
           _id: data._id,
-          adminId : data.adminId,
+          adminId: data.adminId,
           email: data.email,
           name: data.name,
           telephone: data.telephone,
           address: data.address,
           accessToken: acessToken,
         };
-        return newAdminObj;//return new Object with accessToken
-
+        return newAdminObj; //return new Object with accessToken
       } else {
         throw new Error("Password is mismatch");
       }
@@ -156,6 +154,18 @@ const adminLogin = async (email, password) => {
   });
 };
 
+export const getAdminCountService = async () => {
+   return await admin
+    .countDocuments()
+    .then((data) => {
+      return data;
+    })
+    .catch((error) =>{
+      throw new Error(error.message);
+    });
+    
+};
+
 module.exports = {
   adminLogin,
   createAdmin,
@@ -163,4 +173,5 @@ module.exports = {
   getAllAdmins,
   updateAdmin,
   deleteAdmin,
+  getAdminCountService,
 };
