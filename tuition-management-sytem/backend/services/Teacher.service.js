@@ -1,7 +1,7 @@
 import teacher from "../models/teacher.model";
 import Class from "../models/class.model";
 import student from "../models/student.model";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 
