@@ -3,12 +3,54 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 
+//generate Parent Id
+const generateParentId = async () => {
+  //get last parent object, if there is a parent, then return that parent object, otherwise return empty array
+  const lastParentDetails = await parent.find().sort({ _id: -1 }).limit(1);
+  
+  //check if the result array is empty or not, if its empty then return first parent Id
+  if (lastParentDetails.length == 0) {
+    return "PTD-001";
+  }
+
+  //if array is not null, last parent object id
+  const parentId = lastParentDetails.map((data) => {
+    return data.id;
+  });
+
+  //then we get the Integer value from the last part of the ID
+  const oldParentId = parseInt(parentId[0].split("-")[1]);
+
+  const newParentId = oldParentId + 1; //then we add 1 to the past value
+
+  //then we return the id according to below conditions
+  if (newParentId >= 100) {
+    return `PTD-${newParentId}`;
+  } else if (newParentId >= 10) {
+    return `PTD-0${newParentId}`;
+  } else {
+    return `PTD-00${newParentId}`;
+  }
+};
+
 export const createParent = async (parentObj) => {
     const emailExists = await parent.findOne({ email: parentObj.email});
     if (emailExists) {
         throw new Error("Email already exists");
 
     } else{
+
+      //generate Parent Id
+      const ptdId = await generateParentId();
+
+      //create new student obj with custom student ID
+      const newParentObj = {
+        id : ptdId,
+        name : parentObj.name,
+        email: parentObj.email,
+        phone: parentObj.phone,
+      }
+
         return await parent
             .create(parentObj)
             .then(async (data) => {
