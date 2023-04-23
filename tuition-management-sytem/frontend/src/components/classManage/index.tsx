@@ -753,7 +753,7 @@ const ClassManage = ({ user }: adminName) => {
       });
   };
 
-  //testing the get All class Details
+  //fetch all detailss
   useEffect(() => {
     const fetch = async () => {
       showNotification({

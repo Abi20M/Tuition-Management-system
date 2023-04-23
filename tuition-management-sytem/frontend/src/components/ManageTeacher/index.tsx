@@ -19,14 +19,15 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconSearch,
+  IconFileAnalytics,
 } from "@tabler/icons";
 import { IconEdit, IconTrash } from "@tabler/icons";
 import { openConfirmModal } from "@mantine/modals";
 import { showNotification, updateNotification } from "@mantine/notifications";
 import TeacherAPI from "../../API/teacherAPI";
 import { IconCheck, IconAlertTriangle } from "@tabler/icons";
-// import { PDFDownloadLink } from "@react-pdf/renderer";
-// import { ClassPDF } from "../PDFRender/ClassPDFTemplate";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { TeacherPDF } from "../PDFRender/TeacherPDFTemplate";
 import { useForm } from "@mantine/form";
 
 //Interface for teacher data - (Raw data)
@@ -133,9 +134,27 @@ function sortData(
   );
 }
 
-const ManageTeachers: React.FC = () => {
+  //get current Full Date
+  const today = new Date();
+
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const date = today.getDate();
+
+  interface adminName {
+    user: {
+      name: string;
+      email:string;
+    };
+  }
+
+const ManageTeachers = ({ user }: adminName) => {
   const [data, setData] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(true);
+
+  //set admin name
+  const adminName = user.name;
+
 
   // fetch teacher data
   useEffect(() => {
@@ -573,8 +592,35 @@ const ManageTeachers: React.FC = () => {
             icon={<IconSearch size={14} stroke={1.5} />}
             value={search}
             onChange={handleSearchChange}
-            sx={{ width: "300px" }}
+            sx={{ width: "475px" }}
           />
+
+
+          
+
+          {/* download Report button */}
+          <PDFDownloadLink
+            document={<TeacherPDF data={data} user={adminName} />}
+            fileName={`TEACHERDETAILS_${year}_${month}_${date}`}
+          >
+            {({ loading }) =>
+              loading ? (
+                <Button
+                  color="red"
+                  disabled
+                  loading
+                  leftIcon={<IconFileAnalytics size={16} />}
+                >
+                  Generating...
+                </Button>
+              ) : (
+                <Button color="red" leftIcon={<IconFileAnalytics size={16} />}>
+                  Generate Report
+                </Button>
+              )
+            }
+          </PDFDownloadLink>
+
           <Button
             variant="gradient"
             gradient={{ from: "indigo", to: "cyan" }}
