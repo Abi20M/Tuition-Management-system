@@ -12,10 +12,12 @@ const Routes = (app) => {
   app.post("/admin/login", loginAdmin);
   app.post("/admin", protect.adminProtect, adminController.createAdmin);
   app.get("/admin", protect.adminProtect, adminController.getAllAdmins);
+  app.get("/admin/count",protect.adminProtect, adminController.getAdminCount);
   app.get("/admin/:id", protect.adminProtect, adminController.getAdmin);
   app.put("/admin/:id",protect.adminProtect,adminController.updateAdmin);
   app.delete("/admin/:id",protect.adminProtect, adminController.deleteAdmin);
-  
+
+
   //class Routes
   app.get("/class",protect.adminProtect,classController.getAllClasses);
   app.get("/class/:id",protect.adminProtect,classController.getEnrolledStudentDetails);
@@ -25,6 +27,8 @@ const Routes = (app) => {
   app.put("/class/edit/:id",protect.adminProtect,classController.editClassDetails);
   app.put("/enroll",protect.adminProtect, classController.enrollStudent)  
   app.put("/class/unenroll",protect.adminProtect,classController.unEnrollStudent);
+
+
   //expense Routes
   app.get("/expense",protect.adminProtect,expenseController.getAllExpenses);
   app.post("/expense",protect.adminProtect,expenseController.createExpense);
