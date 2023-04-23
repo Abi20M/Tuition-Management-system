@@ -30,8 +30,11 @@ class ParentAPI {
     phone: string;
   }) => {
     let parent = {
-      //id : values.id,
+      id : values.id,
       name: values.name,
+      email:values.email,
+      phone:values.phone
+
     };
     return axios.put(
       `${BASE_URL}/parent/${values._id}`,
