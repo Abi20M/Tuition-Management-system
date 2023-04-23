@@ -30,15 +30,13 @@ import { IconAlertTriangle, IconCheck } from "@tabler/icons";
 import DarkLogo from "../../../assets/darkMainLogo.png";
 import lightLogo from '../../../assets/logo1.png';
 
-//set the page title
-document.title = "Admin Login - Tuition Management System";
+
 
 //create a Custom style class
 const useStyles = createStyles((theme) => ({
   form: {
-    borderLeft: `1px solid ${
-      theme.colorScheme === "dark" ? theme.colors.gray[8] : theme.colors.gray[3]
-    }`,
+    borderLeft: `1px solid ${theme.colorScheme === "dark" ? theme.colors.gray[8] : theme.colors.gray[3]
+      }`,
     [`@media (max-width: ${theme.breakpoints.sm}px)`]: {
       maxWidth: "100%",
     },
@@ -104,6 +102,10 @@ const validateAdmin = (values: {
 };
 
 export const AdminLoginPage = () => {
+
+  //set the page title
+  document.title = "Admin Login - Tuition Management System";
+
   const { classes } = useStyles();
 
   //select color mode (DARK, LIGHT)
@@ -155,7 +157,7 @@ export const AdminLoginPage = () => {
               <Paper className={classes.form}>
                 {/* system Logo */}
                 <Center>
-                  <Image src={dark ? DarkLogo : lightLogo} width={75} height={75} mt={25}/>
+                  <Image src={dark ? DarkLogo : lightLogo} width={75} height={75} mt={25} />
                 </Center>
                 <Title pt={"lg"} align="center" className={classes.title}>
                   Welcome Back to Sysro!

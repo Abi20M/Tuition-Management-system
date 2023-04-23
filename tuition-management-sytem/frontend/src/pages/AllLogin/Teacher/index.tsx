@@ -25,8 +25,7 @@ import {
   import lightLogo from '../../../assets/logo1.png';
   import teacherLogin from "../../../assets/examManage.jpg"
   
-  //set the page title
-  document.title = "Teacher manager - Tuition Management System";
+  
   
   //create a Custom style class
   const useStyles = createStyles((theme) => ({
@@ -101,6 +100,10 @@ import {
   };
   
   export const TeacherLogin = () => {
+    
+    //set the page title
+    document.title = "Teacher manager - Tuition Management System";
+
     const { classes } = useStyles();
   
     //select color mode (DARK, LIGHT)
