@@ -59,6 +59,10 @@ export class adminAPI {
   static getExamsByStudentId = (id: string) => {
     return axios.get(`${BASE_URL}/student/${id}/exams`, requestConfigJson);
   };
+
+  static getAdminCount = () =>{
+    return axios.get(`${BASE_URL}/admin/count`,requestConfigJson);
+  };
 }
 
 export default adminAPI;
