@@ -152,6 +152,7 @@ const ManageParents: React.FC = () => {
       const data = result.map((item: any) => {
         return {
           _id: item._id,
+          id : item.id,
           name: item.name,
           email: item.email,
           phone: item.phone,

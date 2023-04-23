@@ -48,11 +48,12 @@ export const createParent = async (parentObj) => {
         id : ptdId,
         name : parentObj.name,
         email: parentObj.email,
+        password : parentObj.password,
         phone: parentObj.phone,
       }
-
+      
         return await parent
-            .create(parentObj)
+            .create(newParentObj)
             .then(async (data) => {
                 await data.save();
                 return data;
