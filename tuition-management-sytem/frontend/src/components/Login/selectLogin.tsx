@@ -77,7 +77,7 @@ export const SelectLogin = React.forwardRef((props, ref: any) => {
                 fullWidth
                 mt="md"
                 component="a"
-                href="teacher/login"
+                href="/teacher/login"
               >
                 Login as a Teacher
               </Button>
@@ -110,7 +110,7 @@ export const SelectLogin = React.forwardRef((props, ref: any) => {
                 fullWidth
                 mt="md"
                 component="a"
-                href="student/login"
+                href="/student/login"
               >
                 Login as a Student
               </Button>
@@ -143,7 +143,7 @@ export const SelectLogin = React.forwardRef((props, ref: any) => {
                 fullWidth
                 mt="md"
                 component="a"
-                href="parent/login"
+                href="/parent/login"
               >
                 Login as a Parent
               </Button>
@@ -223,7 +223,7 @@ export const SelectLogin = React.forwardRef((props, ref: any) => {
                 fullWidth
                 mt="md"
                 component="a"
-                href="financial/login"
+                href="/financial/login"
               >
                 Manage Expenses
               </Button>
@@ -257,7 +257,7 @@ export const SelectLogin = React.forwardRef((props, ref: any) => {
                 fullWidth
                 mt="md"
                 component="a"
-                href="instructor/login"
+                href="attendance/login"
               >
                 Manage Attendance
               </Button>

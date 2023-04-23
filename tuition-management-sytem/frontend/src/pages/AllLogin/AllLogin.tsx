@@ -9,10 +9,10 @@ const useStyles = createStyles((theme) => ({
   wrapper: {
     position: 'relative',
     paddingTop: 200,
-    paddingBottom:100,
-    height : 650,
+    paddingBottom: 100,
+    height: 650,
     backgroundImage:
-    'url(https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80)',
+      'url(https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80)',
     backgroundSize: 'cover',
     backgroundPosition: 'center',
 
@@ -29,7 +29,7 @@ const useStyles = createStyles((theme) => ({
 
   title: {
     fontWeight: 800,
-    fontSize:40,
+    fontSize: 40,
     letterSpacing: -1,
     paddingLeft: theme.spacing.md,
     paddingRight: theme.spacing.md,
@@ -51,8 +51,8 @@ const useStyles = createStyles((theme) => ({
   description: {
     color: theme.colors.gray[0],
     textAlign: 'center',
-    paddingTop : "15px",
-    paddingBottom : "15px",
+    paddingTop: "15px",
+    paddingBottom: "15px",
 
     [theme.fn.smallerThan('xs')]: {
       fontSize: theme.fontSizes.md,
@@ -98,19 +98,22 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-//Home page tab title
-document.title = "SYSRO - Tuition Management System"
+
 
 export const AllLogin = () => {
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const { classes,cx } = useStyles();
+
+  //Home page tab title
+  document.title = "SYSRO - Tuition Management System";
   
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const { classes, cx } = useStyles();
+
   const loginSection = useRef(null);
 
   const dark = colorScheme === "dark";
 
-  const handleScroll = (elmRef: any) =>{
-    window.scrollTo({top:elmRef.current.offsetTop, behavior: "smooth"})
+  const handleScroll = (elmRef: any) => {
+    window.scrollTo({ top: elmRef.current.offsetTop, behavior: "smooth" })
   }
   return (
     <Box>
@@ -149,59 +152,59 @@ export const AllLogin = () => {
       </Box> */}
 
       <div className={classes.wrapper}>
-      <Overlay color="#000" opacity={0.65} zIndex={1} />      
-      <div className={classes.inner}>
+        <Overlay color="#000" opacity={0.65} zIndex={1} />
+        <div className={classes.inner}>
 
-      <Grid>
-        <Grid.Col>      
-          <Image
-              src={darkMianLogo}
-              style={{
-                width: 150,
-                height: 100,
-                marginLeft: "auto",
-                marginRight: "auto",
-                marginBottom: "70px",
-                marginTop: "-150px",
-              }}
-              alt="Business Logo"
-              radius="lg"
-            /></Grid.Col>
+          <Grid>
             <Grid.Col>
-              <AdminLoginDarkMode/>
+              <Image
+                src={darkMianLogo}
+                style={{
+                  width: 150,
+                  height: 100,
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  marginBottom: "70px",
+                  marginTop: "-150px",
+                }}
+                alt="Business Logo"
+                radius="lg"
+              /></Grid.Col>
+            <Grid.Col>
+              <AdminLoginDarkMode />
             </Grid.Col>
-      </Grid>
+          </Grid>
 
-        
-        <Title className={classes.title}>
-        <Text component="span" inherit className={classes.highlight}>
-            Sysro
-          </Text>
-          {''} Tuition Management System 
 
-        </Title>
+          <Title className={classes.title}>
+            <Text component="span" inherit className={classes.highlight}>
+              Sysro
+            </Text>
+            {''} Tuition Management System
 
-        <Container size={680}>
-          <Text size="lg" className={classes.description}>
-          Welcome to our Tuition Management System, Sysro Institute is a well-established tuition center located in Ruwanwella, Sri Lanka. The
-          institute has been providing quality education to students for over a decade, catering to students
-          from grade 1 up to A-levels. With a team of highly qualified and experienced teachers, Sysro
-          Institute is known for its commitment to delivering excellent academic results and ensuring the
-          overall development of its students.
-          </Text>
-        </Container>
+          </Title>
 
-        <div className={classes.controls}>
-          <Button className={classes.control} variant="white" size="lg" onClick={()=>handleScroll(loginSection)}>
-            Get started
-          </Button>
+          <Container size={680}>
+            <Text size="lg" className={classes.description}>
+              Welcome to our Tuition Management System, Sysro Institute is a well-established tuition center located in Ruwanwella, Sri Lanka. The
+              institute has been providing quality education to students for over a decade, catering to students
+              from grade 1 up to A-levels. With a team of highly qualified and experienced teachers, Sysro
+              Institute is known for its commitment to delivering excellent academic results and ensuring the
+              overall development of its students.
+            </Text>
+          </Container>
+
+          <div className={classes.controls}>
+            <Button className={classes.control} variant="white" size="lg" onClick={() => handleScroll(loginSection)}>
+              Get started
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
-    {/* <div ref={loginSection} style={{marginTop : "10px"}}> */}
-      <SelectLogin ref={loginSection}/>
-    {/* </div> */}
-      
+      {/* <div ref={loginSection} style={{marginTop : "10px"}}> */}
+      <SelectLogin ref={loginSection} />
+      {/* </div> */}
+
     </Box>
   );
 };
