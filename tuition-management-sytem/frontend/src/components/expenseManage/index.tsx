@@ -132,6 +132,7 @@ function sortData(
   );
 }
 
+
 const ExpenseManage: React.FC = () => {
   const [data, setData] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -603,13 +604,18 @@ const ExpenseManage: React.FC = () => {
           >
             Add expense
           </Button>
+
         </Box>
+        
+
         <ScrollArea>
           <Table
             horizontalSpacing="md"
             verticalSpacing="xs"
-            sx={{ tableLayout: "auto", width: "100%" }}
+            sx={{ tableLayout: "auto", width: "100%", }}
           >
+
+            
             <thead>
               <tr>
                 <Th
