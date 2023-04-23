@@ -32,8 +32,7 @@ import {
 import { IconAlertTriangle, IconCheck } from "@tabler/icons";
   
   //set the page title
-  document.title = "Admin Login - Tuition Management System";
-  
+  document.title = "Student Login"
   //create a Custom style class
   const useStyles = createStyles((theme) => ({
     form: {
