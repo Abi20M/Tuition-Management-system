@@ -125,6 +125,9 @@ export const updateParent = async (id, parentObj) => {
     });
   };
 
+  export const getParentCountService = async () =>{
+    return await parent.countDocuments();
+  }
   module.exports = {
     createParent,
     getParent,
@@ -133,6 +136,6 @@ export const updateParent = async (id, parentObj) => {
     deleteParent,
     loginParent,
     verifyParent,
-    
+    getParentCountService
   };
 

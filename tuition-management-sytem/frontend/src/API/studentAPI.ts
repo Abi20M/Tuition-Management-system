@@ -81,6 +81,10 @@ class StudentAPI {
     const studentId = student._id;
     return axios.get(`${BASE_URL}/student/${studentId}/exams`, requestConfigJson);
   };
+
+  static getStudentCount = ()=>{
+    return axios.get(`${BASE_URL}/students/count`,requestConfigJson);
+  }
 }
 
 export default StudentAPI;

@@ -4,37 +4,93 @@ import { IconUserBolt } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 import adminAPI from "../../API/adminAPI";
 import { showNotification } from "@mantine/notifications";
+import TeacherAPI from "../../API/teacherAPI";
+import StudentAPI from "../../API/studentAPI";
+import ParentAPI from "../../API/ParentAPI";
 
 const AdminStats = () => {
   const [adminCount, setAdminCount] = useState(0);
+  const [teacherCount, setTeacherCount] = useState(0);
+  const [studentCount, setStudentCount] = useState(0);
+  const [parentCount, setParentCount] = useState(0);
+
+  const fetchUserCounts = async () => {
+    await adminAPI
+      .getAdminCount()
+      .then((res) => {
+        setAdminCount(res.data);
+      })
+      .catch((error) => {
+        showNotification({
+          id: "while-fetching-halls",
+          disallowClose: false,
+          autoClose: 2000,
+          title: "Something Went Wrong!",
+          message: "There is an error while fetching admin count",
+          color: "red",
+          icon: <IconX />,
+          loading: false,
+        });
+      });
+
+    await TeacherAPI.getTeacherCount()
+      .then((res) => {
+        setTeacherCount(res.data);
+      })
+      .catch((error) => {
+        showNotification({
+          id: "while-fetching-halls",
+          disallowClose: false,
+          autoClose: 2000,
+          title: "Something Went Wrong!",
+          message: "There is an error while fetching Teacher count",
+          color: "red",
+          icon: <IconX />,
+          loading: false,
+        });
+      });
+
+    await StudentAPI.getStudentCount()
+      .then((res) => {
+        setStudentCount(res.data);
+      })
+      .catch((error) => {
+        showNotification({
+          id: "while-fetching-halls",
+          disallowClose: false,
+          autoClose: 2000,
+          title: "Something Went Wrong!",
+          message: "There is an error while fetching Teacher count",
+          color: "red",
+          icon: <IconX />,
+          loading: false,
+        });
+      });
+
+    await ParentAPI.getParentCount()
+      .then((res) => {
+        setParentCount(res.data);
+      })
+      .catch((error) => {
+        showNotification({
+          id: "while-fetching-halls",
+          disallowClose: false,
+          autoClose: 2000,
+          title: "Something Went Wrong!",
+          message: "There is an error while fetching Teacher count",
+          color: "red",
+          icon: <IconX />,
+          loading: false,
+        });
+      });
+  };
 
   useEffect(() => {
-    const fetchUserCounts = async () => {
-      await adminAPI
-        .getAdminCount()
-        .then((res) => {
-            console.log(res.data);
-          setAdminCount(res.data);
-        })
-        .catch((error) => {
-          showNotification({
-            id: "while-fetching-halls",
-            disallowClose: false,
-            autoClose: 2000,
-            title: "Something Went Wrong!",
-            message: "There is an error while fetching admin count",
-            color: "red",
-            icon: <IconX />,
-            loading: false,
-          });
-        });
-
-      
-    };
-
-
     fetchUserCounts();
   }, []);
+
+  //call above function in every 5mins to collect updated data
+  setInterval(fetchUserCounts,300000)
 
   return (
     <Group position="apart" p={5}>
@@ -77,7 +133,7 @@ const AdminStats = () => {
         </Group>
         <Group position="center">
           <Text fz={40} fw={"bolder"}>
-            10
+            {teacherCount}
           </Text>
         </Group>
       </Paper>
@@ -99,7 +155,7 @@ const AdminStats = () => {
         </Group>
         <Group position="center">
           <Text fz={40} fw={"bolder"}>
-            10
+            {studentCount}
           </Text>
         </Group>
       </Paper>
@@ -121,7 +177,7 @@ const AdminStats = () => {
         </Group>
         <Group position="center">
           <Text fz={40} fw={"bolder"}>
-            10
+            {parentCount}
           </Text>
         </Group>
       </Paper>
