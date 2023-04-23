@@ -17,7 +17,7 @@ export const createStudent = async (req, res, next) => {
     grade: req.body.grade,
     address: req.body.address,
     gender: req.body.gender,
-    parent: mongoose.Types.ObjectId(),
+    parent: req.body.parent,
   });
 
   await studentService

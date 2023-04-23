@@ -1,12 +1,14 @@
-const mailgen = require("mailgen");
+import mailgen from 'mailgen';
 import 'dotenv/config';
 import mailConfig  from '../configs/nodeMailer.config';
 
 
 export const sendEnrollEmail = async (studentName, studentEmail, className) =>{
     
+    //import mail configs
     let mailTransporter = mailConfig.mailConfigs();
 
+    
     let MailGenerator = new mailgen({
         theme: "cerberus",
         product : {
@@ -33,15 +35,18 @@ export const sendEnrollEmail = async (studentName, studentEmail, className) =>{
         }
     };
     
+    //convert mailgen body into HTML
     let mail = MailGenerator.generate(email);
     
+    //nodemailer sending credentials
     let details = {
-        from : "sysroinfo@gmail.com",
+        from : process.env.CLIENT_EMAIL,
         to : `${studentEmail}`,
         subject : `You are enrolled in to the ${className}`,
         html : mail
     }
     
+    //send mail through nodemailer
     await mailTransporter.sendMail(details).then((data) =>{
         return data;
     }).catch((error) =>{

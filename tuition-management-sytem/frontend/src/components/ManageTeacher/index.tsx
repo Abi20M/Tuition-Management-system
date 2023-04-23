@@ -19,16 +19,20 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconSearch,
+  IconFileAnalytics,
 } from "@tabler/icons";
 import { IconEdit, IconTrash } from "@tabler/icons";
 import { openConfirmModal } from "@mantine/modals";
 import { showNotification, updateNotification } from "@mantine/notifications";
 import TeacherAPI from "../../API/teacherAPI";
 import { IconCheck, IconAlertTriangle } from "@tabler/icons";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { TeacherPDF } from "../PDFRender/TeacherPDFTemplate";
 import { useForm } from "@mantine/form";
 
 //Interface for teacher data - (Raw data)
 interface RowData {
+  _id: string,
   id: string;
   name: string;
   email: string;
@@ -130,9 +134,27 @@ function sortData(
   );
 }
 
-const ManageTeachers: React.FC = () => {
+  //get current Full Date
+  const today = new Date();
+
+  const year = today.getFullYear();
+  const month = today.getMonth() + 1;
+  const date = today.getDate();
+
+  interface adminName {
+    user: {
+      name: string;
+      email:string;
+    };
+  }
+
+const ManageTeachers = ({ user }: adminName) => {
   const [data, setData] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(true);
+
+  //set admin name
+  const adminName = user.name;
+
 
   // fetch teacher data
   useEffect(() => {
@@ -148,7 +170,8 @@ const ManageTeachers: React.FC = () => {
       const result = await getAllTeachers();
       const data = result.map((item: any) => {
         return {
-          id: item._id,
+          _id: item._id,
+          id : item.id,
           name: item.name,
           email: item.email,
           phone: item.phone,
@@ -184,7 +207,8 @@ const ManageTeachers: React.FC = () => {
 
   //edit teacher form
   const editTeacher = async (values: {
-    id: string;
+    _id: string;
+    id : string,
     name: string;
     email: string;
     phone: string;
@@ -210,9 +234,10 @@ const ManageTeachers: React.FC = () => {
         editForm.reset();
         setEditOpened(false);
         const newData = data.map((item) => {
-          if (item.id === values.id) {
+          if (item._id === values._id) {
             return {
-              id: values.id,
+              _id: values._id,
+              id : values.id,
               name: values.name,
               email: values.email,
               phone: values.phone,
@@ -271,7 +296,8 @@ const ManageTeachers: React.FC = () => {
         const newData = [
           ...data,
           {
-            id: response.data._id,
+            _id: response.data._id,
+            id : response.data.id,
             name: values.name,
             email: values.email,
             phone: values.phone,
@@ -317,7 +343,7 @@ const ManageTeachers: React.FC = () => {
           icon: <IconCheck size={16} />,
           autoClose: 5000,
         });
-        const newData = data.filter((item) => item.id !== id);
+        const newData = data.filter((item) => item._id !== id);
         const payload = {
           sortBy: null,
           reversed: false,
@@ -342,6 +368,7 @@ const ManageTeachers: React.FC = () => {
   const editForm = useForm({
     validateInputOnChange: true,
     initialValues: {
+      _id : "",
       id: "",
       name: "",
       email: "",
@@ -435,7 +462,7 @@ const ManageTeachers: React.FC = () => {
 
   //create rows
   const rows = sortedData.map((row) => (
-    <tr key={row.id}>
+    <tr key={row._id}>
       <td>{row.id}</td>
       <td>{row.name}</td>
       <td>{row.email}</td>
@@ -446,6 +473,7 @@ const ManageTeachers: React.FC = () => {
           leftIcon={<IconEdit size={14} />}
           onClick={() => {
             editForm.setValues({
+              _id : row._id,
               id: row.id,
               name: row.name,
               email: row.email,
@@ -460,7 +488,7 @@ const ManageTeachers: React.FC = () => {
         <Button
           color="red"
           leftIcon={<IconTrash size={14} />}
-          onClick={() => openDeleteModal(row.id)}
+          onClick={() => openDeleteModal(row._id)}
           sx={{ margin: "5px", width: "100px" }}
         >
           Delete
@@ -564,8 +592,35 @@ const ManageTeachers: React.FC = () => {
             icon={<IconSearch size={14} stroke={1.5} />}
             value={search}
             onChange={handleSearchChange}
-            sx={{ width: "300px" }}
+            sx={{ width: "475px" }}
           />
+
+
+          
+
+          {/* download Report button */}
+          <PDFDownloadLink
+            document={<TeacherPDF data={data} user={adminName} />}
+            fileName={`TEACHERDETAILS_${year}_${month}_${date}`}
+          >
+            {({ loading }) =>
+              loading ? (
+                <Button
+                  color="red"
+                  disabled
+                  loading
+                  leftIcon={<IconFileAnalytics size={16} />}
+                >
+                  Generating...
+                </Button>
+              ) : (
+                <Button color="red" leftIcon={<IconFileAnalytics size={16} />}>
+                  Generate Report
+                </Button>
+              )
+            }
+          </PDFDownloadLink>
+
           <Button
             variant="gradient"
             gradient={{ from: "indigo", to: "cyan" }}
