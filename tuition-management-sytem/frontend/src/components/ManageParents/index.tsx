@@ -31,6 +31,7 @@ import { useForm } from "@mantine/form";
 
 //Interface for parent data - (Raw data)
 interface RowData {
+  _id: string;
   id: string;
   name: string;
   email: string;
@@ -150,7 +151,8 @@ const ManageParents: React.FC = () => {
       const result = await getAllParents();
       const data = result.map((item: any) => {
         return {
-          id: item._id,
+          _id: item._id,
+          id : item.id,
           name: item.name,
           email: item.email,
           phone: item.phone,
@@ -186,7 +188,8 @@ const ManageParents: React.FC = () => {
 
   //edit parent form
   const editParent = async (values: {
-    id: string;
+    _id: string;
+    id : string;
     name: string;
     email: string;
     phone: string;
@@ -212,8 +215,9 @@ const ManageParents: React.FC = () => {
         editForm.reset();
         setEditOpened(false);
         const newData = data.map((item) => {
-          if (item.id === values.id) {
+          if (item._id === values._id) {
             return {
+              _id: values._id,
               id: values.id,
               name: values.name,
               email: values.email,
@@ -273,7 +277,8 @@ const ManageParents: React.FC = () => {
         const newData = [
           ...data,
           {
-            id: response.data._id,
+            _id: response.data._id,
+            id : response.data.id,
             name: values.name,
             email: values.email,
             phone: values.phone,
@@ -319,7 +324,7 @@ const ManageParents: React.FC = () => {
           icon: <IconCheck size={16} />,
           autoClose: 5000,
         });
-        const newData = data.filter((item) => item.id !== id);
+        const newData = data.filter((item) => item._id !== id);
         const payload = {
           sortBy: null,
           reversed: false,
@@ -344,6 +349,7 @@ const ManageParents: React.FC = () => {
   const editForm = useForm({
     validateInputOnChange: true,
     initialValues: {
+      _id: "",
       id: "",
       name: "",
       email: "",
@@ -437,7 +443,7 @@ const ManageParents: React.FC = () => {
 
   //create rows
   const rows = sortedData.map((row) => (
-    <tr key={row.id}>
+    <tr key={row._id}>
       <td>{row.id}</td>
       <td>{row.name}</td>
       <td>{row.email}</td>
@@ -448,6 +454,7 @@ const ManageParents: React.FC = () => {
           leftIcon={<IconEdit size={14} />}
           onClick={() => {
             editForm.setValues({
+              _id: row._id,
               id: row.id,
               name: row.name,
               email: row.email,
@@ -462,7 +469,7 @@ const ManageParents: React.FC = () => {
         <Button
           color="red"
           leftIcon={<IconTrash size={14} />}
-          onClick={() => openDeleteModal(row.id)}
+          onClick={() => openDeleteModal(row._id)}
           sx={{ margin: "5px", width: "100px" }}
         >
           Delete
