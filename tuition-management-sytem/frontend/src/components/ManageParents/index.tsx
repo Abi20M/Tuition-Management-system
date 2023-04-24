@@ -598,11 +598,9 @@ const ManageParents= ({ user }: adminName) => {
            icon={<IconSearch size={14} stroke={1.5} />}
            value={search}
            onChange={handleSearchChange}
-           sx={{ minWidth: 600 }}
+           sx={{ minWidth: 475 }}
           />
 
-    
-          {/* download Report button */}
 
           {/* download Report button */}
           <PDFDownloadLink
@@ -628,14 +626,7 @@ const ManageParents= ({ user }: adminName) => {
           </PDFDownloadLink>
          
 
-          {/* <Button
-            variant="gradient"
-            gradient={{ from: "indigo", to: "cyan" }}
-            sx={{ width: "200px", marginRight: "16px" }}
-            onClick={() => setOpened(true)}
-          >
-            Generate Report
-          </Button> */}
+         
 
     
           

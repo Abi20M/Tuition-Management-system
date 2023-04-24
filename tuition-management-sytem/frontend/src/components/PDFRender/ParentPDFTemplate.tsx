@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
       flexDirection: "row",
     },
     tableCol: {
-      width: "12.5%",
+      width: "25%",
       borderStyle: "solid",
       borderWidth: 1,
       borderLeftWidth: 0,
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     },
     HeaderCol: {
       backgroundColor: "#eff5f5",
-      width: "12.5%",
+      width: "25%",
       borderStyle: "solid",
       borderWidth: 1,
       borderLeftWidth: 0,
@@ -139,6 +139,9 @@ export const ParentPDF = ({ data, user}: any) => {
                   </View>
                   <View style={styles.HeaderCol}>
                     <Text style={styles.headerFont}>Email</Text>
+                  </View>
+                  <View style={styles.HeaderCol}>
+                    <Text style={styles.headerFont}>Phone</Text>
                   </View>
                 </View>  
                  
