@@ -1,15 +1,18 @@
 import Teacher from "../models/teacher.model";
 import teacherServices from "../services/Teacher.service";
-
+import bcrypt from 'bcrypt';
 
 //create teacher function
 export const createTeacher = async (req, res, next) => {
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
     // create a teacher object with details
     const teacherObj = new Teacher({
       name: req.body.name,
       email: req.body.email,
-      password: req.body.password,
+      password: hashedPassword,
       phone: req.body.phone,
     });
   
@@ -77,7 +80,16 @@ export const createTeacher = async (req, res, next) => {
       });
   };
   
-  
+  export const teacherLogin = async (req, res, next) => {
+    await teacherServices.loginTeacher(req.body.email, req.body.password)
+      .then((data) => {
+        req.handleResponse.successRespond(res)(data);
+        next();
+      })
+      .catch((error) => {
+        req.handleResponse.errorRespond(res)(error);
+      });
+  };
   
   
   module.exports = {
@@ -85,4 +97,5 @@ export const createTeacher = async (req, res, next) => {
     getAllTeacher,
     deleteTeacher,
     editTeacher,
+    teacherLogin
   };
