@@ -19,6 +19,7 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconSearch,
+  IconFileAnalytics,
 } from "@tabler/icons";
 import { IconEdit, IconTrash } from "@tabler/icons";
 import { openConfirmModal } from "@mantine/modals";
@@ -26,6 +27,8 @@ import { showNotification, updateNotification } from "@mantine/notifications";
 import ExpensesAPI from "../../API/expensesAPI";
 import { IconCheck, IconAlertTriangle } from "@tabler/icons";
 import { useForm } from "@mantine/form";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { ExpensePDF } from "../PDFRender/ExpensePDFTemplate";
 
 //Interface for expense data - (Raw data)
 interface RowData {
@@ -132,10 +135,25 @@ function sortData(
   );
 }
 
+ //get current Full Date
+ const today = new Date();
 
-const ExpenseManage: React.FC = () => {
+ const year = today.getFullYear();
+ const month = today.getMonth() + 1;
+ const date = today.getDate();
+
+ interface adminName {
+   user: {
+     name: string;
+     email:string;
+   };
+ }
+
+const ExpenseManage =  ({ user }: adminName) => {
   const [data, setData] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const adminName = user.name;
 
   // fetch expense data
   useEffect(() => {
@@ -594,12 +612,35 @@ const ExpenseManage: React.FC = () => {
             icon={<IconSearch size={14} stroke={1.5} />}
             value={search}
             onChange={handleSearchChange}
-            sx={{ minWidth: 600 }}
+            sx={{ minWidth: 475 }}
           />
-          <Button
+          {/* download Report button */}
+          <PDFDownloadLink
+            document={<ExpensePDF data={data} user={adminName} />}
+            fileName={`EXPENSEDETAILS_${year}_${month}_${date}`}
+          >
+            {({ loading }) =>
+              loading ? (
+                <Button
+                  color="red"
+                  disabled
+                  loading
+                  leftIcon={<IconFileAnalytics size={16} />}
+                >
+                  Generating...
+                </Button>
+              ) : (
+                <Button color="red" leftIcon={<IconFileAnalytics size={16} />}>
+                  Generate Report
+                </Button>
+              )
+            }
+          </PDFDownloadLink>
+
+          <Button 
             variant="gradient"
             gradient={{ from: "indigo", to: "cyan" }}
-            sx={{ width: "200px", marginRight: "20px" }}
+            sx={{ width: "170px", marginRight: "20px"}}
             onClick={() => setOpened(true)}
           >
             Add expense

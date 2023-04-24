@@ -90,7 +90,7 @@ export const ExpenseDashboard = () => {
           <h1>Hello Overview</h1>
         </Tabs.Panel>
         <Tabs.Panel value="Manage Expenses">
-          <ExpenseManage/>
+          <ExpenseManage user = {user}/>
         </Tabs.Panel>
         <Tabs.Panel value="Past Expenses Details">
           <h1>Hello Past details</h1>
