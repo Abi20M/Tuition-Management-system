@@ -40,7 +40,7 @@ const Routes = (app) => {
   app.post("/teacher",protect.adminProtect,teacherController.createTeacher);
   app.delete("/teacher/:id",protect.adminProtect,teacherController.deleteTeacher);
   app.put("/teacher/:id",protect.adminProtect,teacherController.editTeacher);
-
+  app.post("/teacher/login",teacherController.teacherLogin)
   //Parent Routes
   app.post("/parent",protect.adminProtect, parentController.createParent);
   app.get("/parent", protect.adminProtect, parentController.getAllParents);

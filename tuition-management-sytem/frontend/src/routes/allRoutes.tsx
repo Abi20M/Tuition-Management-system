@@ -56,10 +56,10 @@ export const AllRoutes = () => {
         </Route>   */}
 
 
-        {/* <Route path = "/teacher/" element = {<TeacherPrivateRoute/>}>
+        <Route path = "/teacher/" element = {<TeacherPrivateRoute/>}>
           <Route path = "/teacher/dashboard" element={<TeacherDashboard/>} />
 
-        </Route>   */}
+        </Route>  
 
               
       </Routes>
