@@ -198,6 +198,9 @@ export const getStudents = async (id) => {
     });
 };
 
+export const getTeacherCountService = async () =>{
+  return await teacher.countDocuments();
+}
 module.exports = {
   createTeacher,
   getTeacher,
@@ -207,6 +210,7 @@ module.exports = {
   loginTeacher,
   verifyTeacher,
   getStudents,
+  getTeacherCountService
 };
 
 

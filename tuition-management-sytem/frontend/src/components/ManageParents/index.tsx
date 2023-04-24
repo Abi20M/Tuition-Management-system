@@ -19,6 +19,7 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconSearch,
+  IconFileAnalytics,
 } from "@tabler/icons";
 import { IconEdit, IconTrash } from "@tabler/icons";
 import { openConfirmModal } from "@mantine/modals";
@@ -26,6 +27,8 @@ import { showNotification, updateNotification } from "@mantine/notifications";
 import ParentAPI from "../../API/ParentAPI";
 import { IconCheck, IconAlertTriangle } from "@tabler/icons";
 import { useForm } from "@mantine/form";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { ParentPDF } from "../PDFRender/ParentPDFTemplate";
 
 
 
@@ -69,6 +72,8 @@ const useStyles = createStyles((theme) => ({
     borderRadius: 21,
   },
 }));
+
+
 
 //Interface for Table header props
 interface ThProps {
@@ -133,9 +138,29 @@ function sortData(
   );
 }
 
-const ManageParents: React.FC = () => {
+ //get current Full Date
+ const today = new Date();
+
+ const year = today.getFullYear();
+ const month = today.getMonth() + 1;
+ const date = today.getDate();
+
+ interface adminName {
+   user: {
+     name: string;
+     email:string;
+   };
+ }
+
+const ManageParents= ({ user }: adminName) => {
   const [data, setData] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(true);
+
+
+  //set admin name
+  const adminName = user.name;
+
+  
 
   // fetch parent data
   useEffect(() => {
@@ -573,21 +598,35 @@ const ManageParents: React.FC = () => {
            icon={<IconSearch size={14} stroke={1.5} />}
            value={search}
            onChange={handleSearchChange}
-           sx={{ minWidth: 600 }}
+           sx={{ minWidth: 475 }}
           />
 
-    
+
           {/* download Report button */}
+          <PDFDownloadLink
+            document={<ParentPDF data={data} user={adminName} />}
+            fileName={`PARENTDETAILS_${year}_${month}_${date}`}
+          >
+            {({ loading }) =>
+              loading ? (
+                <Button
+                  color="red"
+                  disabled
+                  loading
+                  leftIcon={<IconFileAnalytics size={16} />}
+                >
+                  Generating...
+                </Button>
+              ) : (
+                <Button color="red" leftIcon={<IconFileAnalytics size={16} />}>
+                  Generate Report
+                </Button>
+              )
+            }
+          </PDFDownloadLink>
          
 
-          <Button
-            variant="gradient"
-            gradient={{ from: "indigo", to: "cyan" }}
-            sx={{ width: "200px", marginRight: "16px" }}
-            onClick={() => setOpened(true)}
-          >
-            Generate Report
-          </Button>
+         
 
     
           

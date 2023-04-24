@@ -25,6 +25,7 @@ import {
   IconChartBar,
   IconDots,
   IconLink,
+  IconFileAnalytics,
 } from "@tabler/icons";
 import { IconEdit, IconTrash } from "@tabler/icons";
 import { openConfirmModal } from "@mantine/modals";
@@ -35,6 +36,8 @@ import ParentAPI from "../../API/ParentAPI";
 
 import { IconCheck, IconAlertTriangle } from "@tabler/icons";
 import { useForm } from "@mantine/form";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { StudentPDF } from "../PDFRender/StudentPDFTemplate";
 
 
 
@@ -206,12 +209,28 @@ function sortData(
   );
 }
 
-const ManageStudents: React.FC = () => {
+//get current Full Date
+const today = new Date();
+
+const year = today.getFullYear();
+const month = today.getMonth() + 1;
+const date = today.getDate();
+
+interface adminName {
+  user: {
+    name: string;
+    email:string;
+  };
+}
+
+const ManageStudents = ({ user }: adminName) => {
   const [data, setData] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(true);
   const [parents, setParents] = useState<RowDataParent[]>([]);
   const [performanceOpened, setPerformanceOpened] = useState(false);
   const [performanceData, setPerformanceData] = useState(performanceDataSample);
+
+  const adminName = user.name;
 
   // fetch student data
   useEffect(() => {
@@ -942,17 +961,39 @@ const ManageStudents: React.FC = () => {
             icon={<IconSearch size={14} stroke={1.5} />}
             value={search}
             onChange={handleSearchChange}
-            sx={{ width: "600px" }}
+            sx={{ width: "475px" }}
           />
 
-          <Button
+          {/* <Button
             variant="gradient"
             gradient={{ from: "indigo", to: "cyan" }}
             sx={{ width: "200px", marginRight: "20px", marginLeft: 20 }}
           // onClick={() => setOpened(true)}
           >
             Generate Report
-          </Button>
+          </Button> */}
+           {/* download Report button */}
+           <PDFDownloadLink
+            document={<StudentPDF data={data} parent= {parents} user={adminName} />}
+            fileName={`STUDENTDETAILS_${year}_${month}_${date}`}
+          >
+            {({ loading }) =>
+              loading ? (
+                <Button
+                  color="red"
+                  disabled
+                  loading
+                  leftIcon={<IconFileAnalytics size={16} />}
+                >
+                  Generating...
+                </Button>
+              ) : (
+                <Button color="red" leftIcon={<IconFileAnalytics size={16} />}>
+                  Generate Report
+                </Button>
+              )
+            }
+          </PDFDownloadLink>
 
           <Button
             variant="gradient"

@@ -88,7 +88,7 @@ export const ParentDashboard = () => {
           <h1>Hello Overview</h1>
         </Tabs.Panel>
         <Tabs.Panel value="Children">
-          <ExpenseManage/>
+          {/* <ExpenseManage/> */}
         </Tabs.Panel>
         <Tabs.Panel value="Past Expese Details">
           <h1>Hello Past details</h1>
