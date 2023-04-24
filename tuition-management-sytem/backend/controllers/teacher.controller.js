@@ -4,7 +4,6 @@ import bcrypt from 'bcrypt';
 
 //create teacher function
 export const createTeacher = async (req, res, next) => {
-
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
@@ -15,70 +14,80 @@ export const createTeacher = async (req, res, next) => {
       password: hashedPassword,
       phone: req.body.phone,
     });
-  
-    //call to createTeacher function to create a object in the database
-    await teacherServices
-      .createTeacher(teacherObj)
-      .then((data) => {
-        req.handleResponse.successRespond(res)(data);
-        next();
-      })
-      .catch((error) => {
-        req.handleResponse.errorRespond(res)(error);
-        next();
-      });
-  };
-  
-  //get all teacher Details
-  export const getAllTeacher = async (req, res, next) => {
-    await teacherServices
-      .getAllTeacher()
-      .then((data) => {
-        req.handleResponse.successRespond(res)(data);
-        next();
-      })
-      .catch((error) => {
-        req.handleResponse.errorRespond(res)(error);
-        next();
-      });
-  };
-  
-  // delete a teacher
-  export const deleteTeacher = async (req, res, next) => {
-    const id = req.params.id;
-  
-    await teacherServices
-      .deleteTeacher(id)
-      .then((data) => {
-        req.handleResponse.successRespond(res)(data);
-        next();
-      })
-      .catch((error) => {
-        req.handleResponse.errorRespond(res)(error);
-        next();
-      });
-  };
 
-  export const editTeacher = async (req, res, next) => {
+  //call to createTeacher function to create a object in the database
+  await teacherServices
+    .createTeacher(teacherObj)
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+      next();
+    })
+    .catch((error) => {
+      req.handleResponse.errorRespond(res)(error);
+      next();
+    })
 
-    
-    const id = req.params.id;
-    const updateDetails ={
-      name : req.body.name,
-      email : req.body.email,
-      phone : req.body.phone,
-    }
-    await teacherServices
-      .updateTeacher(id, updateDetails)
-      .then((data) => {
-        req.handleResponse.successRespond(res)(data);
-        next();
-      })
-      .catch((error) => {
-        req.handleResponse.errorRespond(res)(error);
-        next();
-      });
+};
+
+//get all teacher Details
+export const getAllTeacher = async (req, res, next) => {
+  await teacherServices
+    .getAllTeacher()
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+      next();
+    })
+    .catch((error) => {
+      req.handleResponse.errorRespond(res)(error);
+      next();
+    });
+};
+
+// delete a teacher
+export const deleteTeacher = async (req, res, next) => {
+  const id = req.params.id;
+
+  await teacherServices
+    .deleteTeacher(id)
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+      next();
+    })
+    .catch((error) => {
+      req.handleResponse.errorRespond(res)(error);
+      next();
+    });
+};
+
+export const editTeacher = async (req, res, next) => {
+  const id = req.params.id;
+  const updateDetails = {
+    name: req.body.name,
+    email: req.body.email,
+    phone: req.body.phone,
   };
+  await teacherServices
+    .updateTeacher(id, updateDetails)
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+      next();
+    })
+    .catch((error) => {
+      req.handleResponse.errorRespond(res)(error);
+      next();
+    });
+};
+
+export const getTeacherCount = async (req, res) => {
+  await teacherServices.getTeacherCountService()
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+    })
+    .catch((error) => {
+      req.handleResponse.errorRespond(res)(error);
+    });
+};
+
   
   export const teacherLogin = async (req, res, next) => {
     await teacherServices.loginTeacher(req.body.email, req.body.password)
@@ -97,5 +106,6 @@ export const createTeacher = async (req, res, next) => {
     getAllTeacher,
     deleteTeacher,
     editTeacher,
-    teacherLogin
-  };
+    teacherLogin,
+    getTeacherCount,
+}

@@ -129,6 +129,9 @@ export const deleteStudent = async (id) => {
     });
 };
 
+export const getStudentCountService = async() =>{
+  return await student.countDocuments();
+}
 // export const loginStudent = async (email, password) => {
 //   return await student
 //     .findOne({ email })
@@ -193,6 +196,7 @@ module.exports = {
   getAllStudents,
   updateStudent,
   deleteStudent,
+  getStudentCountService
 //   loginStudent,
 //   verifyStudent,
 //   getExamsByStudentId,
