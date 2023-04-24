@@ -65,6 +65,12 @@ class TeacherAPI {
   static getExamsByStudentId = (id: string) => {
     return axios.get(`${BASE_URL}/student/${id}/exams`, requestConfig);
   };
+
+
+  // get Teacher count
+  static getTeacherCount = () =>{
+    return axios.get(`${BASE_URL}/teacher/count`,requestConfig);
+  }
 }
 
 export default TeacherAPI;

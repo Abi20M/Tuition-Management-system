@@ -111,6 +111,18 @@ export const getExamsByStudentId = async (req, res, next) => {
     });
 };
 
+export const getStudentCount = async (req, res) => {
+  await studentService
+    .getStudentCountService()
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+    })
+    .catch((err) => {
+      req.handleResponse.errorRespond(res)(err);
+    });
+};
+
+
 module.exports = {
   createStudent,
   getStudent,
@@ -119,4 +131,5 @@ module.exports = {
   deleteStudent,
   loginStudent,
   getExamsByStudentId,
+  getStudentCount,
 };

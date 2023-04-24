@@ -4,8 +4,8 @@ import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 
 export const createParent = async (req, res, next) => {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
   //create parent object
   const parent = new Parent({
@@ -83,19 +83,28 @@ export const deleteParent = async (req, res, next) => {
 export const loginParent = async (req, res, next) => {
   await parentService
     .loginParent(req.body.email, res.body.password)
-    .then((data)=> {
+    .then((data) => {
       req.handleResponse.successRespond(res)(err);
       next();
     });
 };
 
+export const getParentCount = async (req, res) => {
+  await parentService
+    .getParentCountService()
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+    })
+    .catch((err) => {
+      req.handleResponse.errorRespond(res)(err);
+    });
+};
 module.exports = {
-    createParent,
-    getParent,
-    getAllParents,
-    updateParent,
-    deleteParent,
-    loginParent,
-    
-
+  createParent,
+  getParent,
+  getAllParents,
+  updateParent,
+  deleteParent,
+  loginParent,
+  getParentCount,
 };

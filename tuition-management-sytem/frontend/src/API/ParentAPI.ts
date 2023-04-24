@@ -63,6 +63,10 @@ class ParentAPI {
   static getExamsByStudentId = (id: string) => {
     return axios.get(`${BASE_URL}/student/${id}/exams`, requestConfig);
   };
+
+  static getParentCount = () =>{
+    return axios.get(`${BASE_URL}/parent/count`,requestConfig);
+  }
 }
 
 export default ParentAPI;
