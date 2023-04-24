@@ -106,7 +106,7 @@ export const AdminDashboard = () => {
         <ManageTeachers/>
         </Tabs.Panel>
         <Tabs.Panel value="Students">
-          <ManageStudents/>
+          <ManageStudents user={user}/>
         </Tabs.Panel>
         <Tabs.Panel value="Parents">
           <ManageParents/>
