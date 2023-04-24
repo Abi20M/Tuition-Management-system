@@ -24,6 +24,7 @@ import {
   import DarkLogo from "../../../assets/darkMainLogo.png";
   import lightLogo from '../../../assets/logo1.png';
   import teacherLogin from "../../../assets/examManage.jpg"
+
   
   //set the page title
   document.title = "Teacher manager - Tuition Management System";
@@ -73,7 +74,7 @@ import {
             id: "admin-login",
             color: "teal",
             title: "User Verified!",
-            message: "Congrats! You will be redirected Parent Management Protal.",
+            message: "Congrats! You will be redirected Teacher Management Protal.",
             icon: <IconCheck size={16} />,
             autoClose: 2000,
           });
@@ -85,7 +86,7 @@ import {
         //store Role key and value as admin in the localStorage, after 2sec browser will be redirected to the admin Dashboard
         setTimeout(() => {
           localStorage.setItem("role", "admin");
-          window.location.href = "/parent/dashboard";
+          window.location.href = "/teacher/dashboard";
         }, 2000);
       })
       .catch((error) => {

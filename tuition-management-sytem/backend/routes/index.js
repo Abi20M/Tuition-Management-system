@@ -64,6 +64,12 @@ const Routes = (app) => {
     studentController.deleteStudent
   );
 
+
+
+
 };
+
+
+
 
 module.exports = Routes;
