@@ -1,6 +1,7 @@
 import { createStyles, Container, Tabs } from "@mantine/core";
 import AdminHeader from "../../components/adminHeader";
-import ExpenseManage from "../../components/ManageParents";
+//import ManageTeacher from "../../components/ManageTeacher";
+import WebsiteFooter from "../../components/Footer";
 
 const useStyles = createStyles((theme) => ({
   tabs: {
@@ -39,14 +40,16 @@ const useStyles = createStyles((theme) => ({
 
 //create tabs List
 const tabs = [
-  "Overview",
-  "Children",
-  
+  "Dashboard",
+  "My Students",
+  "My Classes",
+  "Schedule",
+  "Students prograss"
 ];
 
-export const ParentDashboard = () => {
+export const TeacherDashboard = () => {
   //change the tab Title
-  document.title = "Parent Dashboard - Tuition Management System";
+  document.title = "Teacher Dashboard - Tuition Management System";
 
   const { classes, theme, cx } = useStyles();
 
@@ -87,16 +90,22 @@ export const ParentDashboard = () => {
         <Tabs.Panel value="Dashboard">
           <h1>Hello Overview</h1>
         </Tabs.Panel>
-        <Tabs.Panel value="Children">
-          {/* <ExpenseManage/> */}
+        <Tabs.Panel value="My Students">
+          <h1>Hello Past details</h1>
         </Tabs.Panel>
-        <Tabs.Panel value="Past Expese Details">
+        <Tabs.Panel value="My Classes">
           <h1>Hello Past details</h1>
         </Tabs.Panel>   
+        <Tabs.Panel value="Schedule">
+          <h1>Hello Past details</h1>
+        </Tabs.Panel>  
+        <Tabs.Panel value="Students prograss">
+          <h1>Hello Past details</h1>
+        </Tabs.Panel>  
       </Tabs>
     </Container>
+
+    <WebsiteFooter/>
     </div>
   );
 };
-
-

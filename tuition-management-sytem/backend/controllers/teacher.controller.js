@@ -1,15 +1,19 @@
 import Teacher from "../models/teacher.model";
 import teacherServices from "../services/Teacher.service";
+import bcrypt from 'bcrypt';
 
 //create teacher function
 export const createTeacher = async (req, res, next) => {
-  // create a teacher object with details
-  const teacherObj = new Teacher({
-    name: req.body.name,
-    email: req.body.email,
-    password: req.body.password,
-    phone: req.body.phone,
-  });
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+    // create a teacher object with details
+    const teacherObj = new Teacher({
+      name: req.body.name,
+      email: req.body.email,
+      password: hashedPassword,
+      phone: req.body.phone,
+    });
 
   //call to createTeacher function to create a object in the database
   await teacherServices
@@ -21,7 +25,8 @@ export const createTeacher = async (req, res, next) => {
     .catch((error) => {
       req.handleResponse.errorRespond(res)(error);
       next();
-    });
+    })
+
 };
 
 //get all teacher Details
@@ -83,10 +88,24 @@ export const getTeacherCount = async (req, res) => {
     });
 };
 
-module.exports = {
-  createTeacher,
-  getAllTeacher,
-  deleteTeacher,
-  editTeacher,
-  getTeacherCount,
-};
+  
+  export const teacherLogin = async (req, res, next) => {
+    await teacherServices.loginTeacher(req.body.email, req.body.password)
+      .then((data) => {
+        req.handleResponse.successRespond(res)(data);
+        next();
+      })
+      .catch((error) => {
+        req.handleResponse.errorRespond(res)(error);
+      });
+  };
+  
+  
+  module.exports = {
+    createTeacher,
+    getAllTeacher,
+    deleteTeacher,
+    editTeacher,
+    teacherLogin,
+    getTeacherCount,
+}

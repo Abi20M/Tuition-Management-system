@@ -48,7 +48,7 @@ class TeacherAPI {
       email: email,
       password: password,
     };
-    return axios.post(`${BASE_URL}/teacher/login`, data, requestConfig);
+    return axios.post(`${BASE_URL}/teacher/login`, data);
   };
 
   //get students of the specific teacher by teacher id
