@@ -31,8 +31,8 @@ import {
   import lightLogo from '../../../assets/logo1.png';
 import { IconAlertTriangle, IconCheck } from "@tabler/icons";
   
-  //set the page title
-  document.title = "Student Login"
+  
+  
   //create a Custom style class
   const useStyles = createStyles((theme) => ({
     form: {
@@ -90,7 +90,7 @@ import { IconAlertTriangle, IconCheck } from "@tabler/icons";
         //store Role key and value as admin in the localStorage, after 2sec browser will be redirected to the admin Dashboard
         setTimeout(() => {
           localStorage.setItem("role", "admin");
-          window.location.href = "/admin/dashboard";
+          window.location.href = "/attendance/dashboard";
         }, 2000);
       })
       .catch((error) => {
@@ -105,7 +105,10 @@ import { IconAlertTriangle, IconCheck } from "@tabler/icons";
       });
   };
   
-  export const StudentLoginPage = () => {
+  export const AttendanceLoginPage = () => {
+
+    //set the page title
+    document.title = "Attendance Login";
     const { classes } = useStyles();
   
     //select color mode (DARK, LIGHT)

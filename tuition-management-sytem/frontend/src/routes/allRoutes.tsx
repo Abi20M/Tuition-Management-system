@@ -9,6 +9,8 @@ import AdminPrivateRoute from "./adminPrivateRoute";
 import ExpensePrivateRoute from "./expensePrivateRoute";
 import ParentPrivateRoute from "./ParentPrivateRoute";
 import TeacherPrivateRoute from "./TeacherPrivateRoute";
+import {AttendanceLoginPage} from "../pages/AllLogin/Manage Attendance";
+import AttendancePrivateRoute from "./attendancePrivateRoute";
 
 
 import { TeacherDashboard } from "../pages/teacherDashboard";
@@ -23,11 +25,12 @@ export const AllRoutes = () => {
     <Router>
       <Routes>
         <Route path="/" element={<AllLogin />} />
-        <Route path="admin/login" element={<AdminLoginPage />} />
-        <Route path = "financial/login" element={<FinancialManagerLoginPage />} />
+        <Route path="/admin/login" element={<AdminLoginPage />} />
+        <Route path = "/financial/login" element={<FinancialManagerLoginPage />} />
         <Route path="/student/login" element={<StudentLoginPage />} />
-        <Route path = "parent/login" element={<ParentLogin/>} />
-        <Route path = "teacher/login" element={<TeacherLogin/>} />
+        <Route path = "/parent/login" element={<ParentLogin/>} />
+        <Route path = "/teacher/login" element={<TeacherLogin/>} />
+        <Route path = "/attendance/login" element={<AttendanceLoginPage/>}/>
         <Route path="/logout" element={<Logout />} />
       
         <Route path="*" element={<Page404/>}/>
@@ -46,10 +49,17 @@ export const AllRoutes = () => {
 
         </Route>  
 
-        <Route path = "/teacher/" element = {<TeacherPrivateRoute/>}>
+
+        {/* <Route path = "/attendance/" element = {<AttendancePrivateRoute/>}>
+          <Route path = "/attendance/dashboard" element={<AttendanceDashboard/>} />
+
+        </Route>   */}
+
+
+        {/* <Route path = "/teacher/" element = {<TeacherPrivateRoute/>}>
           <Route path = "/teacher/dashboard" element={<TeacherDashboard/>} />
 
-        </Route>  
+        </Route>   */}
 
               
       </Routes>

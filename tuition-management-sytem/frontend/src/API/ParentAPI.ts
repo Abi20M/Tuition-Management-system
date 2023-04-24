@@ -23,16 +23,21 @@ class ParentAPI {
   };
   //update parent
   static editParent = (values: {
+    _id: string;
     id: string;
     name: string;
     email: string;
     phone: string;
   }) => {
     let parent = {
+      id : values.id,
       name: values.name,
+      email:values.email,
+      phone:values.phone
+
     };
     return axios.put(
-      `${BASE_URL}/parent/${values.id}`,
+      `${BASE_URL}/parent/${values._id}`,
       parent,
       requestConfig
     );
