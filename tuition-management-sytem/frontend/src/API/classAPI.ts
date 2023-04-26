@@ -14,19 +14,20 @@ export class ClassAPI {
         venue:string,
         endTime : Date
     })=>{
-        
+
+
         // convert time into Readable String
         const startTime = values.startTime.toLocaleTimeString("en-US", {
             hour: "numeric",
             minute: "numeric",
-            hour12: false});
+            hour12: true});
 
         const endTime = values.endTime.toLocaleTimeString("en-US", {
             hour: "numeric",
             minute: "numeric",
-            hour12: false});
+            hour12: true});
         
-        //create a new object with class details
+        // create a new object with class details
         const classDetails = {
             name : values.name,
             teacher : values.teacher,
@@ -37,7 +38,7 @@ export class ClassAPI {
             endTime : endTime
         }
 
-        //send a request to backend with class details and accessToken....
+        // send a request to backend with class details and accessToken....
         return axios.post(`${BASE_URL}/class`, classDetails, requestConfig);
     }
 

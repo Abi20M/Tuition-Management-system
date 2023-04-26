@@ -6,6 +6,7 @@ import teacherController from "../controllers/teacher.controller";
 import parentController from "../controllers/Parent.controller";
 import studentController from "../controllers/student.controller";
 import adminController from "../controllers/admin.controller";
+import subjectController from '../controllers/subject.controller';
 
 const Routes = (app) => {
   //normal validation root of the user
@@ -71,8 +72,8 @@ const Routes = (app) => {
     studentController.deleteStudent
   );
 
-
-
+  // Subject Routes
+  app.get("/subjects",protect.adminProtect, subjectController.getAllClasses);
 
 };
 
