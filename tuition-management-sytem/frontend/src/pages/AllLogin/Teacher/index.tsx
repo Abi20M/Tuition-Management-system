@@ -23,7 +23,7 @@ import {
   import { IconAlertTriangle, IconCheck } from "@tabler/icons";
   import DarkLogo from "../../../assets/darkMainLogo.png";
   import lightLogo from '../../../assets/logo1.png';
-  import teacherLogin from "../../../assets/examManage.jpg"
+  import teacherLogin from "../../../assets/teacherLoginLogo.png"
 import TeacherAPI from "../../../API/teacherAPI";
 
   
