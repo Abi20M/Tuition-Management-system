@@ -74,8 +74,12 @@ export const AdminDashboard = () => {
 
   //user information object
   const user = {
+    _id : admin._id,
+    id : admin.adminId,
     name: admin.name,
-    email : admin.email
+    email : admin.email,
+    telephone : admin.telephone,
+    address: admin.address
   };
 
   return (
@@ -101,16 +105,16 @@ export const AdminDashboard = () => {
           <AdminStats />
         </Tabs.Panel>
         <Tabs.Panel value="Adminstrators">
-          <ManageAdmins/>
+          <ManageAdmins user={user}/>
         </Tabs.Panel>
         <Tabs.Panel value="Teachers">
         <ManageTeachers user={user}/>
         </Tabs.Panel>
         <Tabs.Panel value="Students">
-          <ManageStudents/>
+          <ManageStudents user={user}/>
         </Tabs.Panel>
         <Tabs.Panel value="Parents">
-          <ManageParents/>
+          <ManageParents user={user}/>
         </Tabs.Panel>
         <Tabs.Panel value="Classes">
           <ClassManage user={user}/>

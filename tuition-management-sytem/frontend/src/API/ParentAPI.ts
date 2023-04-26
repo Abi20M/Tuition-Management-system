@@ -23,16 +23,21 @@ class ParentAPI {
   };
   //update parent
   static editParent = (values: {
+    _id: string;
     id: string;
     name: string;
     email: string;
     phone: string;
   }) => {
     let parent = {
+      id : values.id,
       name: values.name,
+      email:values.email,
+      phone:values.phone
+
     };
     return axios.put(
-      `${BASE_URL}/parent/${values.id}`,
+      `${BASE_URL}/parent/${values._id}`,
       parent,
       requestConfig
     );
@@ -58,6 +63,10 @@ class ParentAPI {
   static getExamsByStudentId = (id: string) => {
     return axios.get(`${BASE_URL}/student/${id}/exams`, requestConfig);
   };
+
+  static getParentCount = () =>{
+    return axios.get(`${BASE_URL}/parent/count`,requestConfig);
+  }
 }
 
 export default ParentAPI;

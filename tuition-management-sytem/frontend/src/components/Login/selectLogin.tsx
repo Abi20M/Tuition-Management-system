@@ -257,7 +257,7 @@ export const SelectLogin = React.forwardRef((props, ref: any) => {
                 fullWidth
                 mt="md"
                 component="a"
-                href="instructor/login"
+                href="attendance/login"
               >
                 Manage Attendance
               </Button>

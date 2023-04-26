@@ -22,9 +22,8 @@ import {
       },
     ],
   });
-
   //create style classes for the class PDF
-const styles = StyleSheet.create({
+  const styles = StyleSheet.create({
     table: {
       width: "auto",
       borderStyle: "solid",
@@ -40,7 +39,7 @@ const styles = StyleSheet.create({
       flexDirection: "row",
     },
     tableCol: {
-      width: "25%",
+      width: "20%",
       borderStyle: "solid",
       borderWidth: 1,
       borderLeftWidth: 0,
@@ -60,7 +59,7 @@ const styles = StyleSheet.create({
     },
     HeaderCol: {
       backgroundColor: "#eff5f5",
-      width: "25%",
+      width: "20%",
       borderStyle: "solid",
       borderWidth: 1,
       borderLeftWidth: 0,
@@ -109,16 +108,17 @@ const styles = StyleSheet.create({
       margin : "5px"
     }
   });
-
+  
+  
   //generating PDF
-export const ParentPDF = ({ data, user}: any) => {
-
+  export const AdminPDF = ({ data, user}: any) => {
+  
     const today = new Date;
     return (
       
       <>
         <Document>
-          <Page size="A4">
+          <Page size="A3">
             <View style={styles.border}>
             <Image src={tuitionLogo} style={styles.logo} />
             <Text style={styles.title}>Tuition Management System</Text>
@@ -143,14 +143,17 @@ export const ParentPDF = ({ data, user}: any) => {
                   <View style={styles.HeaderCol}>
                     <Text style={styles.headerFont}>Phone</Text>
                   </View>
-                </View>  
-                 
+                  <View style={styles.HeaderCol}>
+                    <Text style={styles.headerFont}>Address</Text>
+                  </View>
+                </View>
+  
                 {/* Table Row Data*/}
                 {data !== null
                   ? data.map((data: any, i: any) => (
                       <View key={i} style={styles.tableRow}>
                         <View style={styles.tableCol}>
-                          <Text style={styles.tableCell}>{data.id}</Text>
+                          <Text style={styles.tableCell}>{data.customId}</Text>
                         </View>
                         <View style={styles.tableCol}>
                           <Text style={styles.tableCell}>{data.name}</Text>
@@ -159,9 +162,12 @@ export const ParentPDF = ({ data, user}: any) => {
                           <Text style={styles.tableCell}>{data.email}</Text>
                         </View>
                         <View style={styles.tableCol}>
-                          <Text style={styles.tableCell}>{data.phone}</Text>
+                          <Text style={styles.tableCell}>{data.telephone}</Text>
                         </View>
+                        <View style={styles.tableCol}>
+                          <Text style={styles.tableCell}>{data.address}</Text>
                         </View>
+                      </View>
                     ))
                   : null}
               </View>
@@ -190,3 +196,4 @@ export const ParentPDF = ({ data, user}: any) => {
       </>
     );
   };
+  

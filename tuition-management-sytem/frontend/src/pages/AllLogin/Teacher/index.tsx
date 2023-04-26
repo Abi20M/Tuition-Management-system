@@ -23,7 +23,9 @@ import {
   import { IconAlertTriangle, IconCheck } from "@tabler/icons";
   import DarkLogo from "../../../assets/darkMainLogo.png";
   import lightLogo from '../../../assets/logo1.png';
-  import teacherLogin from "../../../assets/examManage.jpg"
+  import teacherLogin from "../../../assets/teacherLoginLogo.png"
+import TeacherAPI from "../../../API/teacherAPI";
+
   
   
   
@@ -61,8 +63,8 @@ import {
     });
   
     //call the API>adminAPI > loginAdmin funtion and call to the backend
-    adminAPI
-      .loginAdmin(values.email, values.password)
+    TeacherAPI
+      .teacherLogin(values.email, values.password)
       .then((response) => {
         console.log(response);
         console.log(response.data.accessToken);
@@ -72,19 +74,19 @@ import {
             id: "admin-login",
             color: "teal",
             title: "User Verified!",
-            message: "Congrats! You will be redirected Parent Management Protal.",
+            message: "Congrats! You will be redirected Teacher Management Protal.",
             icon: <IconCheck size={16} />,
             autoClose: 2000,
           });
         }, 1000);
   
         //store admin details to local storage for further use
-        localStorage.setItem("admin", JSON.stringify(response.data));
+        localStorage.setItem("teacher", JSON.stringify(response.data));
   
         //store Role key and value as admin in the localStorage, after 2sec browser will be redirected to the admin Dashboard
         setTimeout(() => {
-          localStorage.setItem("role", "admin");
-          window.location.href = "/parent/dashboard";
+          localStorage.setItem("role", "teacher");
+          window.location.href = "/teacher/dashboard";
         }, 2000);
       })
       .catch((error) => {

@@ -19,6 +19,7 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconSearch,
+  IconFileAnalytics,
 } from "@tabler/icons";
 import { IconEdit, IconTrash } from "@tabler/icons";
 import { openConfirmModal } from "@mantine/modals";
@@ -26,11 +27,14 @@ import { showNotification, updateNotification } from "@mantine/notifications";
 import ParentAPI from "../../API/ParentAPI";
 import { IconCheck, IconAlertTriangle } from "@tabler/icons";
 import { useForm } from "@mantine/form";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { ParentPDF } from "../PDFRender/ParentPDFTemplate";
 
 
 
 //Interface for parent data - (Raw data)
 interface RowData {
+  _id: string;
   id: string;
   name: string;
   email: string;
@@ -68,6 +72,8 @@ const useStyles = createStyles((theme) => ({
     borderRadius: 21,
   },
 }));
+
+
 
 //Interface for Table header props
 interface ThProps {
@@ -132,9 +138,29 @@ function sortData(
   );
 }
 
-const ManageParents: React.FC = () => {
+ //get current Full Date
+ const today = new Date();
+
+ const year = today.getFullYear();
+ const month = today.getMonth() + 1;
+ const date = today.getDate();
+
+ interface adminName {
+   user: {
+     name: string;
+     email:string;
+   };
+ }
+
+const ManageParents= ({ user }: adminName) => {
   const [data, setData] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(true);
+
+
+  //set admin name
+  const adminName = user.name;
+
+  
 
   // fetch parent data
   useEffect(() => {
@@ -150,7 +176,8 @@ const ManageParents: React.FC = () => {
       const result = await getAllParents();
       const data = result.map((item: any) => {
         return {
-          id: item._id,
+          _id: item._id,
+          id : item.id,
           name: item.name,
           email: item.email,
           phone: item.phone,
@@ -186,7 +213,8 @@ const ManageParents: React.FC = () => {
 
   //edit parent form
   const editParent = async (values: {
-    id: string;
+    _id: string;
+    id : string;
     name: string;
     email: string;
     phone: string;
@@ -212,8 +240,9 @@ const ManageParents: React.FC = () => {
         editForm.reset();
         setEditOpened(false);
         const newData = data.map((item) => {
-          if (item.id === values.id) {
+          if (item._id === values._id) {
             return {
+              _id: values._id,
               id: values.id,
               name: values.name,
               email: values.email,
@@ -273,7 +302,8 @@ const ManageParents: React.FC = () => {
         const newData = [
           ...data,
           {
-            id: response.data._id,
+            _id: response.data._id,
+            id : response.data.id,
             name: values.name,
             email: values.email,
             phone: values.phone,
@@ -319,7 +349,7 @@ const ManageParents: React.FC = () => {
           icon: <IconCheck size={16} />,
           autoClose: 5000,
         });
-        const newData = data.filter((item) => item.id !== id);
+        const newData = data.filter((item) => item._id !== id);
         const payload = {
           sortBy: null,
           reversed: false,
@@ -344,6 +374,7 @@ const ManageParents: React.FC = () => {
   const editForm = useForm({
     validateInputOnChange: true,
     initialValues: {
+      _id: "",
       id: "",
       name: "",
       email: "",
@@ -437,7 +468,7 @@ const ManageParents: React.FC = () => {
 
   //create rows
   const rows = sortedData.map((row) => (
-    <tr key={row.id}>
+    <tr key={row._id}>
       <td>{row.id}</td>
       <td>{row.name}</td>
       <td>{row.email}</td>
@@ -448,6 +479,7 @@ const ManageParents: React.FC = () => {
           leftIcon={<IconEdit size={14} />}
           onClick={() => {
             editForm.setValues({
+              _id: row._id,
               id: row.id,
               name: row.name,
               email: row.email,
@@ -462,7 +494,7 @@ const ManageParents: React.FC = () => {
         <Button
           color="red"
           leftIcon={<IconTrash size={14} />}
-          onClick={() => openDeleteModal(row.id)}
+          onClick={() => openDeleteModal(row._id)}
           sx={{ margin: "5px", width: "100px" }}
         >
           Delete
@@ -566,21 +598,35 @@ const ManageParents: React.FC = () => {
            icon={<IconSearch size={14} stroke={1.5} />}
            value={search}
            onChange={handleSearchChange}
-           sx={{ minWidth: 600 }}
+           sx={{ minWidth: 475 }}
           />
 
-    
+
           {/* download Report button */}
+          <PDFDownloadLink
+            document={<ParentPDF data={data} user={adminName} />}
+            fileName={`PARENTDETAILS_${year}_${month}_${date}`}
+          >
+            {({ loading }) =>
+              loading ? (
+                <Button
+                  color="red"
+                  disabled
+                  loading
+                  leftIcon={<IconFileAnalytics size={16} />}
+                >
+                  Generating...
+                </Button>
+              ) : (
+                <Button color="red" leftIcon={<IconFileAnalytics size={16} />}>
+                  Generate Report
+                </Button>
+              )
+            }
+          </PDFDownloadLink>
          
 
-          <Button
-            variant="gradient"
-            gradient={{ from: "indigo", to: "cyan" }}
-            sx={{ width: "200px", marginRight: "16px" }}
-            onClick={() => setOpened(true)}
-          >
-            Generate Report
-          </Button>
+         
 
     
           

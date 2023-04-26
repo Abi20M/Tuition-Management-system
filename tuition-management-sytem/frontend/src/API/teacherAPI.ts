@@ -48,7 +48,7 @@ class TeacherAPI {
       email: email,
       password: password,
     };
-    return axios.post(`${BASE_URL}/teacher/login`, data, requestConfig);
+    return axios.post(`${BASE_URL}/teacher/login`, data);
   };
 
   //get students of the specific teacher by teacher id
@@ -65,6 +65,12 @@ class TeacherAPI {
   static getExamsByStudentId = (id: string) => {
     return axios.get(`${BASE_URL}/student/${id}/exams`, requestConfig);
   };
+
+
+  // get Teacher count
+  static getTeacherCount = () =>{
+    return axios.get(`${BASE_URL}/teacher/count`,requestConfig);
+  }
 }
 
 export default TeacherAPI;
