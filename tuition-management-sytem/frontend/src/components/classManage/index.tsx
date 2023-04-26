@@ -100,8 +100,8 @@ interface RowData {
   subject: string;
   day: string;
   startTime: string;
-  venue: string;
   endTime: string;
+  venue: string;
 }
 
 interface HallData {
