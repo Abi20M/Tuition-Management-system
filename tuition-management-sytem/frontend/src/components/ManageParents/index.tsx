@@ -626,10 +626,6 @@ const ManageParents= ({ user }: adminName) => {
           </PDFDownloadLink>
          
 
-         
-
-    
-          
           <Button
             variant="gradient"
             gradient={{ from: "indigo", to: "cyan" }}

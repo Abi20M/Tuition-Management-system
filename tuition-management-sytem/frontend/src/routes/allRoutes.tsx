@@ -14,7 +14,7 @@ import AttendancePrivateRoute from "./attendancePrivateRoute";
 
 
 import { TeacherDashboard } from "../pages/teacherDashboard";
-import { ParentDashboard } from "../pages/parentDashboard";
+import {ParentDashboard} from "../pages/parentDashboard";
 import {ExpenseDashboard} from "../pages/expenseDashboard/index";
 import { StudentLoginPage } from "../pages/AllLogin/student-login";
 import { ParentLogin } from "../pages/AllLogin/Parent";
