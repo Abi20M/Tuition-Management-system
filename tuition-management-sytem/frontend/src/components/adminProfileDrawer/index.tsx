@@ -16,7 +16,9 @@ interface iProps {
   sidePannel: (value: boolean) => void;
   adminDetails :{
       name : string,
-      email : string
+      email : string,
+      telephone : string,
+      address : string
   }
 }
 
@@ -58,13 +60,13 @@ export const AdminDrawer = (props: iProps) => {
         />
         <TextInput
           label="Address"
-          value={"No.84,Wendala,Ruwanwella"}
+          value={props.adminDetails.address}
           contentEditable={false}
           readOnly
         />
         <TextInput
           label="Mobile No."
-          value={"0712906815"}
+          value={props.adminDetails.telephone}
           contentEditable={false}
           readOnly
         />

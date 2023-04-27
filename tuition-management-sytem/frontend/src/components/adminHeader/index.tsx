@@ -77,8 +77,12 @@ const useStyles = createStyles((theme) => ({
 
 interface HeaderProps {
   user: {
+    _id : string;
+    id : string;
     name: string;
     email : string;
+    telephone : string;
+    address : string;
   };
 }
 

@@ -63,15 +63,17 @@ export const TeacherDashboard = () => {
   const admin = JSON.parse(localStorage.getItem("admin") || "{}");
 
   //user information object
-  const user = {
-    name: admin.name,
-    email : admin.email
-  };
+  // const user = {
+  //   name: admin.name,
+  //   email : admin.email,
+  //   telephone: admin.telephone,
+  //   address : admin.address,
+  // };
 
   return (
     <div>
       {/* import admin Header */}
-    <AdminHeader user ={user}/>
+    {/* <AdminHeader user ={user}/> */}
 
     {/* Tabs */}
     <Container>

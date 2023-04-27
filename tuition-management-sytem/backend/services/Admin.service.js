@@ -127,6 +127,9 @@ const adminLogin = async (email, password) => {
           {
             id: data._id,
             email: data.email,
+            name : data.name,
+            telephone : data.telephone,
+            address : data.address,
             role: "admin",
           },
           process.env.ACCESS_TOKEN_SECRET,
