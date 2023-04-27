@@ -1,6 +1,7 @@
 import { createStyles, Container, Tabs } from "@mantine/core";
-import AdminHeader from "../../components/adminHeader";
-//import ManageTeacher from "../../components/ManageTeacher";
+import TeacherHeader from "../../components/TeacherHeader";
+import MyStudentsTeacher from "../../components/MyStudentsTeacher";
+import MyClassesTeacher from "../../components/MyClassesTeacher";
 import WebsiteFooter from "../../components/Footer";
 
 const useStyles = createStyles((theme) => ({
@@ -71,7 +72,7 @@ export const TeacherDashboard = () => {
   return (
     <div>
       {/* import admin Header */}
-    <AdminHeader user ={user}/>
+    <TeacherHeader user ={user}/>
 
     {/* Tabs */}
     <Container>
@@ -91,10 +92,10 @@ export const TeacherDashboard = () => {
           <h1>Hello Overview</h1>
         </Tabs.Panel>
         <Tabs.Panel value="My Students">
-          <h1>Hello Past details</h1>
+        <MyStudentsTeacher/>
         </Tabs.Panel>
         <Tabs.Panel value="My Classes">
-          <h1>Hello Past details</h1>
+        <MyClassesTeacher/>
         </Tabs.Panel>   
         <Tabs.Panel value="Schedule">
           <h1>Hello Past details</h1>
