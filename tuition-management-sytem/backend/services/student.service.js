@@ -132,42 +132,42 @@ export const deleteStudent = async (id) => {
 export const getStudentCountService = async() =>{
   return await student.countDocuments();
 }
-// export const loginStudent = async (email, password) => {
-//   return await student
-//     .findOne({ email })
-//     .then((data) => {
-//       if (data) {
-//         if (bcrypt.compareSync(password, data.password)) {
-//           const accessToken = jwt.sign(
-//             {
-//               _id: data._id,
-//               email: data.email,
-//               role: "student",
-//             },
-//             process.env.ACCESS_TOKEN_SECRET,
-//             {
-//               expiresIn: "1d",
-//             }
-//           );
-//           //create response object
-//           const responseObj = {
-//             _id: data._id,
-//             name: data.name,
-//             email: data.email,
-//             accessToken: accessToken,
-//           };
-//           return responseObj;
-//         } else {
-//           throw new Error("Invalid Login Credentials");
-//         }
-//       } else {
-//         throw new Error("Invalid Login Credentials");
-//       }
-//     })
-//     .catch((err) => {
-//       throw new Error(err.message);
-//     });
-// };
+export const loginStudent = async (email, password) => {
+  return await student
+    .findOne({ email })
+    .then((data) => {
+      if (data) {
+        if (bcrypt.compareSync(password, data.password)) {
+          const accessToken = jwt.sign(
+            {
+              _id: data._id,
+              email: data.email,
+              role: "student",
+            },
+            process.env.ACCESS_TOKEN_SECRET,
+            {
+              expiresIn: "1d",
+            }
+          );
+          //create response object
+          const responseObj = {
+            _id: data._id,
+            name: data.name,
+            email: data.email,
+            accessToken: accessToken,
+          };
+          return responseObj;
+        } else {
+          throw new Error("Invalid Login Credentials");
+        }
+      } else {
+        throw new Error("Invalid Login Credentials");
+      }
+    })
+    .catch((err) => {
+      throw new Error(err.message);
+    });
+};
 
 export const verifyStudent = async (token) => {
   return jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
@@ -196,8 +196,8 @@ module.exports = {
   getAllStudents,
   updateStudent,
   deleteStudent,
-  getStudentCountService
-//   loginStudent,
+  getStudentCountService,
+  loginStudent,
 //   verifyStudent,
 //   getExamsByStudentId,
 };
