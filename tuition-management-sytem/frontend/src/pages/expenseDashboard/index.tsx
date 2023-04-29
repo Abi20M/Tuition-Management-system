@@ -1,6 +1,7 @@
 import { createStyles, Container, Tabs } from "@mantine/core";
 import AdminHeader from "../../components/adminHeader";
 import ExpenseManage from "../../components/expenseManage";
+import ExpenseStatus from "../../components/expenseOverview";
 import WebsiteFooter from "../../components/Footer";
 
 const useStyles = createStyles((theme) => ({
@@ -91,7 +92,7 @@ export const ExpenseDashboard = () => {
 
         {/* Here you can add your own Component to here */}
         <Tabs.Panel value="Overview">
-          <h1>Hello Overview</h1>
+          <ExpenseStatus/>
         </Tabs.Panel>
         <Tabs.Panel value="Manage Expenses">
           <ExpenseManage user = {user}/>

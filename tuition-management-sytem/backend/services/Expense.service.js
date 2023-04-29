@@ -65,11 +65,23 @@ export const editExpense = async (id,updatedExpense) => {
   return await Expense.findByIdAndUpdate(id, updatedExpense, { new: true });
 };
 
-
+//get admin count 
+export const getExpenseCountService = async () => {
+  return await Expense
+   .countDocuments()
+   .then((data) => {
+     return data;
+   })
+   .catch((error) =>{
+     throw new Error(error.message);
+   });
+   
+};
 
 module.exports = {
   createExpense,
   getAllExpenses,
   deleteExpense,
   editExpense,
+  getExpenseCountService,
 };

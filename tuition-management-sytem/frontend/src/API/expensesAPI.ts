@@ -38,6 +38,11 @@ class ExpensesAPI {
     );
   };
 
+
+  //get expense count
+  static getExpenseCount = () =>{
+    return axios.get(`${BASE_URL}/expense/count`,requestConfig);
+  };
 }
 
 export default ExpensesAPI;

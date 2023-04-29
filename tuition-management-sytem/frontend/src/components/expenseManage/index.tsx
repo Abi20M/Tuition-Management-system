@@ -12,6 +12,8 @@ import {
   Button,
   Modal,
   Select,
+  Menu,
+  ActionIcon,
 } from "@mantine/core";
 import { keys } from "@mantine/utils";
 import {
@@ -20,8 +22,11 @@ import {
   IconChevronUp,
   IconSearch,
   IconFileAnalytics,
+  IconDots,
+  IconLink,
 } from "@tabler/icons";
 import { IconEdit, IconTrash } from "@tabler/icons";
+import { IconTransferIn } from '@tabler/icons-react';
 import { openConfirmModal } from "@mantine/modals";
 import { showNotification, updateNotification } from "@mantine/notifications";
 import ExpensesAPI from "../../API/expensesAPI";
@@ -32,7 +37,7 @@ import { ExpensePDF } from "../PDFRender/ExpensePDFTemplate";
 
 //Interface for expense data - (Raw data)
 interface RowData {
-  _id : string;
+  _id: string;
   id: string;
   name: string;
   description: string;
@@ -135,21 +140,21 @@ function sortData(
   );
 }
 
- //get current Full Date
- const today = new Date();
+//get current Full Date
+const today = new Date();
 
- const year = today.getFullYear();
- const month = today.getMonth() + 1;
- const date = today.getDate();
+const year = today.getFullYear();
+const month = today.getMonth() + 1;
+const date = today.getDate();
 
- interface adminName {
-   user: {
-     name: string;
-     email:string;
-   };
- }
+interface adminName {
+  user: {
+    name: string;
+    email: string;
+  };
+}
 
-const ExpenseManage =  ({ user }: adminName) => {
+const ExpenseManage = ({ user }: adminName) => {
   const [data, setData] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -173,7 +178,7 @@ const ExpenseManage =  ({ user }: adminName) => {
           id: item.id,
           name: item.name,
           description: item.description,
-          category : item.category,
+          category: item.category,
           amount: item.amount,
         };
       });
@@ -209,7 +214,7 @@ const ExpenseManage =  ({ user }: adminName) => {
 
   //edit expense function
   const editExpenses = async (values: {
-    _id : string,
+    _id: string,
     id: string;
     name: string;
     description: string;
@@ -239,7 +244,7 @@ const ExpenseManage =  ({ user }: adminName) => {
         const newData = data.map((item) => {
           if (item._id === values._id) {
             return {
-              _id : values._id,
+              _id: values._id,
               id: values.id,
               name: values.name,
               description: values.description,
@@ -270,12 +275,27 @@ const ExpenseManage =  ({ user }: adminName) => {
       });
   };
 
+  //add fixed value function 
+  const ExpenseForm = () => {
+    const [amount, setAmount] = useState('');
   
+    const handleAmountChange = (e:any) => {
+      setAmount(e.target.value);
+    };
+  
+    return (
+      <form>
+        <label htmlFor="amount">Amount:</label>
+        <input type="number" id="amount" value={amount} onChange={handleAmountChange} />
+      </form>
+    );
+  };
+
   //add expense
   const addExpenses = async (values: {
     name: string;
     description: string;
-    category : string;
+    category: string;
     amount: string;
   }) => {
     showNotification({
@@ -301,11 +321,11 @@ const ExpenseManage =  ({ user }: adminName) => {
         const newData = [
           ...data,
           {
-            _id:response.data._id,
+            _id: response.data._id,
             id: response.data.id,
             name: values.name,
             description: values.description,
-            category:values.category,
+            category: values.category,
             amount: values.amount,
           },
         ];
@@ -374,14 +394,14 @@ const ExpenseManage =  ({ user }: adminName) => {
   const editForm = useForm({
     validateInputOnChange: true,
     initialValues: {
-      _id:"",
+      _id: "",
       id: "",
       name: "",
       description: "",
-      category:"",
+      category: "",
       amount: "",
     },
-    
+
   });
 
   //declare add form
@@ -390,10 +410,10 @@ const ExpenseManage =  ({ user }: adminName) => {
     initialValues: {
       name: "",
       description: "",
-      category:"",
+      category: "",
       amount: "",
     },
-    
+
   });
 
   const setSorting = (field: keyof RowData) => {
@@ -501,29 +521,29 @@ const ExpenseManage =  ({ user }: adminName) => {
             {...addForm.getInputProps("description")}
             required
           />
-         
-         <Select
-                  mb={10}
-                  label="category"
-                  withAsterisk
-                  searchable
-                  placeholder="Select Category"
-                  onSearchChange={setcategorySearchValue}
-                  searchValue={categorySearchValue}
-                  nothingFound="Not Found"
-                  data={[
-                    { value: "Building expense", label: "Building Expense" },
-                    { value: "Infrastructure expense", label: "Infrastructure expense" },
-                    { value: "Transportation expenses", label: "Transportation expenses" },
-                    { value: "Food expenses", label: "Food expenses" },
-                    { value: "Textbooks and materials", label: "Textbooks and materials" },
-                    { value: "Technology expenses", label: "Technology expenses" },
-                    { value: "Maintains", label: "Maintains" },
-                    { value: "Other education-related expenses", label: "Other education-related expenses" },
 
-                  ]}
-                  {...addForm.getInputProps("category")}
-                />
+          <Select
+            mb={10}
+            label="category"
+            withAsterisk
+            searchable
+            placeholder="Select Category"
+            onSearchChange={setcategorySearchValue}
+            searchValue={categorySearchValue}
+            nothingFound="Not Found"
+            data={[
+              { value: "Building expense", label: "Building Expense" },
+              { value: "Infrastructure expense", label: "Infrastructure expense" },
+              { value: "Transportation expenses", label: "Transportation expenses" },
+              { value: "Food expenses", label: "Food expenses" },
+              { value: "Textbooks and materials", label: "Textbooks and materials" },
+              { value: "Technology expenses", label: "Technology expenses" },
+              { value: "Maintains", label: "Maintains" },
+              { value: "Other education-related expenses", label: "Other education-related expenses" },
+
+            ]}
+            {...addForm.getInputProps("category")}
+          />
 
           <TextInput
             label="amount"
@@ -569,27 +589,27 @@ const ExpenseManage =  ({ user }: adminName) => {
             required
           />
           <Select
-                  mb={10}
-                  label="category"
-                  withAsterisk
-                  searchable
-                  placeholder="Select Category"
-                  onSearchChange={setcategorySearchValue}
-                  searchValue={categorySearchValue}
-                  nothingFound="Not Found"
-                  data={[
-                    { value: "Building expense", label: "Building Expense" },
-                    { value: "Infrastructure expense", label: "Infrastructure expense" },
-                    { value: "Transportation expenses", label: "Transportation expenses" },
-                    { value: "Food expenses", label: "Food expenses" },
-                    { value: "Textbooks and materials", label: "Textbooks and materials" },
-                    { value: "Technology expenses", label: "Technology expenses" },
-                    { value: "Maintains", label: "Maintains" },
-                    { value: "Other education-related expenses", label: "Other education-related expenses" },
+            mb={10}
+            label="category"
+            withAsterisk
+            searchable
+            placeholder="Select Category"
+            onSearchChange={setcategorySearchValue}
+            searchValue={categorySearchValue}
+            nothingFound="Not Found"
+            data={[
+              { value: "Building expense", label: "Building Expense" },
+              { value: "Infrastructure expense", label: "Infrastructure expense" },
+              { value: "Transportation expenses", label: "Transportation expenses" },
+              { value: "Food expenses", label: "Food expenses" },
+              { value: "Textbooks and materials", label: "Textbooks and materials" },
+              { value: "Technology expenses", label: "Technology expenses" },
+              { value: "Maintains", label: "Maintains" },
+              { value: "Other education-related expenses", label: "Other education-related expenses" },
 
-                  ]}
-                  {...editForm.getInputProps("category")}
-                />
+            ]}
+            {...editForm.getInputProps("category")}
+          />
           <TextInput
             label="amount"
             placeholder="Enter amount"
@@ -637,17 +657,17 @@ const ExpenseManage =  ({ user }: adminName) => {
             }
           </PDFDownloadLink>
 
-          <Button 
+          <Button
             variant="gradient"
             gradient={{ from: "indigo", to: "cyan" }}
-            sx={{ width: "170px", marginRight: "20px"}}
+            sx={{ width: "170px", marginRight: "20px" }}
             onClick={() => setOpened(true)}
           >
             Add expense
           </Button>
 
         </Box>
-        
+
 
         <ScrollArea>
           <Table
@@ -656,7 +676,7 @@ const ExpenseManage =  ({ user }: adminName) => {
             sx={{ tableLayout: "auto", width: "100%", }}
           >
 
-            
+
             <thead>
               <tr>
                 <Th
@@ -680,7 +700,7 @@ const ExpenseManage =  ({ user }: adminName) => {
                 >
                   Description
                 </Th>
-                  
+
                 <Th
                   sorted={sortBy === "category"}
                   reversed={reverseSortDirection}
@@ -722,6 +742,73 @@ const ExpenseManage =  ({ user }: adminName) => {
             </tbody>
           </Table>
         </ScrollArea>
+
+        {/* monthly fixed value add section */}
+        <Table
+          verticalSpacing="xs" fontSize="sm" withBorder withColumnBorders
+          sx={{ tableLayout: "auto", width: "100%", marginTop: 30 }}
+        >
+          <tbody>
+            <tr>
+              <td colSpan={3} style={{ paddingRight: 20 }}>The monthly fixed value</td>
+              <td style={{ textAlign: "center" }}>500000</td>
+              <td>
+                <Menu
+                  position="bottom"
+                  shadow="md"
+                  width={120}
+                  withArrow
+                  arrowPosition="center"
+                  transition={"slide-up"}
+                  transitionDuration={100}
+                >
+                  <Menu.Target>
+                    <ActionIcon>
+                      <IconDots size={20} />
+                    </ActionIcon>
+                  </Menu.Target>
+
+                  <Menu.Dropdown>
+                    <Menu.Divider />
+                    {/* <Menu.Label>add fixed value</Menu.Label> */}
+                    <Menu.Item
+                      lh={0}
+                      color={"blue"}
+                      icon={<IconTransferIn size={14} />}
+                    onClick={() => ExpenseForm}
+                    >
+                      Add{" "}
+                    </Menu.Item>
+
+                    {/* <Menu.Label>edit fixed value</Menu.Label> */}
+                    <Menu.Item
+                      lh={0}
+                      color={"green"}
+                      icon={<IconEdit size={14} />}
+                    // onClick={() => {
+                    //   editForm.setValues({
+                    //     _id: row._id,
+                    //     name: row.name,
+                    //     day: row.day,
+                    //     teacher: row.teacher,
+                    //     subject: row.subject,
+                    //     startTime: new Date(),
+                    //     endTime: new Date(),
+                    //     venue: row.venue,
+                    //   });
+                    //   setOpenEditClassModal(true);
+                    // }}
+                    >
+                      Edit
+                    </Menu.Item>
+                    <Menu.Divider />
+                   
+                  </Menu.Dropdown>
+                </Menu>
+              </td>
+            </tr>
+          </tbody>
+        </Table>
       </Box>
     </Box>
   );

@@ -79,7 +79,16 @@ export const createExpense = async (req, res, next) => {
       });
   };
   
-  
+  //get expense count
+  export const getExpenseCount = async (req, res) => {
+    await expenseServices.getExpenseCountService()
+      .then((data) => {
+        req.handleResponse.successRespond(res)(data);
+      })
+      .catch((error) => {
+        req.handleResponse.errorRespond(res)(error);
+      });
+  };
   
   
   module.exports = {
@@ -87,4 +96,5 @@ export const createExpense = async (req, res, next) => {
     getAllExpenses,
     deleteExpense,
     editExpense,
+    getExpenseCount,
   };

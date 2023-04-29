@@ -34,6 +34,8 @@ const Routes = (app) => {
   app.post("/expense",protect.adminProtect,expenseController.createExpense);
   app.delete("/expense/delete/:id",protect.adminProtect,expenseController.deleteExpense);
   app.put("/expense/update/:id",protect.adminProtect,expenseController.editExpense);
+  app.get("/expense/count",protect.adminProtect, expenseController.getExpenseCount);
+
 
   //teacher Routes
   app.get("/teacher",protect.adminProtect,teacherController.getAllTeacher);
