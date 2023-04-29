@@ -2,10 +2,15 @@ import studentService from "../services/student.service";
 import Student from "../models/student.model";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import generatePassword from "../utils/passowrdGenerator";
 
 export const createStudent = async (req, res, next) => {
+
+  // generate random password for student
+  const autoPassword = generatePassword();
+
   const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  const hashedPassword = await bcrypt.hash(autoPassword, salt);
 
   const studentObj = new Student({
     name: req.body.name,
@@ -21,7 +26,7 @@ export const createStudent = async (req, res, next) => {
   });
 
   await studentService
-    .createStudent(studentObj)
+    .createStudent(studentObj,autoPassword)
     .then((data) => {
       req.handleResponse.successRespond(res)(data);
       next();

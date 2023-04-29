@@ -4,6 +4,9 @@ import {
     Paper,
     Group,
     Box,
+    Modal,
+    PasswordInput,
+    Button
   } from "@mantine/core";
 //   import ExamIcon from "../../assets/exam.webp";
 //   import TeacherIcon from "../../assets/teacher.png";
@@ -64,12 +67,20 @@ import {
     return data;
   };
   
+  //get stored student Details
+  const student = JSON.parse(localStorage.getItem("student") || "{}");
+
   const StudentDashboard: React.FC = () => {
     const [classes, setClasses] = useState(0);
     const [exams, setExams] = useState(0);
     const [results, setResults] = useState([0, 0, 0, 0, 0, 0]);
-  
+    const [openedPasswordModal, setOpenedPasswordModal] = useState(false);
+
     useEffect(() => {
+
+      if(student.isChangedPassoword === false){
+        setOpenedPasswordModal(true);
+      }
       const fetchData = async () => {
         showNotification({
           id: "loding-data",
@@ -132,6 +143,8 @@ import {
           icon: <IconCheck size={16} />,
           autoClose: 3000,
         });
+
+
       };
       fetchData();
     }, []);
@@ -199,6 +212,20 @@ import {
     // });
   
     return (
+      <>
+      <Modal opened={openedPasswordModal} closeOnClickOutside={false} closeOnEscape={false} withCloseButton={false}
+        onClose={() => {
+          setOpenedPasswordModal(false)
+        }}
+        title={"Change Password for First Time"} centered>
+          <form>
+          <PasswordInput label="Current Password" withAsterisk placeholder="current password" required/>
+          <PasswordInput label="New Password" withAsterisk placeholder="nwe password" required/>
+          <PasswordInput label="Confirm Password" withAsterisk placeholder="confirm password" required/>
+          <Button fullWidth mt={20}>Change Password</Button>
+          </form>
+
+    </Modal>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Box
           sx={{
@@ -239,6 +266,7 @@ import {
           </Box>
         </Box>
       </Box>
+      </>
     );
   };
   
