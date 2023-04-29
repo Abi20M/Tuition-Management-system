@@ -74,7 +74,7 @@ const Routes = (app) => {
     //Student Login
     app.post("/student/login", studentController.loginStudent);
     //Student Routes - Accessible to Students only
-
+  app.put("/student/changePassword/:id",protect.studentProtect, studentController.changeStudentPassword);
 
 };
 

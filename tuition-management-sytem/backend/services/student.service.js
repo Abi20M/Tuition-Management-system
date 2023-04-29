@@ -161,6 +161,7 @@ export const loginStudent = async (email, password) => {
             const responseObj = {
               _id: data._id,
               name: data.name,
+              id: data.id,
               email: data.email,
               isChangedPassoword: data.isPasswordChanged,
               accessToken: accessToken,
@@ -171,6 +172,7 @@ export const loginStudent = async (email, password) => {
             const responseObj = {
               _id: data._id,
               name: data.name,
+              id: data.id,
               email: data.email,
               isChangedPassoword: data.isPasswordChanged,
               accessToken: accessToken,
@@ -187,6 +189,24 @@ export const loginStudent = async (email, password) => {
     .catch((err) => {
       throw new Error(err.message);
     });
+};
+
+export const changeStudentPassword = async (studentId, password) => {
+  return await student.findById(studentId).then(async (data) => {
+    if (bcrypt.compareSync(password.currentPassword, data.password)) {
+      return student
+        .findByIdAndUpdate(
+          studentId,
+          { password: password.newPassword, isPasswordChanged: true },
+          { new: true }
+        )
+        .catch((error) => {
+          throw new Error("Error while updating document");
+        });
+    } else {
+      throw new Error("Current password is wrong");
+    }
+  });
 };
 
 export const verifyStudent = async (token) => {
@@ -218,6 +238,7 @@ module.exports = {
   deleteStudent,
   getStudentCountService,
   loginStudent,
+  changeStudentPassword,
   //   verifyStudent,
   //   getExamsByStudentId,
 };
