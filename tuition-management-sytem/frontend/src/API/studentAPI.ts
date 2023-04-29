@@ -65,7 +65,7 @@ class StudentAPI {
       email: email,
       password: password,
     };
-    return axios.post(`${BASE_URL}/student/login`, data, requestConfigJson);
+    return axios.post(`${BASE_URL}/student/login`, data);
   };
 
   //get classes by student id

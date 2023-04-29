@@ -73,7 +73,9 @@ const Routes = (app) => {
     studentController.deleteStudent
   );
 
-
+    //Student Login
+    app.post("/student/login", studentController.loginStudent);
+    //Student Routes - Accessible to Students only
 
 
 };

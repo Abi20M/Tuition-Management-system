@@ -19,6 +19,8 @@ import {ExpenseDashboard} from "../pages/expenseDashboard/index";
 import { StudentLoginPage } from "../pages/AllLogin/student-login";
 import { ParentLogin } from "../pages/AllLogin/Parent";
 import { TeacherLogin } from "../pages/AllLogin/Teacher";
+import StudentPrivateRoute from "./StudentPrivateRoute";
+import StudentDashboard from "../components/StudentDashboard";
 
 export const AllRoutes = () => {
   return (
@@ -61,6 +63,10 @@ export const AllRoutes = () => {
 
         </Route>  
 
+        <Route path = "/student/" element = {<StudentPrivateRoute/>}>
+          <Route path = "/student/dashboard" element={<StudentDashboard/>} />
+
+        </Route> 
               
       </Routes>
     </Router>
