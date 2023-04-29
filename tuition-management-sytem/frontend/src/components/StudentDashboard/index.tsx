@@ -80,7 +80,7 @@ const StudentDashboard: React.FC = () => {
   const [results, setResults] = useState([0, 0, 0, 0, 0, 0]);
   const [openedPasswordModal, setOpenedPasswordModal] = useState(false);
   const [newPassword, setNewPassword] = useState("");
-  const [error, setError] = useState(false);
+  const [error, setError] = useState(true);
 
   useEffect(() => {
     if (student.isChangedPassoword === false) {
@@ -213,7 +213,7 @@ const StudentDashboard: React.FC = () => {
   //   );
   // });
 
-  // validate confirm password
+  // validate confirm password func
   const validatePassword = (confirmPassword: string) => {
     if (confirmPassword.length != 0) {
       if (newPassword === confirmPassword) {
@@ -221,13 +221,13 @@ const StudentDashboard: React.FC = () => {
         const error = document.getElementById("confirmPasswordError");
         if (error) error.innerHTML = "Password is match!";
       } else {
-        setError(true);
         const error = document.getElementById("confirmPasswordError");
         if (error) error.innerHTML = "Password is not match!";
       }
     }
   };
 
+  // password changing func
   const submitPassword = (values: {
     documentId: string;
     studentId: string;
@@ -243,7 +243,6 @@ const StudentDashboard: React.FC = () => {
 
     StudentAPI.setNewPassword(values)
       .then((res) => {
-        console.log("Success")
         setOpenedPasswordModal(false);
 
         updateNotification({
@@ -256,7 +255,6 @@ const StudentDashboard: React.FC = () => {
         });
       })
       .catch((error) => {
-        console.log("fail")
         updateNotification({
           id: "update-password",
           title: "Error while changing password",
@@ -267,6 +265,7 @@ const StudentDashboard: React.FC = () => {
       });
   };
 
+  // password changing modal
   const changePasswordForm = useForm({
     initialValues: {
       documentId: student._id,
@@ -279,6 +278,7 @@ const StudentDashboard: React.FC = () => {
 
   return (
     <>
+    {/* password chaging modal */}
       <Modal
         opened={openedPasswordModal}
         closeOnClickOutside={false}
@@ -306,6 +306,7 @@ const StudentDashboard: React.FC = () => {
             label="New Password"
             withAsterisk
             placeholder="new password"
+            {...changePasswordForm.getInputProps("newPassword")}
             onChange={(event) => {
               setNewPassword(event.target.value);
               changePasswordForm.setFieldValue(
@@ -336,7 +337,7 @@ const StudentDashboard: React.FC = () => {
             }}
           ></p>
 
-          <Button fullWidth mt={20} type="submit">
+          <Button fullWidth mt={20} type="submit" disabled={error?true:false}>
             Change Password
           </Button>
         </form>
