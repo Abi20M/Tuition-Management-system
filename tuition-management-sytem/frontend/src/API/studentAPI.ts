@@ -85,6 +85,24 @@ class StudentAPI {
   static getStudentCount = ()=>{
     return axios.get(`${BASE_URL}/students/count`,requestConfigJson);
   }
+
+  static setNewPassword = (values : {
+    documentId : string,
+    studentId : string,
+    currentPassword : string,
+    newPassword : string
+    
+  }) =>{
+
+    let password = {
+      studentId : values.studentId,
+      currentPassword : values.currentPassword,
+      newPassword : values.newPassword
+    }
+
+    return axios.put(`${BASE_URL}/student/changePassword/${values.documentId}`,password,  requestConfigJson);
+    
+  }
 }
 
 export default StudentAPI;
