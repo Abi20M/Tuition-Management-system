@@ -278,11 +278,11 @@ const ExpenseManage = ({ user }: adminName) => {
   //add fixed value function 
   const ExpenseForm = () => {
     const [amount, setAmount] = useState('');
-  
-    const handleAmountChange = (e:any) => {
+
+    const handleAmountChange = (e: any) => {
       setAmount(e.target.value);
     };
-  
+
     return (
       <form>
         <label htmlFor="amount">Amount:</label>
@@ -467,6 +467,7 @@ const ExpenseManage = ({ user }: adminName) => {
       <td>{row.description}</td>
       <td>{row.category}</td>
       <td>{row.amount}</td>
+      
       <td>
         <Button
           color="teal"
@@ -496,7 +497,11 @@ const ExpenseManage = ({ user }: adminName) => {
         </Button>
       </td>
     </tr>
+    
   ));
+  
+  //get total amount of expenses
+  const totalExpense = sortedData.reduce((total, row) => total + parseFloat(row.amount), 0);
 
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -634,6 +639,7 @@ const ExpenseManage = ({ user }: adminName) => {
             onChange={handleSearchChange}
             sx={{ minWidth: 475 }}
           />
+          
           {/* download Report button */}
           <PDFDownloadLink
             document={<ExpensePDF data={data} user={adminName} />}
@@ -655,6 +661,7 @@ const ExpenseManage = ({ user }: adminName) => {
                 </Button>
               )
             }
+            
           </PDFDownloadLink>
 
           <Button
@@ -719,6 +726,7 @@ const ExpenseManage = ({ user }: adminName) => {
                 <th>Action</th>
               </tr>
             </thead>
+            
             <tbody>
               {loading ? (
                 <tr>
@@ -743,7 +751,8 @@ const ExpenseManage = ({ user }: adminName) => {
           </Table>
         </ScrollArea>
 
-        {/* monthly fixed value add section */}
+        {/* monthly fixed value,total value and remaining value section */}
+        
         <Table
           verticalSpacing="xs" fontSize="sm" withBorder withColumnBorders
           sx={{ tableLayout: "auto", width: "100%", marginTop: 30 }}
@@ -775,7 +784,7 @@ const ExpenseManage = ({ user }: adminName) => {
                       lh={0}
                       color={"blue"}
                       icon={<IconTransferIn size={14} />}
-                    onClick={() => ExpenseForm}
+                      onClick={() => ExpenseForm}
                     >
                       Add{" "}
                     </Menu.Item>
@@ -802,16 +811,26 @@ const ExpenseManage = ({ user }: adminName) => {
                       Edit
                     </Menu.Item>
                     <Menu.Divider />
-                   
+
                   </Menu.Dropdown>
                 </Menu>
               </td>
+            </tr>
+            <tr>
+              <td colSpan={3} style={{ paddingRight: 20 }}>Total amount of expenses</td>
+              <td style={{ textAlign: "center" }}>{totalExpense}</td>
+            </tr>
+            <tr>
+            <td colSpan={3} style={{ paddingRight: 20 }}>Total remaining Amount </td>
+              <td style={{ textAlign: "center" }}>11111</td>
             </tr>
           </tbody>
         </Table>
       </Box>
     </Box>
   );
+
+
 };
 
 export default ExpenseManage;
