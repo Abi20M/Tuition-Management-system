@@ -1,7 +1,7 @@
 import Class from "../models/class.model";
 import Hall from "../models/hall.model";
-import Student from '../models/student.model';
-import classMails from '../Mails/class.mails';
+import Student from "../models/student.model";
+import classMails from "../Mails/class.mails";
 
 //generate Class Id
 const generateClassId = async () => {
@@ -50,14 +50,55 @@ export const createClass = async (classobj) => {
     students: [],
   };
 
-  return await Class.create(newClassObj)
-    .then(async (obj) => {
-      await obj.save();
-      return obj;
-    })
-    .catch((error) => {
-      throw new Error(error.message);
-    });
+  const newClassStartTime = new Date(newClassObj.startTime).toLocaleTimeString(
+    "en-US",
+    { hour12: true }
+  );
+  const newClassEndTime = new Date(newClassObj.endTime).toLocaleTimeString(
+    "en-US",
+    { hour12: true }
+  );
+
+  let count = 0;
+  let length = 0;
+  Class.find({ vanue: newClassObj.venue, day: newClassObj.day }).then(
+    async (data) => {
+      length = data.length;
+      data.map((classD) => {
+        const currentClassStartTime = new Date(
+          classD.startTime
+        ).toLocaleTimeString("en-US", { hour12: true });
+        const currentClassEndTime = new Date(classD.endTime).toLocaleTimeString(
+          "en-US",
+          { hour12: true }
+        );
+        console.log(currentClassStartTime);
+        console.log(currentClassEndTime);
+
+        if (
+          (newClassStartTime >= currentClassEndTime &&
+            newClassEndTime > currentClassEndTime) ||
+          (newClassStartTime < currentClassStartTime &&
+            newClassEndTime <= currentClassEndTime)
+        ) {
+          count = count + 1;
+        }
+      });
+
+      if (count === length) {
+        return await Class.create(newClassObj)
+          .then(async (obj) => {
+            await obj.save();
+            return obj;
+          })
+          .catch((error) => {
+            throw new Error(error.message);
+          });
+      }else{
+        throw new Error("Time Slot already allocated");
+      }
+    }
+  );
 };
 
 export const getAllClasses = async () => {
@@ -79,8 +120,11 @@ export const editClassDetails = async (id, editedDetails) => {
 };
 
 export const enrollStudent = async (enrollmentData) => {
-
-  classMails.sendEnrollEmail(enrollmentData.studentName,enrollmentData.studentEmail,enrollmentData.className);
+  classMails.sendEnrollEmail(
+    enrollmentData.studentName,
+    enrollmentData.studentEmail,
+    enrollmentData.className
+  );
   return await Class.findByIdAndUpdate(
     { _id: enrollmentData.classId },
     { $push: { students: enrollmentData.studentID } },
@@ -103,9 +147,14 @@ export const getEnrolledStudentsData = async (classID) => {
     });
 };
 
-export const unEnrollStudent = async (studentId, studentName, studentEmail, classId, className) => {
-
-  await classMails.sendUnenrollEmail(studentName, studentEmail,className);
+export const unEnrollStudent = async (
+  studentId,
+  studentName,
+  studentEmail,
+  classId,
+  className
+) => {
+  await classMails.sendUnenrollEmail(studentName, studentEmail, className);
   return await Class.findByIdAndUpdate(
     { _id: classId },
     { $pull: { students: studentId } },

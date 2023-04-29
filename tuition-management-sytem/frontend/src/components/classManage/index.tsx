@@ -287,9 +287,7 @@ const ClassManage = ({ user }: adminName) => {
   const [selectedEnrollClassId, setSelectedEnrollClassId] = useState("");
   const [studentDetails, setStudentDetails] = useState<StudentDetails[]>([]);
   const [selectEnrollStudent, setSelectEnrollStudent] = useState(false);
-  const [enrolledStudents, setEnrolledStudents] = useState<StudentDetails[]>(
-    []
-  );
+  const [enrolledStudents, setEnrolledStudents] = useState<StudentDetails[]>([]);
 
   //set admin name
   const adminName = user.name;
@@ -605,8 +603,14 @@ const ClassManage = ({ user }: adminName) => {
       <td>{row.teacher}</td>
       <td>{row.subject}</td>
       <td>{row.day}</td>
-      <td>{row.startTime}</td>
-      <td>{row.endTime}</td>
+      <td>{new Date(Date.parse(row.startTime)).toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true})}</td>
+      <td>{new Date(Date.parse(row.endTime)).toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true})}</td>
       <td>{row.venue}</td>
       <td>
         <Menu
@@ -653,8 +657,8 @@ const ClassManage = ({ user }: adminName) => {
                   day: row.day,
                   teacher: row.teacher,
                   subject: row.subject,
-                  startTime: new Date(),
-                  endTime: new Date(),
+                  startTime: new Date(row.startTime),
+                  endTime: new Date(row.endTime),
                   venue: row.venue,
                 });
                 setOpenEditClassModal(true);
@@ -748,7 +752,7 @@ const ClassManage = ({ user }: adminName) => {
 
   // validate add Class Form
   const form = useForm({
-    validateInputOnChange: true,
+    validateInputOnChange : true,
     initialValues: {
       name: "",
       teacher: "",
@@ -763,7 +767,7 @@ const ClassManage = ({ user }: adminName) => {
       name: (val) =>
         val.length >= 2
           ? null
-          : "Invalid class name, Class name should have more than 3 characters!",
+          : "Invalid class name, Class name should have more than 3 characters!",  
     },
   });
 
@@ -778,6 +782,7 @@ const ClassManage = ({ user }: adminName) => {
     endTime: Date;
   }) => {
     await ClassAPI.addClass(values)
+
       .then((data) => {
         showNotification({
           id: "class-add",
@@ -1056,7 +1061,7 @@ const ClassManage = ({ user }: adminName) => {
       name: (val) =>
         val.length >= 2
           ? null
-          : "Invalid class name, Class name should have more than 3 characters!",
+          : "Invalid class name, Class name should have more than 3 characters!", 
     },
   });
 
@@ -1245,14 +1250,6 @@ const ClassManage = ({ user }: adminName) => {
             />
 
             {/* get teacher name */}
-            {/* <TextInput
-              required
-              withAsterisk
-              label="Teacher"
-              placeholder="Enter teacher Name"
-              {...editForm.getInputProps("teacher")}
-              mb={10}
-            /> */}
 
             <Select
               mb={10}
@@ -1273,15 +1270,6 @@ const ClassManage = ({ user }: adminName) => {
             />
 
             {/* get subject name */}
-            {/* <TextInput
-              required
-              withAsterisk
-              label="Subject"
-              placeholder="Enter subject Name"
-              {...editForm.getInputProps("subject")}
-              mb={10}
-            /> */}
-
             <Select
               mb={10}
               label="Subject"

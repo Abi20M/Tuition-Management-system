@@ -90,7 +90,7 @@ const AdminStats = () => {
   }, []);
 
   //call above function in every 5mins to collect updated data
-  setInterval(fetchUserCounts,300000)
+  // setInterval(fetchUserCounts,300000)
 
   return (
     <Group position="apart" p={5}>
