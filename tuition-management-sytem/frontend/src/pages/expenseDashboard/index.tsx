@@ -63,7 +63,7 @@ export const ExpenseDashboard = () => {
   //user information object
   const user = {
     _id : admin._id,
-    id : admin.adminId,
+    customId : admin.adminId,
     name: admin.name,
     email : admin.email,
     telephone : admin.telephone,
