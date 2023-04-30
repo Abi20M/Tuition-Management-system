@@ -57,7 +57,6 @@ const useStyles = createStyles((theme) => ({
   th: {
     padding: "0 !important",
   },
-
   control: {
     width: "100%",
     padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
@@ -74,6 +73,31 @@ const useStyles = createStyles((theme) => ({
     width: 21,
     height: 21,
     borderRadius: 21,
+  },
+  header: {
+    position: "sticky",
+    zIndex : 100,
+    top: 0,
+    backgroundColor:
+      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
+    transition: "500ms ease-in-out 0s normal none 1 running fadeInDown",
+
+    "&::after": {
+      content: "''",
+      position: "absolute",
+      left: 0,
+      right: 0,
+      bottom: 0,
+      borderBottom: `1px solid ${
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[3]
+          : theme.colors.gray[2]
+      }`,
+    },
+  },
+
+  scrolled: {
+    boxShadow: theme.shadows.sm,
   },
 }));
 
@@ -148,20 +172,35 @@ const month = today.getMonth() + 1;
 const date = today.getDate();
 
 interface adminName {
+  onTotalExpenseChange: (value: number) => void;
+  onLastFixedChange : (value: number) => void;
   user: {
     name: string;
     email: string;
   };
 }
 
-const ExpenseManage = ({ user }: adminName) => {
+const ExpenseManage = (props: adminName) => {
+  const { classes, cx } = useStyles();
   const [data, setData] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [totalExpense, setTotalExpense] = useState(0.0);
+  const [lastFixedValue, setLastFixedValue] = useState(0);
+  const [search, setSearch] = useState("");
+  const [sortedData, setSortedData] = useState(data);
+  const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
+  const [reverseSortDirection, setReverseSortDirection] = useState(false);
+  const [opened, setOpened] = useState(false);
+  const [openedFix, setOpenedFix] = useState(false);
+  const [editOpened, setEditOpened] = useState(false);
+  const [categorySearchValue, setcategorySearchValue] = useState("");
+  const [scrolled, setScrolled] = useState(false);
 
-  const adminName = user.name;
+  const adminName = props.user.name;
 
   // fetch expense data
   useEffect(() => {
+    
     const fetchData = async () => {
       showNotification({
         id: "loding-data",
@@ -171,46 +210,53 @@ const ExpenseManage = ({ user }: adminName) => {
         autoClose: false,
         disallowClose: true,
       });
-      const result = await getAllExpenses();
-      const data = result.map((item: any) => {
-        return {
-          _id: item._id,
-          id: item.id,
-          name: item.name,
-          description: item.description,
-          category: item.category,
-          amount: item.amount,
+
+      await getAllExpenses().then((res) => {
+        const data = res.map((item: any) => {
+          return {
+            _id: item._id,
+            id: item.id,
+            name: item.name,
+            description: item.description,
+            category: item.category,
+            amount: item.amount,
+          };
+        });
+        setData(data);
+        setLoading(false);
+        const payload = {
+          sortBy: null,
+          reversed: false,
+          search: "",
         };
+        setSortedData(sortData(data, payload));
+
+        updateNotification({
+          id: "loding-data",
+          color: "teal",
+          title: "Data loaded successfully",
+          message:
+            "You can now manage expense by adding, editing or deleting them.",
+          icon: <IconCheck size={16} />,
+          autoClose: 3000,
+        });
+
+        //get total amount of expenses
+        let TotalExpenseValue = 0;
+        data.map((expesnse: any) => {
+          TotalExpenseValue += parseFloat(expesnse.amount);
+          setTotalExpense(TotalExpenseValue);
+        })
+
+        //pass total expense amount to overview
+        props.onTotalExpenseChange(TotalExpenseValue);
       });
-      setData(data);
-      setLoading(false);
-      const payload = {
-        sortBy: null,
-        reversed: false,
-        search: "",
-      };
-      setSortedData(sortData(data, payload));
-      updateNotification({
-        id: "loding-data",
-        color: "teal",
-        title: "Data loaded successfully",
-        message:
-          "You can now manage expense by adding, editing or deleting them.",
-        icon: <IconCheck size={16} />,
-        autoClose: 3000,
-      });
+
     };
     fetchData();
+    getLastFixedValue();
+
   }, []);
-
-  const [search, setSearch] = useState("");
-  const [sortedData, setSortedData] = useState(data);
-  const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
-  const [reverseSortDirection, setReverseSortDirection] = useState(false);
-  const [opened, setOpened] = useState(false);
-  const [editOpened, setEditOpened] = useState(false);
-  const [categorySearchValue, setcategorySearchValue] = useState("");
-
 
   //edit expense function
   const editExpenses = async (values: {
@@ -275,23 +321,88 @@ const ExpenseManage = ({ user }: adminName) => {
       });
   };
 
-  //add fixed value function 
-  const ExpenseForm = () => {
-    const [amount, setAmount] = useState('');
-
-    const handleAmountChange = (e: any) => {
-      setAmount(e.target.value);
-    };
-
-    return (
-      <form>
-        <label htmlFor="amount">Amount:</label>
-        <input type="number" id="amount" value={amount} onChange={handleAmountChange} />
-      </form>
-    );
+  //add fixed value function
+  const addFixedValue = async (values: {
+    fixedValue: string;
+  }) => {
+    showNotification({
+      id: "add-fixed-value",
+      loading: true,
+      title: "Adding fixed value",
+      message: "Please wait while we add fixed value..",
+      autoClose: false,
+      disallowClose: true,
+    });
+    ExpensesAPI.addFixedValue(values)
+      .then((response) => {
+        updateNotification({
+          id: "add-fixed-value",
+          color: "teal",
+          title: "fixed value added successfully",
+          message: "fixed value data added successfully.",
+          icon: <IconCheck size={16} />,
+          autoClose: 5000,
+        });
+        addForm2.reset();
+        setOpenedFix(false);
+       
+        //update real time last fixed value
+        const newLastFixed = parseFloat(values.fixedValue);
+        setLastFixedValue(newLastFixed);
+        props.onLastFixedChange(newLastFixed);
+      })
+      .catch((error) => {
+        updateNotification({
+          id: "add-fixed-value",
+          color: "red",
+          title: "Adding fixed value failed",
+          message: "We were unable to add fixed value to the system",
+          icon: <IconAlertTriangle size={16} />,
+          autoClose: 5000,
+        });
+      });
   };
 
-  //add expense
+  //get last fixed value
+  const getLastFixedValue = async () => {
+    showNotification({
+      id: "get-fixed-value",
+      loading: true,
+      title: "Getting fixed value",
+      message: "Please wait while we get fixed value..",
+      autoClose: false,
+      disallowClose: true,
+    });
+    ExpensesAPI.getLastFixedValue()
+      .then((response) => {
+        updateNotification({
+          id: "get-fixed-value",
+          color: "teal",
+          title: "fixed value got successfully",
+          message: "fixed value data got successfully.",
+          icon: <IconCheck size={16} />,
+          autoClose: 5000,
+        });
+
+        //
+        const newData = response.data;
+        setLastFixedValue(parseFloat(newData[0].FixedAmount));
+        props.onLastFixedChange(parseFloat(newData[0].FixedAmount));
+       
+      })
+      .catch((error) => {
+        updateNotification({
+          id: "get-fixed-value",
+          color: "red",
+          title: "Adding fixed value failed",
+          message: "We were unable to add fixed value to the system",
+          icon: <IconAlertTriangle size={16} />,
+          autoClose: 5000,
+        });
+      });
+  };
+
+  //add expense function
   const addExpenses = async (values: {
     name: string;
     description: string;
@@ -336,6 +447,13 @@ const ExpenseManage = ({ user }: adminName) => {
         };
         setData(newData);
         setSortedData(sortData(newData, payload));
+        
+        //parse the total amount of expense to expense dashboard in pages
+        const pastTotal = totalExpense;
+        const newTotal = pastTotal + parseFloat(response.data.amount);
+        setTotalExpense(newTotal);
+        props.onTotalExpenseChange(newTotal);
+        
       })
       .catch((error) => {
         updateNotification({
@@ -377,6 +495,11 @@ const ExpenseManage = ({ user }: adminName) => {
         };
         setData(newData);
         setSortedData(sortData(newData, payload));
+
+        // reduce removed expense from total
+        const newExpenseTotal = totalExpense - parseFloat(response.data.amount);
+        setTotalExpense(newExpenseTotal);
+        props.onTotalExpenseChange(newExpenseTotal);
       })
       .catch((error) => {
         updateNotification({
@@ -414,6 +537,14 @@ const ExpenseManage = ({ user }: adminName) => {
       amount: "",
     },
 
+  });
+
+  //declare add fixed amount form
+  const addForm2 = useForm({
+    validateInputOnChange: true,
+    initialValues: {
+      fixedValue: "",
+    },
   });
 
   const setSorting = (field: keyof RowData) => {
@@ -467,7 +598,7 @@ const ExpenseManage = ({ user }: adminName) => {
       <td>{row.description}</td>
       <td>{row.category}</td>
       <td>{row.amount}</td>
-      
+
       <td>
         <Button
           color="teal"
@@ -497,13 +628,12 @@ const ExpenseManage = ({ user }: adminName) => {
         </Button>
       </td>
     </tr>
-    
+
   ));
-  
-  //get total amount of expenses
-  const totalExpense = sortedData.reduce((total, row) => total + parseFloat(row.amount), 0);
+
 
   return (
+
     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
       <Modal
         opened={opened}
@@ -565,6 +695,8 @@ const ExpenseManage = ({ user }: adminName) => {
           </Button>
         </form>
       </Modal>
+
+      {/* edit modal */}
       <Modal
         opened={editOpened}
         onClose={() => {
@@ -630,7 +762,34 @@ const ExpenseManage = ({ user }: adminName) => {
           </Button>
         </form>
       </Modal>
-      <Box sx={{ margin: "20px", width: "100%" }}>
+
+      {/* fixed value model */}
+      <Modal
+        opened={openedFix}
+        onClose={() => {
+          addForm2.reset();
+          setOpenedFix(false);
+        }}
+        title="Add Monthly Fixed value"
+      >
+        <form onSubmit={addForm2.onSubmit((values) => addFixedValue(values))}>
+          <TextInput
+            label="fixed value"
+            placeholder="Enter amount"
+            {...addForm2.getInputProps("fixedValue")}
+            required
+          />
+          <Button
+            color="teal"
+            sx={{ marginTop: "10px", width: "100%" }}
+            type="submit"
+          >
+            Add
+          </Button>
+        </form>
+      </Modal>
+
+      <Box sx={{ margin: "20px", width: "100%", marginTop: -5 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <TextInput
             placeholder="Search by any field"
@@ -639,7 +798,7 @@ const ExpenseManage = ({ user }: adminName) => {
             onChange={handleSearchChange}
             sx={{ minWidth: 475 }}
           />
-          
+
           {/* download Report button */}
           <PDFDownloadLink
             document={<ExpensePDF data={data} user={adminName} />}
@@ -661,7 +820,7 @@ const ExpenseManage = ({ user }: adminName) => {
                 </Button>
               )
             }
-            
+
           </PDFDownloadLink>
 
           <Button
@@ -676,7 +835,11 @@ const ExpenseManage = ({ user }: adminName) => {
         </Box>
 
 
-        <ScrollArea>
+        <ScrollArea
+        mt={20}
+        sx={{ height: 700 }}
+        onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
+      >
           <Table
             horizontalSpacing="md"
             verticalSpacing="xs"
@@ -684,7 +847,7 @@ const ExpenseManage = ({ user }: adminName) => {
           >
 
 
-            <thead>
+            <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
               <tr>
                 <Th
                   sorted={sortBy === "id"}
@@ -726,7 +889,7 @@ const ExpenseManage = ({ user }: adminName) => {
                 <th>Action</th>
               </tr>
             </thead>
-            
+
             <tbody>
               {loading ? (
                 <tr>
@@ -752,7 +915,7 @@ const ExpenseManage = ({ user }: adminName) => {
         </ScrollArea>
 
         {/* monthly fixed value,total value and remaining value section */}
-        
+
         <Table
           verticalSpacing="xs" fontSize="sm" withBorder withColumnBorders
           sx={{ tableLayout: "auto", width: "100%", marginTop: 30 }}
@@ -760,7 +923,7 @@ const ExpenseManage = ({ user }: adminName) => {
           <tbody>
             <tr>
               <td colSpan={3} style={{ paddingRight: 20 }}>The monthly fixed value</td>
-              <td style={{ textAlign: "center" }}>500000</td>
+              <td style={{ textAlign: "center" }}>{lastFixedValue}</td>
               <td>
                 <Menu
                   position="bottom"
@@ -772,8 +935,8 @@ const ExpenseManage = ({ user }: adminName) => {
                   transitionDuration={100}
                 >
                   <Menu.Target>
-                    <ActionIcon>
-                      <IconDots size={20} />
+                    <ActionIcon >
+                      <IconDots size={40} />
                     </ActionIcon>
                   </Menu.Target>
 
@@ -784,9 +947,9 @@ const ExpenseManage = ({ user }: adminName) => {
                       lh={0}
                       color={"blue"}
                       icon={<IconTransferIn size={14} />}
-                      onClick={() => ExpenseForm}
+                      onClick={() => setOpenedFix(true)}
                     >
-                      Add{" "}
+                      Add
                     </Menu.Item>
 
                     {/* <Menu.Label>edit fixed value</Menu.Label> */}
@@ -818,11 +981,11 @@ const ExpenseManage = ({ user }: adminName) => {
             </tr>
             <tr>
               <td colSpan={3} style={{ paddingRight: 20 }}>Total amount of expenses</td>
-              <td style={{ textAlign: "center" }}>{totalExpense}</td>
+              <td style={{ textAlign: "center" }}> {totalExpense}</td>
             </tr>
             <tr>
-            <td colSpan={3} style={{ paddingRight: 20 }}>Total remaining Amount </td>
-              <td style={{ textAlign: "center" }}>11111</td>
+              <td colSpan={3} style={{ paddingRight: 20 }}>Total remaining Amount </td>
+              <td style={{ textAlign: "center" }}>{lastFixedValue - totalExpense } </td>
             </tr>
           </tbody>
         </Table>
@@ -832,5 +995,7 @@ const ExpenseManage = ({ user }: adminName) => {
 
 
 };
+
+
 
 export default ExpenseManage;

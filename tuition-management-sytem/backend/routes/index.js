@@ -35,7 +35,8 @@ const Routes = (app) => {
   app.delete("/expense/delete/:id",protect.adminProtect,expenseController.deleteExpense);
   app.put("/expense/update/:id",protect.adminProtect,expenseController.editExpense);
   app.get("/expense/count",protect.adminProtect, expenseController.getExpenseCount);
-
+  app.post("/expense/fixed",protect.adminProtect,expenseController.addFixedValue);
+  app.get("/expense/getFixed",protect.adminProtect,expenseController.getLastFixedValue);
 
   //teacher Routes
   app.get("/teacher",protect.adminProtect,teacherController.getAllTeacher);

@@ -5,11 +5,13 @@ import { IconBrandCashapp } from '@tabler/icons-react';
 import { useEffect, useState } from "react";
 import expensesAPI from "../../API/expensesAPI";
 import { showNotification } from "@mantine/notifications";
+import { Progress, Card, createStyles } from '@mantine/core';
 
 
-const ExpenseStatus = () => {
+
+export const ExpenseCount = () => {
   const [expenseCount, setExpenseCount] = useState(0);
-  
+
 
   const fetchUserCounts = async () => {
     await expensesAPI
@@ -29,24 +31,24 @@ const ExpenseStatus = () => {
           loading: false,
         });
       });
-    }
+  }
   useEffect(() => {
     fetchUserCounts();
   }, []);
 
   //call above function in every 5mins to collect updated data
-  setInterval(fetchUserCounts,3000000)
+  setInterval(fetchUserCounts, 60000)
 
   return (
-    <Group position="apart" p={5}>
+    <Group position="center" p={5}>
       <Paper
         shadow="md"
         radius={"md"}
-        sx={{ width: "200px", height: "180px" }}
+        sx={{ width: "2000px", height: "180px" }}
         withBorder
       >
         <Text fz={20} fw={"bold"} pl={35} pr={35} pt={3} pb={3}>
-          Expenses
+          The total number of expense added to the system
         </Text>
         <Divider variant="solid" my={2} />
         <Group position="center">
@@ -64,4 +66,50 @@ const ExpenseStatus = () => {
   );
 };
 
-export default ExpenseStatus;
+//MONTHLY GOAL card
+const useStyles = createStyles((theme) => ({
+  card: {
+    backgroundColor: theme.fn.primaryColor(),
+  },
+
+  title: {
+    color: theme.fn.rgba(theme.white, 0.65),
+  },
+
+  stats: {
+    color: theme.white,
+  },
+
+  progressBar: {
+    backgroundColor: theme.white,
+  },
+
+  progressTrack: {
+    backgroundColor: theme.fn.rgba(theme.white, 0.4),
+  },
+}));
+
+export const ProgressCardColored = (prop: { totalExpense: number, lastFixed: number }) => {
+  const { classes } = useStyles();
+  return (
+    <Card withBorder radius="md" p="xl" className={classes.card}>
+      <Text fz="xs" tt="uppercase" fw={700} className={classes.title}>
+        Monthly remaining
+      </Text>
+      <Text fz="lg" fw={500} className={classes.stats}>
+        Rs.{prop.totalExpense} / {prop.lastFixed}
+      </Text>
+      <Progress
+        value={(prop.totalExpense / prop.lastFixed) * 100}
+        mt="md"
+        size="lg"
+        radius="xl"
+        classNames={{
+          root: classes.progressTrack,
+          bar: classes.progressBar,
+        }}
+      />
+    </Card>
+  );
+}
+
