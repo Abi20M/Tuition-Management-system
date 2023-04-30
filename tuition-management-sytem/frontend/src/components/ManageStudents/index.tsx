@@ -566,12 +566,14 @@ const ManageStudents = ({ user }: adminName) => {
         /^\d{10}$/.test(value)
           ? null
           : "Phone number must be 10 digits long number",
-      password: (value) =>
-        value.length < 8 ? "Password must have at least 8 characters" : null,
+      // password: (value) =>
+      //   value.length < 8 ? "Password must have at least 8 characters" : null,
       birthDate: (value) =>
         /^\d{4}-\d{2}-\d{2}$/.test(value)
           ? null
           : "Invalid date of birth, date of birth must be in YYYY-MM-DD format",
+
+      grade : (value) => parseInt(value) <= 0 || parseInt(value) > 13 ? "Invalid Grade" : null,    
     },
   });
 
@@ -797,12 +799,6 @@ const ManageStudents = ({ user }: adminName) => {
             label="Email"
             placeholder="Enter email"
             {...addForm.getInputProps("email")}
-            required
-          />
-          <PasswordInput
-            placeholder="Your password"
-            label="Password"
-            {...addForm.getInputProps("password")}
             required
           />
           <TextInput
