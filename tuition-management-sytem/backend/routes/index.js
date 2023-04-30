@@ -74,7 +74,6 @@ const Routes = (app) => {
     studentController.deleteStudent
   );
 
-
     //Subject Routes
     app.post("/subject",protect.adminProtect, subjectController.createSubject);
     app.get("/subject", protect.adminProtect, subjectController.getAllSubjects);
@@ -88,6 +87,11 @@ const Routes = (app) => {
     app.get("/fee/count",protect.adminProtect, feeController.getFeeCount)
     app.put("/fee/:id" , protect.adminProtect, feeController.updateFee);
     app.delete("/fee/:id",protect.adminProtect,feeController.deleteFee);
+    
+    //Student Login
+    app.post("/student/login", studentController.loginStudent);
+    //Student Routes - Accessible to Students only
+  app.put("/student/changePassword/:id",protect.studentProtect, studentController.changeStudentPassword);
 
 };
 module.exports = Routes;
