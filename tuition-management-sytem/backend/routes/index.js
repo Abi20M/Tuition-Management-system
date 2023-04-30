@@ -27,6 +27,12 @@ const Routes = (app) => {
   app.put("/class/edit/:id",protect.adminProtect,classController.editClassDetails);
   app.put("/enroll",protect.adminProtect, classController.enrollStudent)  
   app.put("/class/unenroll",protect.adminProtect,classController.unEnrollStudent);
+    // //get enrolled students
+    // app.get(
+    //   "/class/:id/students",
+    //   protect.staffProtect,
+    //   classController.getEnrolledStudents
+    // );
 
 
   //expense Routes

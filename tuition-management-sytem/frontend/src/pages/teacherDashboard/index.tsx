@@ -2,6 +2,7 @@ import { createStyles, Container, Tabs } from "@mantine/core";
 import TeacherHeader from "../../components/TeacherHeader";
 import MyStudentsTeacher from "../../components/MyStudentsTeacher";
 import MyClassesTeacher from "../../components/MyClassesTeacher";
+import TeacherOverview from "../../components/TeacherDashboard";
 import WebsiteFooter from "../../components/Footer";
 
 const useStyles = createStyles((theme) => ({
@@ -89,7 +90,7 @@ export const TeacherDashboard = () => {
 
         {/* Here you can add your own Component to here */}
         <Tabs.Panel value="Dashboard">
-          <h1>Hello Overview</h1>
+        <TeacherOverview/>
         </Tabs.Panel>
         <Tabs.Panel value="My Students">
         <MyStudentsTeacher/>

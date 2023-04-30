@@ -31,11 +31,12 @@ import { IconCheck } from "@tabler/icons";
 interface RowData {
   id: string;
   name: string;
-  description: string;
   teacher: string;
   subject: string;
   date: string;
-  time: string;
+  startTime: string;
+  endTime: string;
+  venue: string;
 }
 
 interface RowDataSubjects {
@@ -200,11 +201,12 @@ const MyClassesTeacher: React.FC = () => {
       const classes = resultClasses.map((item: any) => ({
         id: item._id,
         name: item.name,
-        description: item.description,
         teacher: item.teacher,
         subject: item.subject,
         date: item.date,
-        time: item.time,
+        startTime: item.startTime,
+        endTime: item.endTime,
+        venue: item.venue,
       }));
       //filter classes by teacher id
       const teacher = JSON.parse(localStorage.getItem("teacher") || "{}");
@@ -322,7 +324,6 @@ const MyClassesTeacher: React.FC = () => {
     <tr key={row.id}>
       <td>{row.id.slice(0, 8)}</td>
       <td>{row.name}</td>
-      <td>{row.description}</td>
       <td>
         {subjects.map((subject: RowDataSubjects) => {
           if (subject.id === row.subject) {
@@ -331,7 +332,9 @@ const MyClassesTeacher: React.FC = () => {
         })}
       </td>
       <td>{row.date}</td>
-      <td>{row.time}</td>
+      <td>{row.startTime}</td>
+      <td>{row.endTime}</td>
+      <td>{row.venue}</td>
       <td>
         <Button
           color="yellow"
@@ -405,7 +408,7 @@ const MyClassesTeacher: React.FC = () => {
             icon={<IconSearch size={14} stroke={1.5} />}
             value={search}
             onChange={handleSearchChange}
-            sx={{ width: "300px" }}
+            sx={{ width: "600px" }}
           />
         </Box>
         <ScrollArea>
@@ -431,13 +434,6 @@ const MyClassesTeacher: React.FC = () => {
                   Name
                 </Th>
                 <Th
-                  sorted={sortBy === "description"}
-                  reversed={reverseSortDirection}
-                  onSort={() => setSorting("description")}
-                >
-                  Description
-                </Th>
-                <Th
                   sorted={sortBy === "subject"}
                   reversed={reverseSortDirection}
                   onSort={() => setSorting("subject")}
@@ -452,11 +448,25 @@ const MyClassesTeacher: React.FC = () => {
                   Date
                 </Th>
                 <Th
-                  sorted={sortBy === "time"}
+                  sorted={sortBy === "startTime"}
                   reversed={reverseSortDirection}
-                  onSort={() => setSorting("time")}
+                  onSort={() => setSorting("startTime")}
                 >
-                  Time
+                  Start Time
+                </Th>
+                <Th
+                  sorted={sortBy === "endTime"}
+                  reversed={reverseSortDirection}
+                  onSort={() => setSorting("endTime")}
+                >
+                  End Time
+                </Th>
+                <Th
+                  sorted={sortBy === "venue"}
+                  reversed={reverseSortDirection}
+                  onSort={() => setSorting("venue")}
+                >
+                  Venue
                 </Th>
                 <th>Action</th>
               </tr>

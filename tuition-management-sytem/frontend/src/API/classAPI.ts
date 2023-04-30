@@ -45,6 +45,11 @@ export class ClassAPI {
         return axios.get(`${BASE_URL}/class`,requestConfig);
     }
 
+      //get enrollnments by class id
+  static getEnrollments = (id: string) => {
+    return axios.get(`${BASE_URL}/class/${id}/students`, requestConfig);
+  };
+
     static deleteClass = async(id : string) =>{
         return axios.delete(`${BASE_URL}/class/delete/${id}`,requestConfig)
     }

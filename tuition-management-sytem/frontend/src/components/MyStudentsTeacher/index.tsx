@@ -419,7 +419,7 @@ const MyStudentsTeacher: React.FC = () => {
             icon={<IconSearch size={14} stroke={1.5} />}
             value={search}
             onChange={handleSearchChange}
-            sx={{ width: "300px" }}
+            sx={{ width: "600px" }}
           />
         </Box>
         <ScrollArea>
