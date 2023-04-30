@@ -30,6 +30,7 @@ import {
   import DarkLogo from "../../../assets/darkMainLogo.png";
   import lightLogo from '../../../assets/logo1.png';
 import { IconAlertTriangle, IconCheck } from "@tabler/icons";
+import StudentAPI from "../../../API/studentAPI";
   
   //set the page title
   document.title = "Student Login"
@@ -67,8 +68,8 @@ import { IconAlertTriangle, IconCheck } from "@tabler/icons";
     });
   
     //call the API>adminAPI > loginAdmin funtion and call to the backend
-    adminAPI
-      .loginAdmin(values.email, values.password)
+    StudentAPI
+      .studentLogin(values.email, values.password)
       .then((response) => {
         console.log(response);
         console.log(response.data.accessToken);
@@ -85,12 +86,12 @@ import { IconAlertTriangle, IconCheck } from "@tabler/icons";
         }, 1000);
   
         //store admin details to local storage for further use
-        localStorage.setItem("admin", JSON.stringify(response.data));
+        localStorage.setItem("student", JSON.stringify(response.data));
   
         //store Role key and value as admin in the localStorage, after 2sec browser will be redirected to the admin Dashboard
         setTimeout(() => {
-          localStorage.setItem("role", "admin");
-          window.location.href = "/admin/dashboard";
+          localStorage.setItem("role", "student");
+          window.location.href = "/student/dashboard";
         }, 2000);
       })
       .catch((error) => {
