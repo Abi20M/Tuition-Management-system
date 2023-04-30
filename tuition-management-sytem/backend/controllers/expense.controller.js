@@ -108,21 +108,6 @@ export const addFixedValue = async (req, res ,next) => {
     });
 };
 
-//get last fixed value
-// const getLastFixedValue = async (req, res,next) => {
-//   const fixedValObj = new fixedValue({FixedAmount: req.body.fixedValue});
-//   await expenseServices.create(fixedValObj)
-//     .then((data) => {
-//       fixedObj.prevDoc = lastDoc;
-//       data = expenseServices.getLastFixedValue(fixedObj);
-//       req.handleResponse.successRespond(res)(data);
-//       next();
-//     })
-//     .catch((error) => {
-//       req.handleResponse.errorRespond(res)(error.message);
-//       next();
-//     });
-// };
 
 export const getLastFixedValue = async (req, res, next) => {
   expenseServices

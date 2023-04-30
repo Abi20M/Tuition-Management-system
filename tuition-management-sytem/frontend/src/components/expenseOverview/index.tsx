@@ -47,7 +47,7 @@ export const ExpenseCount = () => {
         sx={{ width: "2000px", height: "180px" }}
         withBorder
       >
-        <Text fz={20} fw={"bold"} pl={35} pr={35} pt={3} pb={3}>
+        <Text fz={20} fw={"bold"} pl={35} pr={35} pt={3} pb={3} >
           The total number of expense added to the system
         </Text>
         <Divider variant="solid" my={2} />
