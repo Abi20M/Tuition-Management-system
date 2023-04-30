@@ -7,6 +7,7 @@ import { showNotification } from "@mantine/notifications";
 import TeacherAPI from "../../API/teacherAPI";
 import StudentAPI from "../../API/studentAPI";
 import ParentAPI from "../../API/ParentAPI";
+import aos from 'aos';
 
 const AdminStats = () => {
   const [adminCount, setAdminCount] = useState(0);
@@ -86,6 +87,7 @@ const AdminStats = () => {
   };
 
   useEffect(() => {
+    aos.init();
     fetchUserCounts();
   }, []);
 
@@ -93,7 +95,7 @@ const AdminStats = () => {
   // setInterval(fetchUserCounts,300000)
 
   return (
-    <Group position="apart" p={5}>
+    <Group position="apart" p={5} data-aos ="fade-up" data-aos-easing="ease-in-sine" data-aos-duration="600">
       <Paper
         shadow="md"
         radius={"md"}
