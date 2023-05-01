@@ -10,6 +10,9 @@ import ManageAdmins from "../../components/ManageAdmin";
 import AdminStats from "../../components/AdminDashboard";
 import { ManageExamsAdmin } from "../../components";
 
+import ManageSubjects from "../../components/manageSubjects";
+import ManageFees from "../../components/manageFees";
+
 const useStyles = createStyles((theme) => ({
   tabs: {
     [theme.fn.smallerThan("sm")]: {
@@ -76,7 +79,7 @@ export const AdminDashboard = () => {
   //user information object
   const user = {
     _id: admin._id,
-    id: admin.adminId,
+    customId: admin.id,
     name: admin.name,
     email: admin.email,
     telephone: admin.telephone,
@@ -121,10 +124,10 @@ export const AdminDashboard = () => {
             <ClassManage user={user} />
           </Tabs.Panel>
           <Tabs.Panel value="Subjects">
-            <h1>Hello Subjects</h1>
+            <ManageSubjects user={user} />
           </Tabs.Panel>
           <Tabs.Panel value="Fees">
-            <h1>Fees Management</h1>
+            <ManageFees user={user} />
           </Tabs.Panel>
           <Tabs.Panel value="Exam">
             <ManageExamsAdmin />
