@@ -34,11 +34,6 @@ const generateSubjectId = async () => {
 };
 
 export const createSubject = async (subjectObj) => {
-    const emailExists = await subject.findOne({ email: subjectObj.email});
-    if (emailExists) {
-        throw new Error("Email already exists");
-
-    } else{
 
       //generate Subject Id
       const subId = await generateSubjectId();
@@ -58,7 +53,6 @@ export const createSubject = async (subjectObj) => {
             .catch((err) => {
                 throw new Error(err.message);
             });
-    }
 };
 
 export const getSubject = async (id) => {
@@ -117,54 +111,6 @@ export const updateSubject = async (id, subjectObj) => {
       });
   };
 
-//   //Login subject
-//   export const loginSubject = async (email, password) => {
-//     return await subject
-//       .findOne({ email })
-//       .then((data) => {
-//         if (data) {
-//           if (bcrypt.compareSync(password, data.password)) {
-//             const accessToken = jwt.sign(
-//               {
-//                 _id: data._id,
-//                 email: data.email,
-//                 role: "subject",
-//               },
-//               process.env.ACCESS_TOKEN_SECRET,
-//               {
-//                 expiresIn: "1d",
-//               }
-//             );
-//             //create response object
-//             const responseObj = {
-//               _id: data._id,
-//               name: data.name,
-//               email: data.email,
-//               accessToken: accessToken,
-//             };
-//             return responseObj;
-//           } else {
-//             throw new Error("Invalid Login Credentials");
-//           }
-//         } else {
-//           throw new Error("Invalid Login Credentials");
-//         }
-//       })
-//       .catch((err) => {
-//         throw new Error(err.message);
-//       });
-//   };
-
-//   export const verifySubject = async (token) => {
-//     return jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
-//       if (err) {
-//         throw new Error("Invalid token");
-//       } else {
-//         return decoded;
-//       }
-//     });
-//   };
-
   export const getSubjectCountService = async () =>{
     return await subject.countDocuments();
   }
@@ -174,8 +120,6 @@ export const updateSubject = async (id, subjectObj) => {
     getAllSubjects,
     updateSubject,
     deleteSubject,
-    // loginSubject,
-    // verifySubject,
     getSubjectCountService
   };
 
