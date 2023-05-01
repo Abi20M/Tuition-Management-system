@@ -714,10 +714,8 @@ const ManageExams = ({
     validate: {
       name: (value) =>
         value.length < 2 ? "Name must have at least 2 letters" : null,
-      date: (value) =>
-        /^\d{4}-\d{2}-\d{2}$/.test(value)
-          ? null
-          : "Invalid date of birth, date of birth must be in YYYY-MM-DD format",
+      description: (value) =>
+        value.length < 5 ? "Must have a description" : null,
     },
   });
 
@@ -735,6 +733,8 @@ const ManageExams = ({
     validate: {
       name: (value) =>
         value.length < 2 ? "Name must have at least 2 letters" : null,
+      description: (value) =>
+        value.length < 5 ? "Must have a description" : null,
     },
   });
 
@@ -748,8 +748,7 @@ const ManageExams = ({
       marks: "",
     },
     validate: {
-      name: (value) =>
-        value.length < 2 ? "Name must have at least 2 letters" : null,
+      marks: (value) => (/^\d+$/.test(value) ? null : "Marks must be a number"),
     },
   });
 
