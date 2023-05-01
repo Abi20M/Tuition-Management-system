@@ -198,7 +198,7 @@ const ParentOverview: React.FC = () => {
         title: "Loading Teacher Dashboard Data",
         message: "Please wait while we load the data",
         autoClose: false,
-        disallowClose: true,
+        disallowClose: false,
       });
 
       const studentResult = await getAllStudents();
@@ -396,7 +396,7 @@ const ParentOverview: React.FC = () => {
           breakpoints={[{ maxWidth: "sm", cols: 1 }]}
           sx={{ width: "100%", marginTop: "2%" }}
         >
-          <Paper withBorder radius="md" p="xs" key="grades">
+          {/* <Paper withBorder radius="md" p="xs" key="grades">
             <Text weight={700} size="xl" sx={{ fontSize: "1.5rem" }}>
               Gender Distribution of My Children
             </Text>
@@ -411,7 +411,7 @@ const ParentOverview: React.FC = () => {
             <Box sx={{ marginTop: "10%" }}>
               <Bar data={gradeData} options={options2} />
             </Box>
-          </Paper>
+          </Paper> */}
         </SimpleGrid>
         <Box
           sx={{

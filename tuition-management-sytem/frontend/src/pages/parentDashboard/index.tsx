@@ -1,8 +1,11 @@
 import { createStyles, Container, Tabs } from "@mantine/core";
 import AdminHeader from "../../components/adminHeader";
+import ParentHeader from "../../components/ParentHeader";
 import ManageParents from "../../components/ManageParents";
 import WebsiteFooter from "../../components/Footer";
 import ParentOverview from "../../components/parentDashboard"
+
+
 
 const useStyles = createStyles((theme) => ({
   tabs: {
@@ -59,22 +62,25 @@ export const ParentDashboard = () => {
   ));
 
   //get Admin information from the localStorage and we convert into that information into JSON object using JSON.parse()
-  const admin = JSON.parse(localStorage.getItem("admin") || "{}");
+  const parent = JSON.parse(localStorage.getItem("parent") || "{}");
 
   //user information object
   const user = {
-    _id : admin._id,
-    id : admin.adminId,
-    name: admin.name,
-    email : admin.email,
-    telephone : admin.telephone,
-    address : admin.address
+    _id: parent._id,
+    id: parent.id,
+    name: parent.name,
+    email:parent.email,
+    phone: parent.phone,
+    
   };
 
   return (
     <div>
       {/* import admin Header */}
-    <AdminHeader user ={user}/>
+    {/* <AdminHeader user ={user}/> */}
+
+    {/* import parent Header */}
+    <ParentHeader user = {user}/>
 
     {/* Tabs */}
     <Container>
