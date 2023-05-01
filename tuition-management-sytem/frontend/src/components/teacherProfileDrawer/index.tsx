@@ -16,7 +16,8 @@ import {
     sidePannel: (value: boolean) => void;
     teacherDetails :{
         name : string,
-        email : string
+        email : string,
+        //phone : string
     }
   }
   
@@ -56,7 +57,7 @@ import {
             contentEditable={false}
             readOnly
           />
-          <TextInput
+          {/* <TextInput
             label="Address"
             value={"No.84,Wendala,Ruwanwella"}
             contentEditable={false}
@@ -67,7 +68,7 @@ import {
             value={"0712906815"}
             contentEditable={false}
             readOnly
-          />
+          /> */}
         </Stack>
         <Group position="apart" pl={20} pr={20}>
           <Button
