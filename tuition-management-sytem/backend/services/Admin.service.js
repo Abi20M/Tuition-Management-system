@@ -140,7 +140,7 @@ const adminLogin = async (email, password) => {
         //create new Object
         const newAdminObj = {
           _id: data._id,
-          adminId: data.adminId,
+          id: data.id,
           email: data.email,
           name: data.name,
           telephone: data.telephone,
