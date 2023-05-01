@@ -50,18 +50,13 @@ const Routes = (app) => {
   );
 
   //expense Routes
-  app.get("/expense", protect.adminProtect, expenseController.getAllExpenses);
-  app.post("/expense", protect.adminProtect, expenseController.createExpense);
-  app.delete(
-    "/expense/delete/:id",
-    protect.adminProtect,
-    expenseController.deleteExpense
-  );
-  app.put(
-    "/expense/update/:id",
-    protect.adminProtect,
-    expenseController.editExpense
-  );
+  app.get("/expense",protect.adminProtect,expenseController.getAllExpenses);
+  app.post("/expense",protect.adminProtect,expenseController.createExpense);
+  app.delete("/expense/delete/:id",protect.adminProtect,expenseController.deleteExpense);
+  app.put("/expense/update/:id",protect.adminProtect,expenseController.editExpense);
+  app.get("/expense/count",protect.adminProtect, expenseController.getExpenseCount);
+  app.post("/expense/fixed",protect.adminProtect,expenseController.addFixedValue);
+  app.get("/expense/getFixed",protect.adminProtect,expenseController.getLastFixedValue);
 
   //teacher Routes
   app.get("/teacher", protect.adminProtect, teacherController.getAllTeacher);
@@ -175,6 +170,11 @@ const Routes = (app) => {
     "/exam/:id/release/official",
     protect.adminProtect,
     examController.releaseOfficialResults
+  );
+  app.get(
+    "/student/:id/exams",
+    protect.studentProtect,
+    examController.getExamsByStudent
   );
 };
 

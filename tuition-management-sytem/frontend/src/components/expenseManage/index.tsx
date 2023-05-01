@@ -12,6 +12,8 @@ import {
   Button,
   Modal,
   Select,
+  Menu,
+  ActionIcon,
 } from "@mantine/core";
 import { keys } from "@mantine/utils";
 import {
@@ -19,17 +21,23 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconSearch,
+  IconFileAnalytics,
+  IconDots,
+  IconLink,
 } from "@tabler/icons";
 import { IconEdit, IconTrash } from "@tabler/icons";
+import { IconTransferIn } from '@tabler/icons-react';
 import { openConfirmModal } from "@mantine/modals";
 import { showNotification, updateNotification } from "@mantine/notifications";
 import ExpensesAPI from "../../API/expensesAPI";
 import { IconCheck, IconAlertTriangle } from "@tabler/icons";
 import { useForm } from "@mantine/form";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { ExpensePDF } from "../PDFRender/ExpensePDFTemplate";
 
 //Interface for expense data - (Raw data)
 interface RowData {
-  _id : string;
+  _id: string;
   id: string;
   name: string;
   description: string;
@@ -49,7 +57,6 @@ const useStyles = createStyles((theme) => ({
   th: {
     padding: "0 !important",
   },
-
   control: {
     width: "100%",
     padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
@@ -66,6 +73,31 @@ const useStyles = createStyles((theme) => ({
     width: 21,
     height: 21,
     borderRadius: 21,
+  },
+  header: {
+    position: "sticky",
+    zIndex : 100,
+    top: 0,
+    backgroundColor:
+      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
+    transition: "500ms ease-in-out 0s normal none 1 running fadeInDown",
+
+    "&::after": {
+      content: "''",
+      position: "absolute",
+      left: 0,
+      right: 0,
+      bottom: 0,
+      borderBottom: `1px solid ${
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[3]
+          : theme.colors.gray[2]
+      }`,
+    },
+  },
+
+  scrolled: {
+    boxShadow: theme.shadows.sm,
   },
 }));
 
@@ -132,13 +164,43 @@ function sortData(
   );
 }
 
+//get current Full Date
+const today = new Date();
 
-const ExpenseManage: React.FC = () => {
+const year = today.getFullYear();
+const month = today.getMonth() + 1;
+const date = today.getDate();
+
+interface adminName {
+  onTotalExpenseChange: (value: number) => void;
+  onLastFixedChange : (value: number) => void;
+  user: {
+    name: string;
+    email: string;
+  };
+}
+
+const ExpenseManage = (props: adminName) => {
+  const { classes, cx } = useStyles();
   const [data, setData] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [totalExpense, setTotalExpense] = useState(0.0);
+  const [lastFixedValue, setLastFixedValue] = useState(0);
+  const [search, setSearch] = useState("");
+  const [sortedData, setSortedData] = useState(data);
+  const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
+  const [reverseSortDirection, setReverseSortDirection] = useState(false);
+  const [opened, setOpened] = useState(false);
+  const [openedFix, setOpenedFix] = useState(false);
+  const [editOpened, setEditOpened] = useState(false);
+  const [categorySearchValue, setcategorySearchValue] = useState("");
+  const [scrolled, setScrolled] = useState(false);
+
+  const adminName = props.user.name;
 
   // fetch expense data
   useEffect(() => {
+    
     const fetchData = async () => {
       showNotification({
         id: "loding-data",
@@ -148,50 +210,57 @@ const ExpenseManage: React.FC = () => {
         autoClose: false,
         disallowClose: true,
       });
-      const result = await getAllExpenses();
-      const data = result.map((item: any) => {
-        return {
-          _id: item._id,
-          id: item.id,
-          name: item.name,
-          description: item.description,
-          category : item.category,
-          amount: item.amount,
+
+      await getAllExpenses().then((res) => {
+        const data = res.map((item: any) => {
+          return {
+            _id: item._id,
+            id: item.id,
+            name: item.name,
+            description: item.description,
+            category: item.category,
+            amount: item.amount,
+          };
+        });
+        setData(data);
+        setLoading(false);
+        const payload = {
+          sortBy: null,
+          reversed: false,
+          search: "",
         };
+        setSortedData(sortData(data, payload));
+
+        updateNotification({
+          id: "loding-data",
+          color: "teal",
+          title: "Data loaded successfully",
+          message:
+            "You can now manage expense by adding, editing or deleting them.",
+          icon: <IconCheck size={16} />,
+          autoClose: 3000,
+        });
+
+        //get total amount of expenses
+        let TotalExpenseValue = 0;
+        data.map((expesnse: any) => {
+          TotalExpenseValue += parseFloat(expesnse.amount);
+          setTotalExpense(TotalExpenseValue);
+        })
+
+        //pass total expense amount to overview
+        props.onTotalExpenseChange(TotalExpenseValue);
       });
-      setData(data);
-      setLoading(false);
-      const payload = {
-        sortBy: null,
-        reversed: false,
-        search: "",
-      };
-      setSortedData(sortData(data, payload));
-      updateNotification({
-        id: "loding-data",
-        color: "teal",
-        title: "Data loaded successfully",
-        message:
-          "You can now manage expense by adding, editing or deleting them.",
-        icon: <IconCheck size={16} />,
-        autoClose: 3000,
-      });
+
     };
     fetchData();
+    getLastFixedValue();
+
   }, []);
-
-  const [search, setSearch] = useState("");
-  const [sortedData, setSortedData] = useState(data);
-  const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
-  const [reverseSortDirection, setReverseSortDirection] = useState(false);
-  const [opened, setOpened] = useState(false);
-  const [editOpened, setEditOpened] = useState(false);
-  const [categorySearchValue, setcategorySearchValue] = useState("");
-
 
   //edit expense function
   const editExpenses = async (values: {
-    _id : string,
+    _id: string,
     id: string;
     name: string;
     description: string;
@@ -221,7 +290,7 @@ const ExpenseManage: React.FC = () => {
         const newData = data.map((item) => {
           if (item._id === values._id) {
             return {
-              _id : values._id,
+              _id: values._id,
               id: values.id,
               name: values.name,
               description: values.description,
@@ -252,12 +321,92 @@ const ExpenseManage: React.FC = () => {
       });
   };
 
-  
-  //add expense
+  //add fixed value function
+  const addFixedValue = async (values: {
+    fixedValue: string;
+  }) => {
+    showNotification({
+      id: "add-fixed-value",
+      loading: true,
+      title: "Adding fixed value",
+      message: "Please wait while we add fixed value..",
+      autoClose: false,
+      disallowClose: true,
+    });
+    ExpensesAPI.addFixedValue(values)
+      .then((response) => {
+        updateNotification({
+          id: "add-fixed-value",
+          color: "teal",
+          title: "fixed value added successfully",
+          message: "fixed value data added successfully.",
+          icon: <IconCheck size={16} />,
+          autoClose: 5000,
+        });
+        addForm2.reset();
+        setOpenedFix(false);
+       
+        //update real time last fixed value
+        const newLastFixed = parseFloat(values.fixedValue);
+        setLastFixedValue(newLastFixed);
+        props.onLastFixedChange(newLastFixed);
+      })
+      .catch((error) => {
+        updateNotification({
+          id: "add-fixed-value",
+          color: "red",
+          title: "Adding fixed value failed",
+          message: "We were unable to add fixed value to the system",
+          icon: <IconAlertTriangle size={16} />,
+          autoClose: 5000,
+        });
+      });
+  };
+
+  //get last fixed value
+  const getLastFixedValue = async () => {
+    showNotification({
+      id: "get-fixed-value",
+      loading: true,
+      title: "Getting fixed value",
+      message: "Please wait while we get fixed value..",
+      autoClose: false,
+      disallowClose: true,
+    });
+    ExpensesAPI.getLastFixedValue()
+      .then((response) => {
+        updateNotification({
+          id: "get-fixed-value",
+          color: "teal",
+          title: "fixed value got successfully",
+          message: "fixed value data got successfully.",
+          icon: <IconCheck size={16} />,
+          autoClose: 5000,
+        });
+
+        //
+        const newData = response.data;
+        setLastFixedValue(parseFloat(newData[0].FixedAmount));
+        props.onLastFixedChange(parseFloat(newData[0].FixedAmount));
+       
+      })
+      .catch((error) => {
+        updateNotification({
+          id: "get-fixed-value",
+          color: "red",
+          title: "Adding fixed value failed",
+          message: "We were unable to add fixed value to the system",
+          icon: <IconAlertTriangle size={16} />,
+          autoClose: 5000,
+        });
+      });
+  };
+
+  //add expense function
   const addExpenses = async (values: {
     name: string;
     description: string;
-    category : string;
+    category: string;
     amount: string;
   }) => {
     showNotification({
@@ -283,11 +432,11 @@ const ExpenseManage: React.FC = () => {
         const newData = [
           ...data,
           {
-            _id:response.data._id,
+            _id: response.data._id,
             id: response.data.id,
             name: values.name,
             description: values.description,
-            category:values.category,
+            category: values.category,
             amount: values.amount,
           },
         ];
@@ -298,6 +447,13 @@ const ExpenseManage: React.FC = () => {
         };
         setData(newData);
         setSortedData(sortData(newData, payload));
+        
+        //parse the total amount of expense to expense dashboard in pages
+        const pastTotal = totalExpense;
+        const newTotal = pastTotal + parseFloat(response.data.amount);
+        setTotalExpense(newTotal);
+        props.onTotalExpenseChange(newTotal);
+        
       })
       .catch((error) => {
         updateNotification({
@@ -339,6 +495,11 @@ const ExpenseManage: React.FC = () => {
         };
         setData(newData);
         setSortedData(sortData(newData, payload));
+
+        // reduce removed expense from total
+        const newExpenseTotal = totalExpense - parseFloat(response.data.amount);
+        setTotalExpense(newExpenseTotal);
+        props.onTotalExpenseChange(newExpenseTotal);
       })
       .catch((error) => {
         updateNotification({
@@ -356,14 +517,14 @@ const ExpenseManage: React.FC = () => {
   const editForm = useForm({
     validateInputOnChange: true,
     initialValues: {
-      _id:"",
+      _id: "",
       id: "",
       name: "",
       description: "",
-      category:"",
+      category: "",
       amount: "",
     },
-    
+
   });
 
   //declare add form
@@ -372,10 +533,18 @@ const ExpenseManage: React.FC = () => {
     initialValues: {
       name: "",
       description: "",
-      category:"",
+      category: "",
       amount: "",
     },
-    
+
+  });
+
+  //declare add fixed amount form
+  const addForm2 = useForm({
+    validateInputOnChange: true,
+    initialValues: {
+      fixedValue: "",
+    },
   });
 
   const setSorting = (field: keyof RowData) => {
@@ -429,6 +598,7 @@ const ExpenseManage: React.FC = () => {
       <td>{row.description}</td>
       <td>{row.category}</td>
       <td>{row.amount}</td>
+
       <td>
         <Button
           color="teal"
@@ -458,9 +628,12 @@ const ExpenseManage: React.FC = () => {
         </Button>
       </td>
     </tr>
+
   ));
 
+
   return (
+
     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
       <Modal
         opened={opened}
@@ -483,29 +656,29 @@ const ExpenseManage: React.FC = () => {
             {...addForm.getInputProps("description")}
             required
           />
-         
-         <Select
-                  mb={10}
-                  label="category"
-                  withAsterisk
-                  searchable
-                  placeholder="Select Category"
-                  onSearchChange={setcategorySearchValue}
-                  searchValue={categorySearchValue}
-                  nothingFound="Not Found"
-                  data={[
-                    { value: "Building expense", label: "Building Expense" },
-                    { value: "Infrastructure expense", label: "Infrastructure expense" },
-                    { value: "Transportation expenses", label: "Transportation expenses" },
-                    { value: "Food expenses", label: "Food expenses" },
-                    { value: "Textbooks and materials", label: "Textbooks and materials" },
-                    { value: "Technology expenses", label: "Technology expenses" },
-                    { value: "Maintains", label: "Maintains" },
-                    { value: "Other education-related expenses", label: "Other education-related expenses" },
 
-                  ]}
-                  {...addForm.getInputProps("category")}
-                />
+          <Select
+            mb={10}
+            label="category"
+            withAsterisk
+            searchable
+            placeholder="Select Category"
+            onSearchChange={setcategorySearchValue}
+            searchValue={categorySearchValue}
+            nothingFound="Not Found"
+            data={[
+              { value: "Building expense", label: "Building Expense" },
+              { value: "Infrastructure expense", label: "Infrastructure expense" },
+              { value: "Transportation expenses", label: "Transportation expenses" },
+              { value: "Food expenses", label: "Food expenses" },
+              { value: "Textbooks and materials", label: "Textbooks and materials" },
+              { value: "Technology expenses", label: "Technology expenses" },
+              { value: "Maintains", label: "Maintains" },
+              { value: "Other education-related expenses", label: "Other education-related expenses" },
+
+            ]}
+            {...addForm.getInputProps("category")}
+          />
 
           <TextInput
             label="amount"
@@ -522,6 +695,8 @@ const ExpenseManage: React.FC = () => {
           </Button>
         </form>
       </Modal>
+
+      {/* edit modal */}
       <Modal
         opened={editOpened}
         onClose={() => {
@@ -551,27 +726,27 @@ const ExpenseManage: React.FC = () => {
             required
           />
           <Select
-                  mb={10}
-                  label="category"
-                  withAsterisk
-                  searchable
-                  placeholder="Select Category"
-                  onSearchChange={setcategorySearchValue}
-                  searchValue={categorySearchValue}
-                  nothingFound="Not Found"
-                  data={[
-                    { value: "Building expense", label: "Building Expense" },
-                    { value: "Infrastructure expense", label: "Infrastructure expense" },
-                    { value: "Transportation expenses", label: "Transportation expenses" },
-                    { value: "Food expenses", label: "Food expenses" },
-                    { value: "Textbooks and materials", label: "Textbooks and materials" },
-                    { value: "Technology expenses", label: "Technology expenses" },
-                    { value: "Maintains", label: "Maintains" },
-                    { value: "Other education-related expenses", label: "Other education-related expenses" },
+            mb={10}
+            label="category"
+            withAsterisk
+            searchable
+            placeholder="Select Category"
+            onSearchChange={setcategorySearchValue}
+            searchValue={categorySearchValue}
+            nothingFound="Not Found"
+            data={[
+              { value: "Building expense", label: "Building Expense" },
+              { value: "Infrastructure expense", label: "Infrastructure expense" },
+              { value: "Transportation expenses", label: "Transportation expenses" },
+              { value: "Food expenses", label: "Food expenses" },
+              { value: "Textbooks and materials", label: "Textbooks and materials" },
+              { value: "Technology expenses", label: "Technology expenses" },
+              { value: "Maintains", label: "Maintains" },
+              { value: "Other education-related expenses", label: "Other education-related expenses" },
 
-                  ]}
-                  {...editForm.getInputProps("category")}
-                />
+            ]}
+            {...editForm.getInputProps("category")}
+          />
           <TextInput
             label="amount"
             placeholder="Enter amount"
@@ -587,36 +762,92 @@ const ExpenseManage: React.FC = () => {
           </Button>
         </form>
       </Modal>
-      <Box sx={{ margin: "20px", width: "100%" }}>
+
+      {/* fixed value model */}
+      <Modal
+        opened={openedFix}
+        onClose={() => {
+          addForm2.reset();
+          setOpenedFix(false);
+        }}
+        title="Add Monthly Fixed value"
+      >
+        <form onSubmit={addForm2.onSubmit((values) => addFixedValue(values))}>
+          <TextInput
+            label="fixed value"
+            placeholder="Enter amount"
+            {...addForm2.getInputProps("fixedValue")}
+            required
+          />
+          <Button
+            color="teal"
+            sx={{ marginTop: "10px", width: "100%" }}
+            type="submit"
+          >
+            Add
+          </Button>
+        </form>
+      </Modal>
+
+      <Box sx={{ margin: "20px", width: "100%", marginTop: -5 }}>
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <TextInput
             placeholder="Search by any field"
             icon={<IconSearch size={14} stroke={1.5} />}
             value={search}
             onChange={handleSearchChange}
-            sx={{ minWidth: 600 }}
+            sx={{ minWidth: 475 }}
           />
+
+          {/* download Report button */}
+          <PDFDownloadLink
+            document={<ExpensePDF data={data} user={adminName} />}
+            fileName={`EXPENSEDETAILS_${year}_${month}_${date}`}
+          >
+            {({ loading }) =>
+              loading ? (
+                <Button
+                  color="red"
+                  disabled
+                  loading
+                  leftIcon={<IconFileAnalytics size={16} />}
+                >
+                  Generating...
+                </Button>
+              ) : (
+                <Button color="red" leftIcon={<IconFileAnalytics size={16} />}>
+                  Generate Report
+                </Button>
+              )
+            }
+
+          </PDFDownloadLink>
+
           <Button
             variant="gradient"
             gradient={{ from: "indigo", to: "cyan" }}
-            sx={{ width: "200px", marginRight: "20px" }}
+            sx={{ width: "170px", marginRight: "20px" }}
             onClick={() => setOpened(true)}
           >
             Add expense
           </Button>
 
         </Box>
-        
 
-        <ScrollArea>
+
+        <ScrollArea
+        mt={20}
+        sx={{ height: 700 }}
+        onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
+      >
           <Table
             horizontalSpacing="md"
             verticalSpacing="xs"
             sx={{ tableLayout: "auto", width: "100%", }}
           >
 
-            
-            <thead>
+
+            <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
               <tr>
                 <Th
                   sorted={sortBy === "id"}
@@ -639,7 +870,7 @@ const ExpenseManage: React.FC = () => {
                 >
                   Description
                 </Th>
-                  
+
                 <Th
                   sorted={sortBy === "category"}
                   reversed={reverseSortDirection}
@@ -658,6 +889,7 @@ const ExpenseManage: React.FC = () => {
                 <th>Action</th>
               </tr>
             </thead>
+
             <tbody>
               {loading ? (
                 <tr>
@@ -681,9 +913,89 @@ const ExpenseManage: React.FC = () => {
             </tbody>
           </Table>
         </ScrollArea>
+
+        {/* monthly fixed value,total value and remaining value section */}
+
+        <Table
+          verticalSpacing="xs" fontSize="sm" withBorder withColumnBorders
+          sx={{ tableLayout: "auto", width: "100%", marginTop: 30 }}
+        >
+          <tbody>
+            <tr>
+              <td colSpan={3} style={{ paddingRight: 20 }}>The monthly fixed value</td>
+              <td style={{ textAlign: "center" }}>{lastFixedValue}</td>
+              <td>
+                <Menu
+                  position="bottom"
+                  shadow="md"
+                  width={120}
+                  withArrow
+                  arrowPosition="center"
+                  transition={"slide-up"}
+                  transitionDuration={100}
+                >
+                  <Menu.Target>
+                    <ActionIcon >
+                      <IconDots size={40} />
+                    </ActionIcon>
+                  </Menu.Target>
+
+                  <Menu.Dropdown>
+                    <Menu.Divider />
+                    {/* <Menu.Label>add fixed value</Menu.Label> */}
+                    <Menu.Item
+                      lh={0}
+                      color={"blue"}
+                      icon={<IconTransferIn size={14} />}
+                      onClick={() => setOpenedFix(true)}
+                    >
+                      Add
+                    </Menu.Item>
+
+                    {/* <Menu.Label>edit fixed value</Menu.Label> */}
+                    <Menu.Item
+                      lh={0}
+                      color={"green"}
+                      icon={<IconEdit size={14} />}
+                    // onClick={() => {
+                    //   editForm.setValues({
+                    //     _id: row._id,
+                    //     name: row.name,
+                    //     day: row.day,
+                    //     teacher: row.teacher,
+                    //     subject: row.subject,
+                    //     startTime: new Date(),
+                    //     endTime: new Date(),
+                    //     venue: row.venue,
+                    //   });
+                    //   setOpenEditClassModal(true);
+                    // }}
+                    >
+                      Edit
+                    </Menu.Item>
+                    <Menu.Divider />
+
+                  </Menu.Dropdown>
+                </Menu>
+              </td>
+            </tr>
+            <tr>
+              <td colSpan={3} style={{ paddingRight: 20 }}>Total amount of expenses</td>
+              <td style={{ textAlign: "center" }}> {totalExpense}</td>
+            </tr>
+            <tr>
+              <td colSpan={3} style={{ paddingRight: 20 }}>Total remaining Amount </td>
+              <td style={{ textAlign: "center" }}>{lastFixedValue - totalExpense } </td>
+            </tr>
+          </tbody>
+        </Table>
       </Box>
     </Box>
   );
+
+
 };
+
+
 
 export default ExpenseManage;
