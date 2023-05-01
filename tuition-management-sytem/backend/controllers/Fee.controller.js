@@ -4,8 +4,8 @@ import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 
 export const createFee = async (req, res, next) => {
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  //const salt = await bcrypt.genSalt(10);
+  //const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
   //create fee object
   const fee = new Fee({
