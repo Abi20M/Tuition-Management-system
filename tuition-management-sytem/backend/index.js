@@ -5,7 +5,7 @@ import { logger } from "./middleware/logEvent";
 import errorHandler from "./middleware/errorHandler";
 import DB_Connect from "./utils/index";
 import Routes from "./routes/index";
-import responseHandler from './utils/response.handlers';
+import responseHandler from "./utils/response.handlers";
 
 //initialize express
 const app = express();
@@ -15,7 +15,6 @@ const PORT = process.env.PORT || 6000;
 
 //custom middleware logger
 app.use(logger);
-
 
 //Cross Origin Resource Sharing Options
 const whiteList = ["http://localhost:3000"];
@@ -44,12 +43,12 @@ app.use(express.json());
 app.use(errorHandler);
 
 //inject error handlers to the Request chain
-app.use((req,res,next) =>{
+app.use((req, res, next) => {
   req.handleResponse = responseHandler;
   next();
 });
 
-app.get("/",(req,res,next) =>{
+app.get("/", (req, res, next) => {
   res.send("<h1>Sysro Student Mangement System</h1>");
 });
 
@@ -58,5 +57,4 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on PORT ${PORT}!`);
   DB_Connect; //database connection
   Routes(app); //import routes
-
 });
