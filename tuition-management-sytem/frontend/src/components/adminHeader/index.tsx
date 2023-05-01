@@ -77,8 +77,12 @@ const useStyles = createStyles((theme) => ({
 
 interface HeaderProps {
   user: {
+    _id : string;
+    customId : string;
     name: string;
     email : string;
+    telephone : string;
+    address : string;
   };
 }
 
@@ -91,7 +95,25 @@ const AdminHeader = ({ user }: HeaderProps) => {
   const [dateState, setDateState] = useState(new Date());
   const dark = colorScheme === "dark";
   const [sidePanelOpened,setSidePanelOpened] = useState(false);//use to open and close the side pannel of the admin details
+  const [userDetails, setUserDetails] = useState({
+    _id : user._id,
+    customId : user.customId,
+    name: user.name,
+    email : user.email,
+    telephone : user.telephone,
+    address : user.address
+  })
 
+  const handleChildStateChange = (adminDetails : {
+    _id : string,
+    customId : string,
+    name: string,
+    email : string,
+    telephone : string,
+    address : string
+  }) =>{
+    setUserDetails(adminDetails);
+  }
 
   // useEffect(() => {
   //   setInterval(() => setDateState(new Date()), 59000);
@@ -159,7 +181,7 @@ const AdminHeader = ({ user }: HeaderProps) => {
                     size={20}
                   />
                   <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
-                    {user.name}
+                    {userDetails.name}
                   </Text>
                   <IconChevronDown size={12} stroke={1.5} />
                 </Group>
@@ -212,7 +234,7 @@ const AdminHeader = ({ user }: HeaderProps) => {
       position="left"
       size="xl"
     >
-      <AdminDrawer sidePannel={setSidePanelOpened} adminDetails = {user}/>
+      <AdminDrawer sidePannel={setSidePanelOpened} adminDetails = {userDetails} onStateChange = {handleChildStateChange}/>
     </Drawer>
     </div>
   );
