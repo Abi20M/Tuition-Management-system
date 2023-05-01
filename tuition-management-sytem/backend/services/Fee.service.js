@@ -34,11 +34,11 @@ const generateFeeId = async () => {
 };
 
 export const createFee = async (feeObj) => {
-    const emailExists = await fee.findOne({ email: feeObj.email});
-    if (emailExists) {
-        throw new Error("Email already exists");
+    // const emailExists = await fee.findOne({ email: feeObj.email});
+    // if (emailExists) {
+    //     throw new Error("Email already exists");
 
-    } else{
+    // } else{
 
       //generate Fee Id
       const payId = await generateFeeId();
@@ -58,7 +58,7 @@ export const createFee = async (feeObj) => {
             .catch((err) => {
                 throw new Error(err.message);
             });
-    }
+    //}
 };
 
 export const getFee = async (id) => {

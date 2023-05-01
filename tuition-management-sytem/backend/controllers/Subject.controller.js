@@ -4,8 +4,8 @@ import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 
 export const createSubject = async (req, res, next) => {
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  //const salt = await bcrypt.genSalt(10);
+  //const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
   //create subject object
   const subject = new Subject({
@@ -76,16 +76,6 @@ export const deleteSubject = async (req, res, next) => {
     });
 };
 
-// //Parent login
-// export const loginParent = async (req, res, next) => {
-//   await parentService
-//     .loginParent(req.body.email, res.body.password)
-//     .then((data) => {
-//       req.handleResponse.successRespond(res)(err);
-//       next();
-//     });
-// };
-
 export const getSubjectCount = async (req, res) => {
   await subjectService
     .getSubjectCountService()
@@ -102,6 +92,5 @@ module.exports = {
   getAllSubjects,
   updateSubject,
   deleteSubject,
-//   loginSubject,
   getSubjectCount,
 };

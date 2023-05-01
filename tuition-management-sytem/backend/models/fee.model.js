@@ -12,7 +12,7 @@ const FeeSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    required: true,
+    required: false,
     default: 'Not Paid'
   },  
 },{timestamps:true});
