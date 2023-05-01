@@ -1044,9 +1044,9 @@ const ManageExams = ({
             {...editForm.getInputProps("status")}
             required
             data={[
-              { label: "Scheduled", value: "scheduled" },
-              { label: "Results Pending", value: "results pending" },
-              { label: "Results Added", value: "results added" },
+              { label: "Scheduled", value: "Scheduled" },
+              { label: "Results Pending", value: "Results Pending" },
+              { label: "Results Added", value: "Results Added" },
               {
                 label: "Results Released - Unofficial",
                 value: "Results Released - Unofficial",
