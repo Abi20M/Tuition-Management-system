@@ -9,6 +9,9 @@ import ManageTeachers from "../../components/ManageTeacher";
 import ManageAdmins from "../../components/ManageAdmin";
 import AdminStats from '../../components/AdminDashboard';
 
+import ManageSubjects from "../../components/manageSubjects";
+import ManageFees from "../../components/manageFees";
+
 const useStyles = createStyles((theme) => ({
   tabs: {
     [theme.fn.smallerThan("sm")]: {
@@ -120,10 +123,10 @@ export const AdminDashboard = () => {
           <ClassManage user={user}/>
         </Tabs.Panel>
         <Tabs.Panel value="Subjects">
-          <h1>Hello Subjects</h1>
+          <ManageSubjects user={user}/>
         </Tabs.Panel>
         <Tabs.Panel value="Fees">
-          <h1>Fees Management</h1>
+        <ManageFees user={user}/>
         </Tabs.Panel>
         <Tabs.Panel value="Exam">
           <h1>Hello Exam Management</h1>
