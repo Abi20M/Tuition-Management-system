@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import Admin from "../models/admin.model";
 import Teacher from "../models/teacher.model";
 
+// import Student from '../models/student.model';
 
 export const adminProtect = async (req,res,next) =>{
     let token;
@@ -13,7 +14,7 @@ export const adminProtect = async (req,res,next) =>{
             if(decoded.role != 'admin'){
                 return res.status(401).json({ message: "Not authorized to access this route" });
             }else{
-                req.admin = await Admin.findById(decoded.id).select("password");
+                req.admin = await Admin.findById(decoded._id).select("password");
                 next(); 
             }
 
@@ -53,6 +54,9 @@ export const teacherProtect = async (req,res,next) =>{
 }
 
 
+
+
+           
 
 
 module.exports = {

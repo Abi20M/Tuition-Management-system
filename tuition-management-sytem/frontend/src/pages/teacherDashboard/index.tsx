@@ -3,7 +3,8 @@ import TeacherHeader from "../../components/TeacherHeader";
 import MyStudentsTeacher from "../../components/MyStudentsTeacher";
 import MyClassesTeacher from "../../components/MyClassesTeacher";
 import TeacherOverview from "../../components/TeacherDashboard";
-import WebsiteFooter from "../../components/Footer";
+
+// import WebsiteFooter from "../../components/Footer";
 
 const useStyles = createStyles((theme) => ({
   tabs: {
@@ -62,12 +63,14 @@ export const TeacherDashboard = () => {
   ));
 
   //get Admin information from the localStorage and we convert into that information into JSON object using JSON.parse()
-  const admin = JSON.parse(localStorage.getItem("admin") || "{}");
+  const teacher = JSON.parse(localStorage.getItem("teacher") || "{}");
 
   //user information object
   const user = {
-    name: admin.name,
-    email : admin.email
+    name: teacher.name,
+    email : teacher.email,
+  //   telephone: admin.telephone,
+  //   address : admin.address,
   };
 
   return (
@@ -107,7 +110,7 @@ export const TeacherDashboard = () => {
       </Tabs>
     </Container>
 
-    <WebsiteFooter/>
+    {/* <WebsiteFooter/> */}
     </div>
   );
 };
