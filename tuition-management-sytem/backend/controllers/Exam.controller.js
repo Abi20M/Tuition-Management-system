@@ -156,6 +156,19 @@ export const releaseOfficialResults = async (req, res, next) => {
     });
 };
 
+export const getExamsByStudent = async (req, res, next) => {
+  await examService
+    .getExamsByStudent(req.params.id)
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+      next();
+    })
+    .catch((err) => {
+      req.handleResponse.errorRespond(res)(err);
+      next();
+    });
+};
+
 module.exports = {
   createExam,
   getExam,
@@ -169,4 +182,5 @@ module.exports = {
   saveAttendance,
   releaseUnofficialResults,
   releaseOfficialResults,
+  getExamsByStudent,
 };

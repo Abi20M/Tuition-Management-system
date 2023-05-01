@@ -112,6 +112,11 @@ class ExamAPI {
       requestConfig
     );
   };
+
+  static getExamsByStudent = () => {
+    const studentId = JSON.parse(localStorage.getItem("student") || "{}")._id;
+    return axios.get(`${BASE_URL}/student/${studentId}/exams`, requestConfig);
+  };
 }
 
 export default ExamAPI;
