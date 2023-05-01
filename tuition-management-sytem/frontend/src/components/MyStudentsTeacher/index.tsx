@@ -89,6 +89,7 @@ interface RowData {
   school: string;
   grade: string;
   birthDate: string;
+  gender: string;
   address: string;
   parent: string;
 }
@@ -240,6 +241,7 @@ const MyStudentsTeacher: React.FC = () => {
           school: item.school,
           grade: item.grade,
           birthDate: item.birthDate,
+          gender:item.gender,
           address: item.address,
           parent: item.parent,
         };
@@ -367,6 +369,7 @@ const MyStudentsTeacher: React.FC = () => {
       <td>{row.school}</td>
       <td>{row.grade}</td>
       <td>{row.birthDate.slice(0, 10)}</td>
+      <td>{row.gender}</td>
       <td>{row.address}</td>
       <td>
         {parents.map((parentObj: RowDataParent) => {
@@ -478,6 +481,13 @@ const MyStudentsTeacher: React.FC = () => {
                   onSort={() => setSorting("birthDate")}
                 >
                   Birth Date
+                </Th>
+                <Th
+                  sorted={sortBy === "gender"}
+                  reversed={reverseSortDirection}
+                  onSort={() => setSorting("gender")}
+                >
+                  Gender
                 </Th>
                 <Th
                   sorted={sortBy === "address"}

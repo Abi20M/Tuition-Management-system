@@ -1,9 +1,9 @@
 import { createStyles, Container, Tabs } from "@mantine/core";
-import TeacherHeader from "../../components/TeacherHeader";
+//import TeacherHeader from "../../components/TeacherHeader";
 import MyStudentsTeacher from "../../components/MyStudentsTeacher";
 import MyClassesTeacher from "../../components/MyClassesTeacher";
 import TeacherOverview from "../../components/TeacherDashboard";
-
+import TeacherHeaderLogin from "../../components/TeacherHeader/TeacherHeaderLogin"
 // import WebsiteFooter from "../../components/Footer";
 
 const useStyles = createStyles((theme) => ({
@@ -76,7 +76,7 @@ export const TeacherDashboard = () => {
   return (
     <div>
       {/* import admin Header */}
-    <TeacherHeader user ={user}/>
+    <TeacherHeaderLogin user ={user}/>
 
     {/* Tabs */}
     <Container>
