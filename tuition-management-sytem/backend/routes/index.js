@@ -170,6 +170,11 @@ const Routes = (app) => {
     protect.adminProtect,
     examController.releaseOfficialResults
   );
+  app.get(
+    "/student/:id/exams",
+    protect.studentProtect,
+    examController.getExamsByStudent
+  );
 };
 
 module.exports = Routes;

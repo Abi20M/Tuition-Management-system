@@ -1,4 +1,5 @@
 import exam from "../models/Exam.model.js";
+import classService from "./Class.service.js";
 import "dotenv/config";
 
 const generateExamId = async () => {
@@ -209,6 +210,76 @@ export const releaseOfficialResults = async (id) => {
     });
 };
 
+export const getExamsByStudent = async (id) => {
+  try {
+    const classes = await classService.getAllClasses();
+    let studentClasses = [];
+    for (let i = 0; i < classes.length; i++) {
+      const index = classes[i].students.findIndex((student) => student == id);
+      if (index > -1) {
+        studentClasses.push(classes[i]);
+      }
+    }
+    const exams = await getAllExams();
+    let studentExams = [];
+    for (let i = 0; i < exams.length; i++) {
+      const index = studentClasses.findIndex((studentClass) => {
+        return studentClass._id.toString() == exams[i].class.toString();
+      });
+      if (index > -1) {
+        studentExams.push(exams[i]);
+      }
+    }
+    let examData = [];
+    let result = undefined;
+    console.log(studentExams);
+    studentExams.forEach((exam) => {
+      result = undefined;
+      exam.marks.forEach((mark) => {
+        if (mark.id.toString() == id) {
+          result = mark.marks;
+        }
+      });
+      if (!result && result != 0) {
+        examData.push({
+          _id: exam._id,
+          examId: exam.examId,
+          name: exam.name,
+          description: exam.description,
+          class: exam.class,
+          status: exam.status,
+          date: exam.date,
+          time: exam.time,
+          result: "Not Released",
+          marks: exam.marks,
+          attendance: exam.attendance,
+        });
+      } else {
+        examData.push({
+          _id: exam._id,
+          examId: exam.examId,
+          name: exam.name,
+          description: exam.description,
+          class: exam.class,
+          status: exam.status,
+          date: exam.date,
+          time: exam.time,
+          result: result,
+          marks: exam.marks,
+          attendance: exam.attendance,
+        });
+      }
+    });
+    const data = {
+      exams: examData,
+      classes: studentClasses,
+    };
+    return data;
+  } catch (err) {
+    throw new Error(err.message);
+  }
+};
+
 module.exports = {
   createExam,
   getExam,
@@ -222,4 +293,5 @@ module.exports = {
   saveAttendance,
   releaseUnofficialResults,
   releaseOfficialResults,
+  getExamsByStudent,
 };
