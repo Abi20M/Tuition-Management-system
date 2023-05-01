@@ -1,10 +1,17 @@
-import { model, Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const SubjectSchema = new Schema({
+const SubjectSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required : true,
+    unique : true,
+  },
   name: {
     type: String,
     required: true,
-  },
-});
+  },  
+},{timestamps:true});
 
-export default model("Subject", SubjectSchema);
+const Subject = mongoose.model("Subjects", SubjectSchema);
+
+export default Subject;
