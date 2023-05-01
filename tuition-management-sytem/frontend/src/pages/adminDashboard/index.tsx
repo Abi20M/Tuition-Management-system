@@ -74,11 +74,11 @@ export const AdminDashboard = () => {
 
   //get Admin information from the localStorage and we convert into that information into JSON object using JSON.parse()
   const admin = JSON.parse(localStorage.getItem("admin") || "{}");
-
+  
   //user information object
   const user = {
     _id : admin._id,
-    id : admin.adminId,
+    customId : admin.id,
     name: admin.name,
     email : admin.email,
     telephone : admin.telephone,
