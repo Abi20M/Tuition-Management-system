@@ -816,7 +816,7 @@ const ManageExamsAdmin = () => {
               disabled={selectedExam.status !== "Results Released - Unofficial"}
             >
               {selectedExam.status === "Results Released - Unofficial"
-                ? "Results Released - Official"
+                ? "Release Official Results"
                 : "Results not released by the teacher"}
             </Button>
           </Box>
