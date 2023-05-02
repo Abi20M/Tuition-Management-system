@@ -9,7 +9,7 @@ import "dotenv/config";
 const generateTeacherId = async () => {
   //get last class object, if there is a teacher, then return that class object, otherwise return empty array
   const lastTeacherDetails = await teacher.find().sort({ _id: -1 }).limit(1);
-  
+
   //check if the result array is empty or not, if its empty then return first Teacher Id
   if (lastTeacherDetails.length == 0) {
     return "TCH-001";
@@ -40,16 +40,15 @@ export const createTeacher = async (teacherObj) => {
   if (emailExists) {
     throw new Error("Email already exists");
   } else {
-
     const customTeacherId = await generateTeacherId();
 
-    const newTeacherObj ={
-      id : customTeacherId,
-      name:  teacherObj.name,
-      email:  teacherObj.email,
-      password:  teacherObj.password,
+    const newTeacherObj = {
+      id: customTeacherId,
+      name: teacherObj.name,
+      email: teacherObj.email,
+      password: teacherObj.password,
       phone: teacherObj.phone,
-    }
+    };
     return await teacher
       .create(newTeacherObj)
       .then(async (data) => {
@@ -138,6 +137,7 @@ export const loginTeacher = async (email, password) => {
           //create response object
           const responseObj = {
             _id: data._id,
+            id: data.id,
             name: data.name,
             email: data.email,
             accessToken: accessToken,
@@ -198,9 +198,9 @@ export const getStudents = async (id) => {
     });
 };
 
-export const getTeacherCountService = async () =>{
+export const getTeacherCountService = async () => {
   return await teacher.countDocuments();
-}
+};
 module.exports = {
   createTeacher,
   getTeacher,
@@ -210,22 +210,19 @@ module.exports = {
   loginTeacher,
   verifyTeacher,
   getStudents,
-  getTeacherCountService
+  getTeacherCountService,
 };
 
-
-
-// my 
+// my
 // import Teacher from "../models/teacher.model";
 // import classes from "../models/classes.model";
 // import student from "../models/student.model";
-
 
 // //generate teacher Id
 // const generateTeacherId = async () => {
 //   //get last teacher object, if there is a teacher, then return that teacher object, otherwise return empty array
 //   const lastTeacherDetails = await Teacher.find().sort({ _id: -1 }).limit(1);
-  
+
 //   //check if the result array is empty or not, if its empty then return first Teacher Id
 //   if (lastTeacherDetails.length == 0) {
 //     return "Te-001";
@@ -252,7 +249,7 @@ module.exports = {
 // };
 
 // export const createTeacher = async (teacherobj) => {
-//   //generate the teacher ID  
+//   //generate the teacher ID
 //   const id = await generateTeacherId();
 
 // //create a new object by adding generated ID
@@ -274,7 +271,7 @@ module.exports = {
 
 // export const getAllTeacher = async () =>{
 //   return await Teacher.find();
-  
+
 // }
 
 // export const deleteTeacher = async(id) =>{
@@ -286,9 +283,6 @@ module.exports = {
 //     console.log(updatedTeacher);
 //     return await Teacher.findByIdAndUpdate(id, updatedTeacher, { new: true });
 //   };
-  
-
-
 
 // module.exports = {
 // createTeacher,
@@ -296,5 +290,3 @@ module.exports = {
 // deleteTeacher,
 // editTeacher,
 // };
-
-

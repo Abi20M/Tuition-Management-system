@@ -1,7 +1,7 @@
 import Class from "../models/class.model";
 import Hall from "../models/hall.model";
-import Student from '../models/student.model';
-import classMails from '../Mails/class.mails';
+import Student from "../models/student.model";
+import classMails from "../Mails/class.mails";
 
 //generate Class Id
 const generateClassId = async () => {
@@ -64,6 +64,10 @@ export const getAllClasses = async () => {
   return await Class.find();
 };
 
+export const getClassById = async (id) => {
+  return await Class.findById(id);
+};
+
 export const deleteClass = async (id) => {
   return await Class.findByIdAndDelete(id);
 };
@@ -79,8 +83,11 @@ export const editClassDetails = async (id, editedDetails) => {
 };
 
 export const enrollStudent = async (enrollmentData) => {
-
-  classMails.sendEnrollEmail(enrollmentData.studentName,enrollmentData.studentEmail,enrollmentData.className);
+  classMails.sendEnrollEmail(
+    enrollmentData.studentName,
+    enrollmentData.studentEmail,
+    enrollmentData.className
+  );
   return await Class.findByIdAndUpdate(
     { _id: enrollmentData.classId },
     { $push: { students: enrollmentData.studentID } },
@@ -103,9 +110,14 @@ export const getEnrolledStudentsData = async (classID) => {
     });
 };
 
-export const unEnrollStudent = async (studentId, studentName, studentEmail, classId, className) => {
-
-  await classMails.sendUnenrollEmail(studentName, studentEmail,className);
+export const unEnrollStudent = async (
+  studentId,
+  studentName,
+  studentEmail,
+  classId,
+  className
+) => {
+  await classMails.sendUnenrollEmail(studentName, studentEmail, className);
   return await Class.findByIdAndUpdate(
     { _id: classId },
     { $pull: { students: studentId } },
@@ -126,6 +138,7 @@ export const unEnrollStudent = async (studentId, studentName, studentEmail, clas
 module.exports = {
   createClass,
   getAllClasses,
+  getClassById,
   deleteClass,
   getAllHallDetails,
   editClassDetails,

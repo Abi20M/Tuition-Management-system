@@ -24,15 +24,21 @@ import {
   IconEyeCheck,
   IconCheckupList,
   IconRocket,
+  IconFileAnalytics,
 } from "@tabler/icons";
 import { openConfirmModal } from "@mantine/modals";
 import { showNotification, updateNotification } from "@mantine/notifications";
 import ExamAPI from "../../API/ExamAPI";
 import { IconCheck, IconAlertTriangle } from "@tabler/icons";
 import {
+  Average,
   ClassData,
   ExamData,
+  GradeDistribution,
+  ResultOverview,
 } from "../../pages/ExamPortal/Teacher/TeacherExamPortalDashboard/TeacherExamPortalDashboard";
+import StudentAPI from "../../API/studentAPI";
+import ExamsReport from "../ManageExams/ExamsReport";
 
 export interface StudentsData {
   id: string;
@@ -143,7 +149,36 @@ function Th({ children, reversed, sorted, onSort }: ThProps) {
 function filterData(data: ExamData[], search: string) {
   const query = search.toLowerCase().trim();
   return data.filter((item) =>
-    keys(data[0]).some((key) => item[key].toLowerCase().includes(query))
+    keys(data[0]).some((key) => {
+      if (key === "marks" || key === "attendance") {
+        return false;
+      }
+      return item[key].toLowerCase().includes(query);
+    })
+  );
+}
+
+function filterAttendanceData(data: AttendanceData[], search: string) {
+  const query = search.toLowerCase().trim();
+  return data.filter((item) =>
+    keys(data[0]).some((key) => {
+      if (key === "status") {
+        return false;
+      }
+      return item[key].toLowerCase().includes(query);
+    })
+  );
+}
+
+function filterMarksData(data: ExamMarksData[], search: string) {
+  const query = search.toLowerCase().trim();
+  return data.filter((item) =>
+    keys(data[0]).some((key) => {
+      if (key === "marks") {
+        return false;
+      }
+      return item[key].toLowerCase().includes(query);
+    })
   );
 }
 
@@ -160,6 +195,72 @@ export function sortData(
 
   return filterData(
     [...data].sort((a, b) => {
+      if (sortBy === "marks" || sortBy === "attendance") {
+        return 0;
+      }
+
+      if (payload.reversed) {
+        return b[sortBy].localeCompare(a[sortBy]);
+      }
+
+      return a[sortBy].localeCompare(b[sortBy]);
+    }),
+    payload.search
+  );
+}
+
+export function sortAttendanceData(
+  data: AttendanceData[],
+  payload: {
+    sortBy: keyof AttendanceData | null;
+    reversed: boolean;
+    search: string;
+  }
+) {
+  const { sortBy } = payload;
+
+  if (!sortBy) {
+    return filterAttendanceData(data, payload.search);
+  }
+
+  return filterAttendanceData(
+    [...data].sort((a, b) => {
+      //exclude status
+      if (sortBy === "status") {
+        return 0;
+      }
+
+      if (payload.reversed) {
+        return b[sortBy].localeCompare(a[sortBy]);
+      }
+
+      return a[sortBy].localeCompare(b[sortBy]);
+    }),
+    payload.search
+  );
+}
+
+export function sortMarksData(
+  data: ExamMarksData[],
+  payload: {
+    sortBy: keyof ExamMarksData | null;
+    reversed: boolean;
+    search: string;
+  }
+) {
+  const { sortBy } = payload;
+
+  if (!sortBy) {
+    return filterMarksData(data, payload.search);
+  }
+
+  return filterMarksData(
+    [...data].sort((a, b) => {
+      //exclude marks
+      if (sortBy === "marks") {
+        return 0;
+      }
+
       if (payload.reversed) {
         return b[sortBy].localeCompare(a[sortBy]);
       }
@@ -184,23 +285,90 @@ export const getAllExams = async () => {
   return data;
 };
 
+//Get all students records from the database
+const getAllStudents = async () => {
+  const response = await StudentAPI.getStudents();
+  const data = await response.data;
+  return data;
+};
+
 const ManageExamsAdmin = () => {
   const [selectedExam, setSelectedExam] = useState({
     id: "",
     examId: "",
     status: "",
   });
-  const [search, setSearch] = useState("");
+  const [examsSearch, setExamsSearch] = useState("");
   const [sortBy, setSortBy] = useState<keyof ExamData | null>(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
   const [marksOpened, setMarksOpened] = useState(false);
-  const [marks, setMarks] = useState<ExamMarksData[]>([]);
   const [attendanceOpened, setAttendanceOpened] = useState(false);
-  const [attendance, setAttendance] = useState<AttendanceData[]>([]);
   const [exams, setExams] = useState<ExamData[]>([]);
   const [loading, setLoading] = useState(true);
   const [classes, setClasses] = useState<ClassData[]>([]);
   const [sortedData, setSortedData] = useState(exams);
+
+  const [marks, setMarks] = useState<ExamMarksData[]>([]);
+  const [marksSearch, setMarksSearch] = useState("");
+  const [sortedMarksData, setSortedMarksData] = useState(marks);
+
+  const [attendance, setAttendance] = useState<AttendanceData[]>([]);
+  const [attendanceSearch, setAttendanceSearch] = useState("");
+  const [sortedAttendanceData, setSortedAttendanceData] = useState(attendance);
+
+  const [resultOverview, setResultOverview] = useState<ResultOverview>({
+    passed: 0,
+    failed: 0,
+    absent: 0,
+  });
+  const [gradeDistribution, setGradeDistribution] = useState<
+    GradeDistribution[]
+  >([]);
+  const [average, setAverage] = useState<Average[]>([]);
+  const [students, setStudents] = useState<StudentsData[]>([]);
+
+  const [reportOpened, setReportOpened] = useState(false);
+
+  const setSorting = (field: keyof ExamData) => {
+    const reversed = field === sortBy ? !reverseSortDirection : false;
+    setReverseSortDirection(reversed);
+    setSortBy(field);
+    setSortedData(
+      sortData(exams, { sortBy: field, reversed, search: examsSearch })
+    );
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.currentTarget;
+    setExamsSearch(value);
+    setSortedData(
+      sortData(exams, { sortBy, reversed: reverseSortDirection, search: value })
+    );
+  };
+
+  const handleAttendanceSearchChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { value } = event.currentTarget;
+    setAttendanceSearch(value);
+    setSortedAttendanceData(
+      sortAttendanceData(attendance, {
+        sortBy: null,
+        reversed: false,
+        search: value,
+      })
+    );
+  };
+
+  const handleMarksSearchChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { value } = event.currentTarget;
+    setMarksSearch(value);
+    setSortedMarksData(
+      sortMarksData(marks, { sortBy: null, reversed: false, search: value })
+    );
+  };
 
   // fetch exam data on page load
   useEffect(() => {
@@ -240,8 +408,96 @@ const ManageExamsAdmin = () => {
         time: item.time,
       }));
 
+      const studentsResult = await getAllStudents();
+      const studentsData = studentsResult.map((item: any) => {
+        return {
+          id: item._id,
+          studentId: item.id,
+          name: item.name,
+          email: item.email,
+          phone: item.phone,
+          school: item.school,
+          grade: item.grade,
+          birthDate: item.birthDate,
+          address: item.address,
+          gender: item.gender,
+          parent: item.parent,
+        };
+      });
+
+      const gradeDistribution: GradeDistribution[] = [];
+      classes.forEach((item: any) => {
+        let gradeDistributionItem: GradeDistribution = {
+          class: item.classId,
+          A: 0,
+          B: 0,
+          C: 0,
+          F: 0,
+        };
+        const classExams = examDataFetched.filter(
+          (exam: any) => exam.class === item.id
+        );
+        classExams.forEach((exam: any) => {
+          exam.marks.forEach((mark: any) => {
+            if (mark.marks >= 75) {
+              gradeDistributionItem.A++;
+            } else if (mark.marks >= 65 && mark.marks < 75) {
+              gradeDistributionItem.B++;
+            } else if (mark.marks >= 45 && mark.marks < 65) {
+              gradeDistributionItem.C++;
+            } else if (mark.marks < 45) {
+              gradeDistributionItem.F++;
+            }
+          });
+        });
+        gradeDistribution.push(gradeDistributionItem);
+      });
+
+      const resultOverview: ResultOverview = {
+        passed: 0,
+        failed: 0,
+        absent: 0,
+      };
+
+      gradeDistribution.forEach((item: any) => {
+        resultOverview.passed += item.A + item.B + item.C;
+        resultOverview.failed += item.F;
+      });
+
+      examDataFetched.forEach((item: any) => {
+        item.attendance.forEach((attendance: any) => {
+          if (!attendance.status) {
+            resultOverview.absent++;
+          }
+        });
+      });
+
+      const average: Average[] = [];
+      classes.forEach((item: any) => {
+        let averageItem: Average = {
+          class: item.classId,
+          average: [0, 0, 0, 0, 0, 0],
+        };
+        const classExams = examDataFetched.filter(
+          (exam: any) => exam.class === item.id && exam.marks.length > 0
+        );
+        classExams.forEach((exam: any, index: number) => {
+          let total = 0;
+          exam.marks.forEach((mark: any) => {
+            total += mark.marks;
+          });
+          averageItem.average[index] = total / exam.marks.length;
+        });
+        averageItem.average.reverse();
+        average.push(averageItem);
+      });
+
+      setResultOverview(resultOverview);
+      setGradeDistribution(gradeDistribution);
+      setAverage(average);
       setClasses(classes);
       setExams(examDataFetched);
+      setStudents(studentsData);
       setLoading(false);
       const payload = {
         sortBy: null,
@@ -308,6 +564,12 @@ const ManageExamsAdmin = () => {
       }
     });
     setMarks(finalMarks);
+    const payload = {
+      sortBy: null,
+      reversed: false,
+      search: "",
+    };
+    setSortedMarksData(sortMarksData(finalMarks, payload));
     setMarksOpened(true);
     updateNotification({
       id: "loding-marks",
@@ -319,7 +581,7 @@ const ManageExamsAdmin = () => {
     });
   };
 
-  const getStudents = async (examid: string, classid: string) => {
+  const getStudentsMarks = async (examid: string, classid: string) => {
     showNotification({
       id: "loding-atendance",
       loading: true,
@@ -368,6 +630,12 @@ const ManageExamsAdmin = () => {
       }
     });
     setAttendance(finalAttendance);
+    const payload = {
+      sortBy: null,
+      reversed: false,
+      search: "",
+    };
+    setSortedAttendanceData(sortAttendanceData(finalAttendance, payload));
     setAttendanceOpened(true);
     updateNotification({
       id: "loding-atendance",
@@ -378,21 +646,6 @@ const ManageExamsAdmin = () => {
       icon: <IconCheck size={16} />,
       autoClose: 3000,
     });
-  };
-
-  const setSorting = (field: keyof ExamData) => {
-    const reversed = field === sortBy ? !reverseSortDirection : false;
-    setReverseSortDirection(reversed);
-    setSortBy(field);
-    setSortedData(sortData(exams, { sortBy: field, reversed, search }));
-  };
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.currentTarget;
-    setSearch(value);
-    setSortedData(
-      sortData(exams, { sortBy, reversed: reverseSortDirection, search: value })
-    );
   };
 
   const releaseOfficialResults = () => {
@@ -489,7 +742,7 @@ const ManageExamsAdmin = () => {
                   examId: row.examId,
                   status: row.status,
                 });
-                getStudents(row.id, row.class);
+                getStudentsMarks(row.id, row.class);
               }}
             >
               <IconCheckupList size="24px" stroke={1.5} />
@@ -517,6 +770,23 @@ const ManageExamsAdmin = () => {
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
       <Modal
+        opened={reportOpened}
+        onClose={() => {
+          setReportOpened(false);
+        }}
+        size="1000px"
+      >
+        <ExamsReport
+          exams={exams}
+          classes={classes}
+          resultOverview={resultOverview}
+          gradeDistribution={gradeDistribution}
+          average={average}
+          role="teacher"
+          students={students}
+        />
+      </Modal>
+      <Modal
         opened={marksOpened}
         onClose={() => {
           setMarksOpened(false);
@@ -530,8 +800,8 @@ const ManageExamsAdmin = () => {
               placeholder="Search by any field"
               mb="md"
               icon={<IconSearch size={14} stroke={1.5} />}
-              value={search}
-              onChange={() => {}}
+              value={marksSearch}
+              onChange={handleMarksSearchChange}
               sx={{ width: "300px" }}
             />
             <Button
@@ -564,7 +834,7 @@ const ManageExamsAdmin = () => {
                 </tr>
               </thead>
               <tbody>
-                {marks.map((enrollment: ExamMarksData) => (
+                {sortedMarksData.map((enrollment: ExamMarksData) => (
                   <tr key={enrollment.id}>
                     <td>{enrollment.studentId}</td>
                     <td>{enrollment.name}</td>
@@ -590,8 +860,8 @@ const ManageExamsAdmin = () => {
               placeholder="Search by any field"
               mb="md"
               icon={<IconSearch size={14} stroke={1.5} />}
-              value={search}
-              onChange={() => {}}
+              value={attendanceSearch}
+              onChange={handleAttendanceSearchChange}
               sx={{ width: "300px" }}
             />
           </Box>
@@ -609,7 +879,7 @@ const ManageExamsAdmin = () => {
                 </tr>
               </thead>
               <tbody>
-                {attendance.map((record) => (
+                {sortedAttendanceData.map((record) => (
                   <tr key={record.id}>
                     <td>{record.studentId}</td>
                     <td>{record.name}</td>
@@ -629,10 +899,20 @@ const ManageExamsAdmin = () => {
             placeholder="Search by any field"
             mb="md"
             icon={<IconSearch size={14} stroke={1.5} />}
-            value={search}
+            value={examsSearch}
             onChange={handleSearchChange}
             sx={{ width: "300px" }}
           />
+          <Button
+            color="red"
+            leftIcon={<IconFileAnalytics size={16} />}
+            sx={{ width: "200px", marginRight: "20px" }}
+            onClick={() => {
+              setReportOpened(true);
+            }}
+          >
+            Generate Report
+          </Button>
         </Box>
         <ScrollArea>
           <Table
