@@ -10,6 +10,7 @@ import ExpensePrivateRoute from "./expensePrivateRoute";
 import ParentPrivateRoute from "./ParentPrivateRoute";
 import TeacherPrivateRoute from "./TeacherPrivateRoute";
 import { AttendanceLoginPage } from "../pages/AllLogin/Manage Attendance";
+import { AttendanceDashboard } from "../pages/attendanceDashboard";
 import AttendancePrivateRoute from "./attendancePrivateRoute";
 
 import { TeacherDashboard } from "../pages/teacherDashboard";
@@ -102,6 +103,11 @@ export const AllRoutes = () => {
         <Route path="/student/" element={<StudentPrivateRoute />}>
           <Route path="/student/dashboard" element={<StudentDashboard />} />
         </Route>
+
+        <Route path="/attendance/" element={<AttendancePrivateRoute />}>
+          <Route path="/attendance/dashboard" element={<AttendanceDashboard />} />
+        </Route>
+
       </Routes>
     </Router>
   );

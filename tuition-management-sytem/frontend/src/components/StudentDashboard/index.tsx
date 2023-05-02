@@ -221,6 +221,7 @@ const StudentDashboard: React.FC = () => {
         const error = document.getElementById("confirmPasswordError");
         if (error) error.innerHTML = "Password is match!";
       } else {
+        setError(true);
         const error = document.getElementById("confirmPasswordError");
         if (error) error.innerHTML = "Password is not match!";
       }
