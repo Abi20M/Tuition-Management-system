@@ -155,6 +155,7 @@ function sortData(
 const ManageParents= ({ user }: adminName) => {
   const [data, setData] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(true);
+  
 
 
   //set admin name
@@ -276,7 +277,7 @@ const ManageParents= ({ user }: adminName) => {
   const addParent = async (values: {
     name: string;
     email: string;
-    password: string;
+   // password: string;
     phone: string;
   }) => {
     showNotification({
@@ -418,8 +419,8 @@ const ManageParents= ({ user }: adminName) => {
         /^\d{10}$/.test(value)
           ? null
           : "Phone number must be 10 digits long number",
-      password: (value) =>
-        value.length < 8 ? "Password must have at least 8 characters" : null,
+     // password: (value) =>
+       // value.length < 8 ? "Password must have at least 8 characters" : null,
     },
   });
 
@@ -526,12 +527,12 @@ const ManageParents= ({ user }: adminName) => {
             {...addForm.getInputProps("email")}
             required
           />
-          <PasswordInput
+          {/* <PasswordInput
             placeholder="Your password"
             label="Password"
             {...addForm.getInputProps("password")}
             required
-          />
+          /> */}
           <TextInput
             label="Phone"
             placeholder="Enter phone"

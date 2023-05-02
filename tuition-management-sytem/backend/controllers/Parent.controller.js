@@ -2,10 +2,14 @@ import parentService from "../services/Parent.service.js";
 import Parent from "../models/parent.model.js";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
+import generatePassword from "../utils/passowrdGenerator";
 
 export const createParent = async (req, res, next) => {
+  //generate random password for parent
+  const autoPassword = generatePassword();
+
   const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  const hashedPassword = await bcrypt.hash(autoPassword, salt);
 
   //create parent object
   const parent = new Parent({
@@ -16,7 +20,7 @@ export const createParent = async (req, res, next) => {
   });
 
   await parentService
-    .createParent(parent)
+    .createParent(parent, autoPassword)
     .then((data) => {
       req.handleResponse.successRespond(res)(data);
       next();
@@ -86,6 +90,10 @@ export const loginParent = async (req, res, next) => {
     .then((data) => {
       req.handleResponse.successRespond(res)(data);
       next();
+    })
+    .catch((err) => {
+      req.handleResponse.errorRespond(res)(err);
+      next();
     });
 };
 
@@ -99,6 +107,28 @@ export const getParentCount = async (req, res) => {
       req.handleResponse.errorRespond(res)(err);
     });
 };
+
+export const changeParentPassword = async (req, res) => {
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(req.body.newPassword, salt);
+
+  const parentId = req.params.id;
+  const password = {
+    currentPassword: req.body.currentPassword,
+    newPassword: hashedPassword,
+  };
+  await parentService
+  .changeParentPassword(parentId, password)
+  .then((data) => {
+    req.handleResponse.successRespond(res)(data);
+  })
+  .catch((err) => {
+    req.handleResponse.errorRespond(res)(err);
+  });
+};
+
+
+
 module.exports = {
   createParent,
   getParent,
@@ -107,4 +137,5 @@ module.exports = {
   deleteParent,
   loginParent,
   getParentCount,
+  changeParentPassword,
 };

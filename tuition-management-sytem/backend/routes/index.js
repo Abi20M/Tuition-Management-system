@@ -101,19 +101,13 @@ const Routes = (app) => {
   //Parent Routes
     //parent login
   app.post("/parent/login" , parentController.loginParent);
+  
   app.post("/parent", protect.adminProtect, parentController.createParent);
   app.get("/parent", protect.adminProtect, parentController.getAllParents);
-  app.get(
-    "/parent/count",
-    protect.adminProtect,
-    parentController.getParentCount
-  );
+  app.get("/parent/count",protect.adminProtect,parentController.getParentCount);
   app.put("/parent/:id", protect.adminProtect, parentController.updateParent);
-  app.delete(
-    "/parent/:id",
-    protect.adminProtect,
-    parentController.deleteParent
-  );
+  app.delete("/parent/:id",protect.adminProtect,parentController.deleteParent);
+  app.put("/parent/changePassword/:id",protect.parentProtect, parentController.changeParentPassword);
 
 
 //Student Routes
