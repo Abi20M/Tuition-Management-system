@@ -600,11 +600,7 @@ const ClassManage = ({ user }: adminName) => {
     <tr key={row._id}>
       <td>{row.id}</td>
       <td>{row.name}</td>
-      <td>{teacherDetails.map((teacher) => {
-          if(row.teacher === teacher._id){
-            return teacher.name
-          }
-        })}</td>
+      <td>{row.teacher}</td>
       <td>{row.subject}</td>
       <td>{row.day}</td>
       <td>{new Date(Date.parse(row.startTime)).toLocaleTimeString("en-US", {
@@ -801,7 +797,6 @@ const ClassManage = ({ user }: adminName) => {
         form.reset(); //reset form data after entering new details
         setOpenedAddClassModal(false); //Auto Close the class adding modal
 
-
         //then update the Table with new Details
         const newData = [
           ...classDetails,
@@ -965,7 +960,6 @@ const ClassManage = ({ user }: adminName) => {
       }, 500);
     };
     fetch();
-    getTeacherDetails();
   }, []);
 
   //fetch Registered Students
@@ -1446,7 +1440,7 @@ const ClassManage = ({ user }: adminName) => {
                   nothingFound="Not Found"
                   data={teacherDetails.map((teacher) => {
                     return {
-                      value: teacher._id,
+                      value: teacher.name,
                       label: teacher.name,
                     };
                   })}
