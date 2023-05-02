@@ -1,6 +1,11 @@
 import { createStyles, Container, Tabs } from "@mantine/core";
 import AdminHeader from "../../components/adminHeader";
-import ExpenseManage from "../../components/ManageParents";
+import ParentHeader from "../../components/ParentHeader";
+import ManageParents from "../../components/ManageParents";
+import WebsiteFooter from "../../components/Footer";
+import ParentOverview from "../../components/parentDashboard"
+
+
 
 const useStyles = createStyles((theme) => ({
   tabs: {
@@ -39,8 +44,8 @@ const useStyles = createStyles((theme) => ({
 
 //create tabs List
 const tabs = [
-  "Overview",
-  "Children",
+  "Dashboard",
+  "My Children",
   
 ];
 
@@ -57,18 +62,25 @@ export const ParentDashboard = () => {
   ));
 
   //get Admin information from the localStorage and we convert into that information into JSON object using JSON.parse()
-  const admin = JSON.parse(localStorage.getItem("admin") || "{}");
+  const parent = JSON.parse(localStorage.getItem("parent") || "{}");
 
   //user information object
-  // const user = {
-  //   name: admin.name,
-  //   email : admin.email
-  // };
+  const user = {
+    _id: parent._id,
+    id: parent.id,
+    name: parent.name,
+    email:parent.email,
+    phone: parent.phone,
+    
+  };
 
   return (
     <div>
       {/* import admin Header */}
     {/* <AdminHeader user ={user}/> */}
+
+    {/* import parent Header */}
+    <ParentHeader user = {user}/>
 
     {/* Tabs */}
     <Container>
@@ -81,20 +93,21 @@ export const ParentDashboard = () => {
           tab: classes.tab,
         }}
       >
+        
         <Tabs.List grow>{items}</Tabs.List>
 
         {/* Here you can add your own Component to here */}
-        <Tabs.Panel value="Dashboard">
+        <Tabs.Panel value="Overview">
           <h1>Hello Overview</h1>
         </Tabs.Panel>
-        <Tabs.Panel value="Children">
-          {/* <ExpenseManage/> */}
+        <Tabs.Panel value="My Children">
+          <ParentOverview/>
         </Tabs.Panel>
-        <Tabs.Panel value="Past Expese Details">
-          <h1>Hello Past details</h1>
-        </Tabs.Panel>   
+         
       </Tabs>
     </Container>
+
+    <WebsiteFooter/>
     </div>
   );
 };

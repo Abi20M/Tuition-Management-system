@@ -97,7 +97,7 @@ export const getAllExams = async () => {
 
 const StudentExamPortalDashboard = () => {
   //change the tab Title
-  document.title = "Teacher Dashboard - Exam Portal";
+  document.title = "Student Dashboard - Exam Portal";
   const { classes } = useStyles();
 
   const [examData, setExamData] = useState<ExamData[]>([]);

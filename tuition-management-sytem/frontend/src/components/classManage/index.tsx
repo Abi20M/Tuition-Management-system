@@ -43,7 +43,8 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import { ClassPDF } from "../PDFRender/ClassPDFTemplate";
 import { openConfirmModal } from "@mantine/modals";
 import StudentAPI from "../../API/studentAPI";
-import { isConstructorDeclaration } from "typescript";
+import TeacherAPI from "../../API/teacherAPI";
+import subjectAPI from "../../API/SubjectAPI";
 
 const useStyles = createStyles((theme) => ({
   th: {
@@ -100,8 +101,8 @@ interface RowData {
   subject: string;
   day: string;
   startTime: string;
-  venue: string;
   endTime: string;
+  venue: string;
 }
 
 interface HallData {
@@ -119,6 +120,16 @@ interface StudentDetails {
   phone: string;
 }
 
+interface TeacherRowData {
+  _id: string;
+  id: string;
+  name: string;
+}
+
+interface SubjectRawData {
+  _id: string;
+  name: string;
+}
 interface TableSortProps {
   data: RowData[];
 }
@@ -224,6 +235,26 @@ const fethClassDetailsById = async (classId: string) => {
     });
 };
 
+const getTeacherDetailAPI = async () => {
+  return TeacherAPI.getTeachers()
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      return error;
+    });
+};
+
+const getAllSubjectAPI = async () => {
+  return subjectAPI
+    .getSubjects()
+    .then((response) => {
+      return response.data;
+    })
+    .catch((error) => {
+      return error;
+    });
+};
 //created prop type
 interface adminName {
   user: {
@@ -242,9 +273,13 @@ const ClassManage = ({ user }: adminName) => {
   const [scrolled, setScrolled] = useState(false);
   const [openedAddClassModal, setOpenedAddClassModal] = useState(false);
   const [daySearchValue, setDaySearchValue] = useState("");
+  const [teacherSearchValue, setTeacherSearchValue] = useState("");
+  const [subjectSearchValue, setSubjectSearchValue] = useState("");
   const { classes, cx } = useStyles();
   const theme = useMantineTheme();
 
+  const [teacherDetails, setTeacherDetails] = useState<TeacherRowData[]>([]);
+  const [subjectDetails, setSubjectDetails] = useState<SubjectRawData[]>([]);
   const [hallDetails, setHallDetails] = useState<HallData[]>([]);
   const [openEditClassModal, setOpenEditClassModal] = useState(false);
   const [openEnrollModal, setOpenEnrollModel] = useState(false);
@@ -416,7 +451,13 @@ const ClassManage = ({ user }: adminName) => {
   };
 
   // Enroll student
-  const enrollStudent = (studentObjId: string,studentEmail : string, studentName : string, classId: string,className : string) => {
+  const enrollStudent = (
+    studentObjId: string,
+    studentEmail: string,
+    studentName: string,
+    classId: string,
+    className: string
+  ) => {
     showNotification({
       id: "class-enroll",
       title: "Enrolling....",
@@ -424,7 +465,13 @@ const ClassManage = ({ user }: adminName) => {
       loading: true,
     });
 
-    ClassAPI.enrollStudent(studentObjId,studentEmail, studentName, classId, className)
+    ClassAPI.enrollStudent(
+      studentObjId,
+      studentEmail,
+      studentName,
+      classId,
+      className
+    )
       .then((data) => {
         // const newClassObj = data.data.students;
         updateNotification({
@@ -455,7 +502,13 @@ const ClassManage = ({ user }: adminName) => {
 
   // UnEnroll Students
 
-  const removeEnrollStudent = async (studentId: string, studentName : string, studentEmail : string, classId: string, className : string) => {
+  const removeEnrollStudent = async (
+    studentId: string,
+    studentName: string,
+    studentEmail: string,
+    classId: string,
+    className: string
+  ) => {
     showNotification({
       id: "student-unenroll",
       title: "Unenrolling....",
@@ -463,7 +516,13 @@ const ClassManage = ({ user }: adminName) => {
       loading: true,
     });
 
-    ClassAPI.unEnrollStudent(studentId, studentName, studentEmail ,classId, className)
+    ClassAPI.unEnrollStudent(
+      studentId,
+      studentName,
+      studentEmail,
+      classId,
+      className
+    )
       .then((response) => {
         setEnrolledStudents(
           enrolledStudents.filter(
@@ -520,7 +579,13 @@ const ClassManage = ({ user }: adminName) => {
             leftIcon={<IconX size={16} />}
             ml={-30}
             onClick={() =>
-              removeEnrollStudent(student._id, student.name, student.email, selectedEnrollClassId, enrollClassName)
+              removeEnrollStudent(
+                student._id,
+                student.name,
+                student.email,
+                selectedEnrollClassId,
+                enrollClassName
+              )
             }
           >
             Unenroll Student
@@ -538,8 +603,14 @@ const ClassManage = ({ user }: adminName) => {
       <td>{row.teacher}</td>
       <td>{row.subject}</td>
       <td>{row.day}</td>
-      <td>{row.startTime}</td>
-      <td>{row.endTime}</td>
+      <td>{new Date(Date.parse(row.startTime)).toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true})}</td>
+      <td>{new Date(Date.parse(row.endTime)).toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true})}</td>
       <td>{row.venue}</td>
       <td>
         <Menu
@@ -586,11 +657,13 @@ const ClassManage = ({ user }: adminName) => {
                   day: row.day,
                   teacher: row.teacher,
                   subject: row.subject,
-                  startTime: new Date(),
-                  endTime: new Date(),
+                  startTime: new Date(row.startTime),
+                  endTime: new Date(row.endTime),
                   venue: row.venue,
                 });
                 setOpenEditClassModal(true);
+                getTeacherDetails();
+                getSubjectDetails();
               }}
             >
               Edit
@@ -611,7 +684,6 @@ const ClassManage = ({ user }: adminName) => {
     </tr>
   ));
 
-  //todo Create this function real time when admin enrolled student into the class, then the system update that student as a enrolled student
   // registered student details rows
   const studentRows = studentDetails.map((studentRow: StudentDetails) => {
     var count = 0;
@@ -649,16 +721,25 @@ const ClassManage = ({ user }: adminName) => {
               color="teal"
               leftIcon={<IconPlus size={16} />}
               ml={-30}
-              onClick={() =>{
-                enrollStudent(studentRow._id, studentRow.email,studentRow.name, selectedEnrollClassId,enrollClassName);
-                setEnrolledStudents(prevState => ([...prevState,{
-                  _id : studentRow._id,
-                  id : studentRow.id,
-                  name : studentRow.name,
-                  email : studentRow.email,
-                  phone : studentRow.phone,
-                  grade : studentRow.grade
-                }]))
+              onClick={() => {
+                enrollStudent(
+                  studentRow._id,
+                  studentRow.email,
+                  studentRow.name,
+                  selectedEnrollClassId,
+                  enrollClassName
+                );
+                setEnrolledStudents((prevState) => [
+                  ...prevState,
+                  {
+                    _id: studentRow._id,
+                    id: studentRow.id,
+                    name: studentRow.name,
+                    email: studentRow.email,
+                    phone: studentRow.phone,
+                    grade: studentRow.grade,
+                  },
+                ]);
               }}
             >
               Enroll Student
@@ -671,7 +752,7 @@ const ClassManage = ({ user }: adminName) => {
 
   // validate add Class Form
   const form = useForm({
-    validateInputOnChange: true,
+    validateInputOnChange : true,
     initialValues: {
       name: "",
       teacher: "",
@@ -686,7 +767,7 @@ const ClassManage = ({ user }: adminName) => {
       name: (val) =>
         val.length >= 2
           ? null
-          : "Invalid class name, Class name should have more than 3 characters!",
+          : "Invalid class name, Class name should have more than 3 characters!",  
     },
   });
 
@@ -701,6 +782,7 @@ const ClassManage = ({ user }: adminName) => {
     endTime: Date;
   }) => {
     await ClassAPI.addClass(values)
+
       .then((data) => {
         showNotification({
           id: "class-add",
@@ -909,6 +991,52 @@ const ClassManage = ({ user }: adminName) => {
     setStudentDetails(registeredStudents);
   };
 
+  const getTeacherDetails = async () => {
+    const newTeacherDetails = await getTeacherDetailAPI().catch((error) => {
+      updateNotification({
+        id: "while-fetching-teachers",
+        disallowClose: false,
+        autoClose: 2000,
+        title: "Something Went Wrong!",
+        message: "There is an error while fetching teachers details",
+        color: "red",
+        icon: <IconX />,
+        loading: false,
+      });
+    });
+
+    const teacherDetails = newTeacherDetails.map((teacher: any) => ({
+      _id: teacher._id,
+      id: teacher.id,
+      name: teacher.name,
+    }));
+
+    // set teacher Details
+    setTeacherDetails(teacherDetails);
+  };
+
+  const getSubjectDetails = async () => {
+    const newSubjectDetails = await getAllSubjectAPI().catch((error) => {
+      updateNotification({
+        id: "while-fetching-subjects",
+        disallowClose: false,
+        autoClose: 2000,
+        title: "Something Went Wrong!",
+        message: "There is an error while fetching subject details",
+        color: "red",
+        icon: <IconX />,
+        loading: false,
+      });
+    });
+
+    const subject = newSubjectDetails.map((sub: any) => ({
+      _id: sub._id,
+      name: sub.name,
+    }));
+
+    setSubjectDetails(subject);
+  };
+
   //get current Full Date
   const today = new Date();
 
@@ -933,7 +1061,7 @@ const ClassManage = ({ user }: adminName) => {
       name: (val) =>
         val.length >= 2
           ? null
-          : "Invalid class name, Class name should have more than 3 characters!",
+          : "Invalid class name, Class name should have more than 3 characters!", 
     },
   });
 
@@ -1043,7 +1171,6 @@ const ClassManage = ({ user }: adminName) => {
         onClose={() => {
           setSelectEnrollStudent(false);
         }}
-
       >
         <TextInput
           placeholder="Search by any field"
@@ -1123,23 +1250,42 @@ const ClassManage = ({ user }: adminName) => {
             />
 
             {/* get teacher name */}
-            <TextInput
-              required
-              withAsterisk
-              label="Teacher"
-              placeholder="Enter teacher Name"
-              {...editForm.getInputProps("teacher")}
+
+            <Select
               mb={10}
+              label="Teacher"
+              withAsterisk
+              searchable
+              placeholder="Select teacher"
+              onSearchChange={setTeacherSearchValue}
+              searchValue={teacherSearchValue}
+              nothingFound="Not Found"
+              data={teacherDetails.map((teacher) => {
+                return {
+                  value: teacher.name,
+                  label: teacher.name,
+                };
+              })}
+              {...editForm.getInputProps("teacher")}
             />
 
             {/* get subject name */}
-            <TextInput
-              required
-              withAsterisk
-              label="Subject"
-              placeholder="Enter subject Name"
-              {...editForm.getInputProps("subject")}
+            <Select
               mb={10}
+              label="Subject"
+              withAsterisk
+              searchable
+              placeholder="Select Subject"
+              onSearchChange={setSubjectSearchValue}
+              searchValue={subjectSearchValue}
+              nothingFound="Not Found"
+              data={subjectDetails.map((subject) => {
+                return {
+                  value: subject.name,
+                  label: subject.name,
+                };
+              })}
+              {...editForm.getInputProps("subject")}
             />
 
             {/* get Day */}
@@ -1283,23 +1429,41 @@ const ClassManage = ({ user }: adminName) => {
                 />
 
                 {/* get teacher name */}
-                <TextInput
-                  required
-                  withAsterisk
-                  label="Teacher"
-                  placeholder="Enter teacher Name"
-                  {...form.getInputProps("teacher")}
+                <Select
                   mb={10}
+                  label="Teacher"
+                  withAsterisk
+                  searchable
+                  placeholder="Select teacher"
+                  onSearchChange={setTeacherSearchValue}
+                  searchValue={teacherSearchValue}
+                  nothingFound="Not Found"
+                  data={teacherDetails.map((teacher) => {
+                    return {
+                      value: teacher.name,
+                      label: teacher.name,
+                    };
+                  })}
+                  {...form.getInputProps("teacher")}
                 />
 
                 {/* get subject name */}
-                <TextInput
-                  required
-                  withAsterisk
-                  label="Subject"
-                  placeholder="Enter subject Name"
-                  {...form.getInputProps("subject")}
+                <Select
                   mb={10}
+                  label="Subject"
+                  withAsterisk
+                  searchable
+                  placeholder="Select Subject"
+                  onSearchChange={setSubjectSearchValue}
+                  searchValue={subjectSearchValue}
+                  nothingFound="Not Found"
+                  data={subjectDetails.map((subject) => {
+                    return {
+                      value: subject.name,
+                      label: subject.name,
+                    };
+                  })}
+                  {...form.getInputProps("subject")}
                 />
 
                 {/* get Day */}
@@ -1359,7 +1523,6 @@ const ClassManage = ({ user }: adminName) => {
                   clearable
                   withAsterisk
                   nothingFound="No Hall"
-                  defaultValue={editForm.values.venue}
                   data={hallDetails.map((data: any) => {
                     return {
                       value: data.hallID,
@@ -1383,7 +1546,11 @@ const ClassManage = ({ user }: adminName) => {
           {/* Add class Button */}
           <Button
             leftIcon={<IconPlus size={16} />}
-            onClick={() => setOpenedAddClassModal(true)}
+            onClick={() => {
+              setOpenedAddClassModal(true);
+              getTeacherDetails();
+              getSubjectDetails();
+            }}
           >
             Add Class
           </Button>
