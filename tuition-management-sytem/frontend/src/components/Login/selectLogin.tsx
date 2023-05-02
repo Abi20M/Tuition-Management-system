@@ -25,10 +25,9 @@ import React from "react";
 import welcomeBackground1 from "../../assets/welcomeBackground1.svg";
 import welcomeBackground2 from "../../assets/welcomeBackground2.svg";
 import { GetInTouch } from "../contactUs";
-import getBack1 from '../../assets/getInTouch1.svg';
-import getBack2 from '../../assets/getInTouch2.svg';
-import WebsiteFooter from '../Footer/index'
-
+import getBack1 from "../../assets/getInTouch1.svg";
+import getBack2 from "../../assets/getInTouch2.svg";
+import WebsiteFooter from "../Footer/index";
 
 export const SelectLogin = React.forwardRef((props, ref: any) => {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -44,13 +43,7 @@ export const SelectLogin = React.forwardRef((props, ref: any) => {
     <>
       <Box ref={ref}>
         <BackgroundImage src={dark ? welcomeBackground2 : welcomeBackground1}>
-          <Group
-            position="center"
-            grow
-            mr={100}
-            ml={100}
-            mb={10}
-          >
+          <Group position="center" grow mr={100} ml={100} mb={10}>
             <Paper
               radius="md"
               withBorder
@@ -150,13 +143,7 @@ export const SelectLogin = React.forwardRef((props, ref: any) => {
             </Paper>
           </Group>
 
-          <Group
-            position="center"
-            grow
-            mr={100}
-            ml={100}
-
-          >
+          <Group position="center" grow mr={100} ml={100}>
             <Paper
               radius="md"
               withBorder
@@ -167,27 +154,26 @@ export const SelectLogin = React.forwardRef((props, ref: any) => {
                     ? theme.colors.dark[8]
                     : theme.white,
               })}
-              mb = {40}
+              mb={40}
               // data-aos = "fade-down" data-aos-delay = "800"
             >
               <Avatar src={examManage} size={120} radius={120} mx="auto" />
               <Text align="center" size="lg" weight={"bold"} mt="md">
-                Exam Management
+                Exam Portal
               </Text>
               <Text align="center" size="sm" weight="lighter" mt="md">
-                Expenses management refers to the process of tracking, analyzing
-                and controlling expenses incurred by an individual or
-                organization. Are you a financial manager? Then this Login for
-                you!
+                Log in now and take control of your exam experience: Teachers
+                can manage exams and students can view their marks with just a
+                few clicks.
               </Text>
               <Button
                 color="red"
                 fullWidth
                 mt="md"
                 component="a"
-                href="instructor/login"
+                href="exam-portal"
               >
-                Login as a Teacher
+                Go to Exam Portal
               </Button>
             </Paper>
             <Paper
@@ -200,7 +186,7 @@ export const SelectLogin = React.forwardRef((props, ref: any) => {
                     ? theme.colors.dark[8]
                     : theme.white,
               })}
-              mb = {40}
+              mb={40}
               // data-aos = "fade-down"  data-aos-delay = "200"
             >
               <Avatar
@@ -239,7 +225,7 @@ export const SelectLogin = React.forwardRef((props, ref: any) => {
                     ? theme.colors.dark[8]
                     : theme.white,
               })}
-              mb = {40}
+              mb={40}
               // data-aos = "fade-down" data-aos-delay = "400"
             >
               <Avatar src={attendance} size={120} radius={120} mx="auto" />
@@ -266,23 +252,19 @@ export const SelectLogin = React.forwardRef((props, ref: any) => {
         </BackgroundImage>
       </Box>
       <BackgroundImage
-          src= { dark ? getBack2 : getBack1}
-          // style={{backgroundRepeat : "no-repeat",backgroundSize : 100}}
-          pt={40}
-          pb={100}
-          mb={-120}
-        >
-      <Box data-aos = "zoom-in-up" data-aos-delay = "300">
-
-        <GetInTouch />
-        
-        
-      </Box>
+        src={dark ? getBack2 : getBack1}
+        // style={{backgroundRepeat : "no-repeat",backgroundSize : 100}}
+        pt={40}
+        pb={100}
+        mb={-120}
+      >
+        <Box data-aos="zoom-in-up" data-aos-delay="300">
+          <GetInTouch />
+        </Box>
       </BackgroundImage>
-      
 
       {/* Footer */}
-      <WebsiteFooter/>
+      <WebsiteFooter />
     </>
     // <Grid>
     //   {/* Teacher Colum */}
