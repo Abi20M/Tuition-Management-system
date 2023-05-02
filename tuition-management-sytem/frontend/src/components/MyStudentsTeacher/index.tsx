@@ -220,62 +220,62 @@ const MyStudentsTeacher: React.FC = () => {
   const [performanceData, setPerformanceData] = useState(performanceDataSample);
 
   // fetch student data
-  useEffect(() => {
-    const fetchData = async () => {
-      showNotification({
-        id: "loding-data",
-        loading: true,
-        title: "Loading data",
-        message: "Please wait while we load the data",
-        autoClose: false,
-        disallowClose: true,
-      });
-      const result = await getAllStudents();
-      const resultParent = await getAllParents();
-      const data = result.map((item: any) => {
-        return {
-          id: item._id,
-          name: item.name,
-          email: item.email,
-          phone: item.phone,
-          school: item.school,
-          grade: item.grade,
-          birthDate: item.birthDate,
-          gender:item.gender,
-          address: item.address,
-          parent: item.parent,
-        };
-      });
-      const dataParent = resultParent.map((item: any) => {
-        return {
-          id: item._id,
-          name: item.name,
-          email: item.email,
-          phone: item.phone,
-        };
-      });
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     showNotification({
+  //       id: "loding-data",
+  //       loading: true,
+  //       title: "Loading data",
+  //       message: "Please wait while we load the data",
+  //       autoClose: false,
+  //       disallowClose: true,
+  //     });
+  //     const result = await getAllStudents();
+  //     const resultParent = await getAllParents();
+  //     const data = result.map((item: any) => {
+  //       return {
+  //         id: item._id,
+  //         name: item.name,
+  //         email: item.email,
+  //         phone: item.phone,
+  //         school: item.school,
+  //         grade: item.grade,
+  //         birthDate: item.birthDate,
+  //         gender:item.gender,
+  //         address: item.address,
+  //         parent: item.parent,
+  //       };
+  //     });
+  //     const dataParent = resultParent.map((item: any) => {
+  //       return {
+  //         id: item._id,
+  //         name: item.name,
+  //         email: item.email,
+  //         phone: item.phone,
+  //       };
+  //     });
 
-      setData(data);
-      setParents(dataParent);
-      setLoading(false);
-      const payload = {
-        sortBy: null,
-        reversed: false,
-        search: "",
-      };
-      setSortedData(sortData(data, payload));
-      updateNotification({
-        id: "loding-data",
-        color: "teal",
-        title: "Data loaded successfully",
-        message:
-          "You can now manage students by adding, editing or deleting them.",
-        icon: <IconCheck size={16} />,
-        autoClose: 3000,
-      });
-    };
-    fetchData();
-  }, []);
+  //     setData(data);
+  //     setParents(dataParent);
+  //     setLoading(false);
+  //     const payload = {
+  //       sortBy: null,
+  //       reversed: false,
+  //       search: "",
+  //     };
+  //     setSortedData(sortData(data, payload));
+  //     updateNotification({
+  //       id: "loding-data",
+  //       color: "teal",
+  //       title: "Data loaded successfully",
+  //       message:
+  //         "You can now manage students by adding, editing or deleting them.",
+  //       icon: <IconCheck size={16} />,
+  //       autoClose: 3000,
+  //     });
+  //   };
+  //   fetchData();
+  // }, []);
 
   const [search, setSearch] = useState("");
   const [sortedData, setSortedData] = useState(data);
