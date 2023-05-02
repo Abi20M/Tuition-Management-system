@@ -6,9 +6,8 @@ import teacherController from "../controllers/teacher.controller";
 import parentController from "../controllers/Parent.controller";
 import studentController from "../controllers/student.controller";
 import adminController from "../controllers/admin.controller";
+import subjectController from '../controllers/subject.controller';
 import examController from "../controllers/Exam.controller";
-
-import subjectController from "../controllers/Subject.controller";
 import feeController from "../controllers/Fee.controller";
 
 const Routes = (app) => {
@@ -95,7 +94,12 @@ const Routes = (app) => {
   );
   app.put("/teacher/:id", protect.adminProtect, teacherController.editTeacher);
   app.post("/teacher/login", teacherController.teacherLogin);
+
+
+
   //Parent Routes
+    //parent login
+    // app.post("/parent/login" , parentController.loginParent);
   app.post("/parent", protect.adminProtect, parentController.createParent);
   app.get("/parent", protect.adminProtect, parentController.getAllParents);
   app.get(
@@ -109,9 +113,6 @@ const Routes = (app) => {
     protect.adminProtect,
     parentController.deleteParent
   );
-
-  //parent login
-  // app.post("/parent/login" , parentController.loginParent);
 
   //Student Routes
   app.post("/student", protect.adminProtect, studentController.createStudent);
@@ -139,11 +140,8 @@ const Routes = (app) => {
   //Student Login
   app.post("/student/login", studentController.loginStudent);
   //Student Routes - Accessible to Students only
-  app.put(
-    "/student/changePassword/:id",
-    protect.studentProtect,
-    studentController.changeStudentPassword
-  );
+  app.put("/student/changePassword/:id",protect.studentProtect, studentController.changeStudentPassword);
+
 
   //Subject Routes
   app.post("/subject", protect.adminProtect, subjectController.createSubject);
@@ -171,22 +169,11 @@ const Routes = (app) => {
   app.put("/fee/:id", protect.adminProtect, feeController.updateFee);
   app.delete("/fee/:id", protect.adminProtect, feeController.deleteFee);
 
-  //Student Login
-  app.post("/student/login", studentController.loginStudent);
-  //Student Routes - Accessible to Students only
-  app.put(
-    "/student/changePassword/:id",
-    protect.studentProtect,
-    studentController.changeStudentPassword
-  );
 
   //Manage Exams
   app.post("/exam", protect.adminOrTeacherProtect, examController.createExam);
-
   app.get("/exam", protect.adminOrTeacherProtect, examController.getAllExams);
-
   app.get("/exam/:id", protect.adminOrTeacherProtect, examController.getExam);
-
   app.put(
     "/exam/:id",
     protect.adminOrTeacherProtect,

@@ -14,30 +14,18 @@ export class ClassAPI {
         venue:string,
         endTime : Date
     })=>{
-        
-        // convert time into Readable String
-        const startTime = values.startTime.toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "numeric",
-            hour12: false});
-
-        const endTime = values.endTime.toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "numeric",
-            hour12: false});
-        
-        //create a new object with class details
+        // create a new object with class details
         const classDetails = {
             name : values.name,
             teacher : values.teacher,
             subject : values.subject,
             day : values.day,
-            startTime : startTime,
+            startTime : values.startTime,
             venue : values.venue,
-            endTime : endTime
+            endTime : values.endTime
         }
 
-        //send a request to backend with class details and accessToken....
+        // send a request to backend with class details and accessToken....
         return axios.post(`${BASE_URL}/class`, classDetails, requestConfig);
     }
 
@@ -65,27 +53,15 @@ export class ClassAPI {
         venue:string,
         endTime : Date
     }) =>{
-
-        // convert time into Readable String
-        const startTime = values.startTime.toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "numeric",
-            hour12: false});
-
-        const endTime = values.endTime.toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "numeric",
-            hour12: false});
-        
         //create a new object with class details
         const updatedClassDetails = {
             name : values.name,
             teacher : values.teacher,
             subject : values.subject,
             day : values.day,
-            startTime : startTime,
+            startTime : values.startTime,
             venue : values.venue,
-            endTime : endTime
+            endTime : values.endTime
         }
 
         return axios.put(`${BASE_URL}/class/edit/${values._id}`,updatedClassDetails,requestConfig);

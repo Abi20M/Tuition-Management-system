@@ -18,7 +18,7 @@ const successRespond = (response, status = 201) => {
   
   const errorRespond = (response) => {
     return function (error) {
-      return response.status(400).json({ status: 400, message: error.message });
+      return response.status(400).json({ status: 400, message: error});
     };
   };
   
