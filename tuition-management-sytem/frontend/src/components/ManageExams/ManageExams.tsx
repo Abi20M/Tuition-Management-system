@@ -1232,6 +1232,7 @@ const ManageExams = ({
                 label: "Results Released - Official",
                 value: "Results Released - official",
               },
+              { label: "Cancelled", value: "Cancelled" },
             ]}
             defaultValue={editForm.values.status}
           />
