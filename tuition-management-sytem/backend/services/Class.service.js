@@ -66,6 +66,10 @@ export const getAllClasses = async () => {
   return await Class.find();
 };
 
+export const getClassById = async (id) => {
+  return await Class.findById(id);
+};
+
 export const deleteClass = async (id) => {
   return await Class.findByIdAndDelete(id);
 };
@@ -136,6 +140,7 @@ export const unEnrollStudent = async (
 module.exports = {
   createClass,
   getAllClasses,
+  getClassById,
   deleteClass,
   getAllHallDetails,
   editClassDetails,

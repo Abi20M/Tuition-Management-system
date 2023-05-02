@@ -116,7 +116,11 @@ const Routes = (app) => {
 
   //Student Routes
   app.post("/student", protect.adminProtect, studentController.createStudent);
-  app.get("/student", protect.adminProtect, studentController.getAllStudents);
+  app.get(
+    "/student",
+    protect.adminOrTeacherProtect,
+    studentController.getAllStudents
+  );
   app.get(
     "/students/count",
     protect.adminProtect,
