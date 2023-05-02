@@ -37,14 +37,14 @@ export const ExpenseCount = () => {
   }, []);
 
   //call above function in every 5mins to collect updated data
-  setInterval(fetchUserCounts, 60000)
+  setInterval(fetchUserCounts, 120000)
 
   return (
     <Group position="center" p={5}>
       <Paper
         shadow="md"
         radius={"md"}
-        sx={{ width: "2000px", height: "180px" }}
+        sx={{ width: "400px", height: "200px" }}
         withBorder
       >
         <Text fz={20} fw={"bold"} pl={35} pr={35} pt={3} pb={3} >
@@ -70,6 +70,8 @@ export const ExpenseCount = () => {
 const useStyles = createStyles((theme) => ({
   card: {
     backgroundColor: theme.fn.primaryColor(),
+    width : "400px",
+    height : "200px",
   },
 
   title: {
@@ -94,7 +96,7 @@ export const ProgressCardColored = (prop: { totalExpense: number, lastFixed: num
   return (
     <Card withBorder radius="md" p="xl" className={classes.card}>
       <Text fz="xs" tt="uppercase" fw={700} className={classes.title}>
-        Monthly remaining
+        MONTHLY REMAINING 
       </Text>
       <Text fz="lg" fw={500} className={classes.stats}>
         Rs.{prop.totalExpense} / {prop.lastFixed}

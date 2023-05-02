@@ -13,11 +13,12 @@ import { AttendanceLoginPage } from "../pages/AllLogin/Manage Attendance";
 import AttendancePrivateRoute from "./attendancePrivateRoute";
 
 import { TeacherDashboard } from "../pages/teacherDashboard";
-import { ParentDashboard } from "../pages/parentDashboard";
+import {ParentDashboard} from "../pages/parentDashboard";
 import { ParentLogin } from "../pages/AllLogin/Parent";
 import { TeacherLogin } from "../pages/AllLogin/Teacher";
 import StudentPrivateRoute from "./StudentPrivateRoute";
 import StudentDashboard from "../components/StudentDashboard";
+import ParentOverview from "../components/parentDashboard";
 import { ExpenseDashboard } from "../pages/expenseDashboard/index";
 import { StudentLoginPage } from "../pages/AllLogin/student-login";
 import {
