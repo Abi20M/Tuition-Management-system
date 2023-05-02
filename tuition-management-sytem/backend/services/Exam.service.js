@@ -1,5 +1,6 @@
 import exam from "../models/Exam.model.js";
 import classService from "./Class.service.js";
+import examMailService from "../Mails/exam.mails";
 import "dotenv/config";
 
 const generateExamId = async () => {
@@ -20,6 +21,13 @@ export const createExam = async (examObj) => {
     .create(examObj)
     .then(async (data) => {
       await data.save();
+      const students = await classService.getEnrolledStudentsData(data.class);
+      const classObj = await classService.getClassById(data.class);
+      await examMailService.sendNewExamNotification(
+        students,
+        classObj.name,
+        data
+      );
       return data;
     })
     .catch((err) => {
@@ -54,10 +62,25 @@ export const getAllExams = async () => {
 };
 
 export const updateExam = async (id, examObj) => {
+  const oldExam = await exam.findById(id);
   return await exam
     .findByIdAndUpdate(id, examObj, { new: true })
-    .then((data) => {
+    .then(async (data) => {
       if (data) {
+        const students = await classService.getEnrolledStudentsData(data.class);
+        const classObj = await classService.getClassById(data.class);
+        await examMailService.sendExamUpdateNotification(
+          students,
+          classObj.name,
+          data
+        );
+        if (oldExam.class !== "Cancelled" && examObj.class === "Cancelled") {
+          await examMailService.sendExamCancelNotification(
+            students,
+            classObj.name,
+            data
+          );
+        }
         return data;
       } else {
         throw new Error("Exam not found");
@@ -71,8 +94,15 @@ export const updateExam = async (id, examObj) => {
 export const deleteExam = async (id) => {
   return await exam
     .findByIdAndDelete(id)
-    .then((data) => {
+    .then(async (data) => {
       if (data) {
+        const students = await classService.getEnrolledStudentsData(data.class);
+        const classObj = await classService.getClassById(data.class);
+        await examMailService.sendExamCancelNotification(
+          students,
+          classObj.name,
+          data
+        );
         return data;
       } else {
         throw new Error("Exam not found");
@@ -194,6 +224,13 @@ export const releaseOfficialResults = async (id) => {
     .then(async (data) => {
       if (data) {
         await data.save();
+        const students = await classService.getEnrolledStudentsData(data.class);
+        const classObj = await classService.getClassById(data.class);
+        await examMailService.sendExamResultNotification(
+          students,
+          classObj.name,
+          data
+        );
         return data;
       } else {
         throw new Error("Exam not found");
@@ -226,7 +263,6 @@ export const getExamsByStudent = async (id) => {
     }
     let examData = [];
     let result = undefined;
-    console.log(studentExams);
     studentExams.forEach((exam) => {
       result = undefined;
       exam.marks.forEach((mark) => {

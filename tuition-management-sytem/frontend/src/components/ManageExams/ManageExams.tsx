@@ -1130,6 +1130,7 @@ const ManageExams = ({
                 label: "Results Released - Official",
                 value: "Results Released - Official",
               },
+              { label: "Cancelled", value: "Cancelled" },
             ]}
           />
           <DatePicker

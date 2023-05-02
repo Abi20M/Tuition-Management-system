@@ -178,8 +178,6 @@ const ExamsReport = ({
     })),
   };
 
-  console.log(exams);
-
   return (
     <>
       <Box ref={componentRef}>
