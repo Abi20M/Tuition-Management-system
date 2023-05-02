@@ -95,112 +95,138 @@ const styles = StyleSheet.create({
     padding: "10px",
     textAlign: "justify",
   },
-  rDetails : {
-    fontSize : "10px",
-    marginLeft : "13px",
+  rDetails: {
+    fontSize: "10px",
+    marginLeft: "13px",
   },
-  border : {
+  border: {
     borderStyle: "solid",
     borderWidth: "1pt",
-    borderColor : "black",
-    height : "98%",
-    padding : "10px",
-    margin : "5px"
-  }
+    borderColor: "black",
+    height: "98%",
+    padding: "10px",
+    margin: "5px",
+  },
 });
 
-
 //generating PDF
-export const ClassPDF = ({ data, user}: any) => {
-
-  const today = new Date;
+export const ClassPDF = ({ data, user }: any) => {
+  const today = new Date();
   return (
-    
     <>
       <Document>
-        <Page size="A4">
+        <Page size="A3" orientation="landscape">
           <View style={styles.border}>
-          <Image src={tuitionLogo} style={styles.logo} />
-          <Text style={styles.title}>Tuition Management System</Text>
+            <Image src={tuitionLogo} style={styles.logo} />
+            <Text style={styles.title}>Tuition Management System</Text>
 
-          <View>
-            <Text style={[styles.rDetails,{marginTop : "40px", marginBottom : "5px"}]}>Created Date : {`${today.getFullYear()} / ${today.getMonth() + 1} / ${today.getDate()}`}</Text>
-            <Text style={[styles.rDetails,{marginBottom : "5px"}]}>Created Time : {`${today.getHours()}.${today.getMinutes()}.${today.getSeconds()}`}</Text>
-            <Text style={[styles.rDetails,{marginBottom:"10px"}]}>Generated Person : {user}</Text>
-          </View>
-          <Fragment>
-            <View style={styles.table}>
-              <View style={styles.tableRow}>
-                <View style={styles.HeaderCol}>
-                  <Text style={styles.headerFont}>ID</Text>
-                </View>
-                <View style={styles.HeaderCol}>
-                  <Text style={styles.headerFont}>Name</Text>
-                </View>
-                <View style={styles.HeaderCol}>
-                  <Text style={styles.headerFont}>Teacher</Text>
-                </View>
-                <View style={styles.HeaderCol}>
-                  <Text style={styles.headerFont}>Subject</Text>
-                </View>
-                <View style={styles.HeaderCol}>
-                  <Text style={styles.headerFont}>Day</Text>
-                </View>
-                <View style={styles.HeaderCol}>
-                  <Text style={styles.headerFont}>Start Time</Text>
-                </View>
-                <View style={styles.HeaderCol}>
-                  <Text style={styles.headerFont}>End Time</Text>
-                </View>
-                <View style={styles.HeaderCol}>
-                  <Text style={styles.headerFont}>Venue</Text>
-                </View>
-              </View>
-
-              {/* Table Row Data*/}
-              {data !== null
-                ? data.map((data: any, i: any) => (
-                    <View key={i} style={styles.tableRow}>
-                      <View style={styles.tableCol}>
-                        <Text style={styles.tableCell}>{data.id}</Text>
-                      </View>
-                      <View style={styles.tableCol}>
-                        <Text style={styles.tableCell}>{data.name}</Text>
-                      </View>
-                      <View style={styles.tableCol}>
-                        <Text style={styles.tableCell}>{data.teacher}</Text>
-                      </View>
-                      <View style={styles.tableCol}>
-                        <Text style={styles.tableCell}>{data.subject}</Text>
-                      </View>
-                      <View style={styles.tableCol}>
-                        <Text style={styles.tableCell}>{data.day}</Text>
-                      </View>
-                      <View style={styles.tableCol}>
-                        <Text style={styles.tableCell}>{data.startTime}</Text>
-                      </View>
-                      <View style={styles.tableCol}>
-                        <Text style={styles.tableCell}>{data.endTime}</Text>
-                      </View>
-                      <View style={styles.tableCol}>
-                        <Text style={styles.tableCell}>{data.venue}</Text>
-                      </View>
-                    </View>
-                  ))
-                : null}
+            <View>
+              <Text
+                style={[
+                  styles.rDetails,
+                  { marginTop: "40px", marginBottom: "5px" },
+                ]}
+              >
+                Created Date :{" "}
+                {`${today.getFullYear()} / ${
+                  today.getMonth() + 1
+                } / ${today.getDate()}`}
+              </Text>
+              <Text style={[styles.rDetails, { marginBottom: "5px" }]}>
+                Created Time :{" "}
+                {`${today.getHours()}.${today.getMinutes()}.${today.getSeconds()}`}
+              </Text>
+              <Text style={[styles.rDetails, { marginBottom: "10px" }]}>
+                Generated Person : {user}
+              </Text>
             </View>
-          </Fragment>
-          <View>
-            <Text style={styles.copyright}>
-              This PDF document and its content, including text, images, and
-              formatting, are protected by copyright law. The document has been
-              generated using an automated system developed by Sysro Tuition
-              Management System. The use, reproduction, distribution, or
-              modification of this document or its content without prior written
-              permission from Sysro Tuition Management System is strictly
-              prohibited and may result in legal action
-            </Text>
-          </View>
+            <Fragment>
+              <View style={styles.table}>
+                <View style={styles.tableRow}>
+                  <View style={styles.HeaderCol}>
+                    <Text style={styles.headerFont}>ID</Text>
+                  </View>
+                  <View style={styles.HeaderCol}>
+                    <Text style={styles.headerFont}>Name</Text>
+                  </View>
+                  <View style={styles.HeaderCol}>
+                    <Text style={styles.headerFont}>Teacher</Text>
+                  </View>
+                  <View style={styles.HeaderCol}>
+                    <Text style={styles.headerFont}>Subject</Text>
+                  </View>
+                  <View style={styles.HeaderCol}>
+                    <Text style={styles.headerFont}>Day</Text>
+                  </View>
+                  <View style={styles.HeaderCol}>
+                    <Text style={styles.headerFont}>Start Time</Text>
+                  </View>
+                  <View style={styles.HeaderCol}>
+                    <Text style={styles.headerFont}>End Time</Text>
+                  </View>
+                  <View style={styles.HeaderCol}>
+                    <Text style={styles.headerFont}>Venue</Text>
+                  </View>
+                </View>
+
+                {/* Table Row Data*/}
+                {data !== null
+                  ? data.map((data: any, i: any) => (
+                      <View key={i} style={styles.tableRow}>
+                        <View style={styles.tableCol}>
+                          <Text style={styles.tableCell}>{data.id}</Text>
+                        </View>
+                        <View style={styles.tableCol}>
+                          <Text style={styles.tableCell}>{data.name}</Text>
+                        </View>
+                        <View style={styles.tableCol}>
+                          <Text style={styles.tableCell}>{data.teacher}</Text>
+                        </View>
+                        <View style={styles.tableCol}>
+                          <Text style={styles.tableCell}>{data.subject}</Text>
+                        </View>
+                        <View style={styles.tableCol}>
+                          <Text style={styles.tableCell}>{data.day}</Text>
+                        </View>
+                        <View style={styles.tableCol}>
+                          <Text style={styles.tableCell}>
+                            {new Date(
+                              Date.parse(data.startTime)
+                            ).toLocaleTimeString("en-US", {
+                              hour: "numeric",
+                              minute: "numeric",
+                              hour12: true,
+                            })}
+                          </Text>
+                        </View>
+                        <View style={styles.tableCol}>
+                          <Text style={styles.tableCell}>{new Date(
+                              Date.parse(data.endTime)
+                            ).toLocaleTimeString("en-US", {
+                              hour: "numeric",
+                              minute: "numeric",
+                              hour12: true,
+                            })}</Text>
+                        </View>
+                        <View style={styles.tableCol}>
+                          <Text style={styles.tableCell}>{data.venue}</Text>
+                        </View>
+                      </View>
+                    ))
+                  : null}
+              </View>
+            </Fragment>
+            <View>
+              <Text style={styles.copyright}>
+                This PDF document and its content, including text, images, and
+                formatting, are protected by copyright law. The document has
+                been generated using an automated system developed by Sysro
+                Tuition Management System. The use, reproduction, distribution,
+                or modification of this document or its content without prior
+                written permission from Sysro Tuition Management System is
+                strictly prohibited and may result in legal action
+              </Text>
+            </View>
             <Text
               style={styles.pageNo}
               render={({ pageNumber, totalPages }) =>
@@ -208,7 +234,7 @@ export const ClassPDF = ({ data, user}: any) => {
               }
               fixed
             />
-            </View>
+          </View>
         </Page>
       </Document>
     </>
