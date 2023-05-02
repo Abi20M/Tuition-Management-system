@@ -74,6 +74,21 @@ class TeacherAPI {
   static getTeacherClasses = async () =>{
     return axios.get(`${BASE_URL}teacher/class`,requestConfig);
 }
+static setNewPassword = (values : {
+    documentId : string,
+    teacherId : string,
+    currentPassword : string,
+    newPassword : string
+    
+  }) =>{
+
+    let password = {
+      teacherId : values.teacherId,
+      currentPassword : values.currentPassword,
+      newPassword : values.newPassword
+    }
+     return axios.put(`${BASE_URL}/teacher/changePassword/${values.documentId}`,password,  requestConfig);
+}
 }
 
 export default TeacherAPI;

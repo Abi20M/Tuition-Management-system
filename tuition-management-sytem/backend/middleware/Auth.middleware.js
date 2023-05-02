@@ -131,4 +131,5 @@ module.exports = {
   adminProtect,
   studentProtect,
   adminOrTeacherProtect,
+  teacherProtect,
 };
