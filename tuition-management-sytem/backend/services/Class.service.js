@@ -50,55 +50,16 @@ export const createClass = async (classobj) => {
     students: [],
   };
 
-  const newClassStartTime = new Date(newClassObj.startTime).toLocaleTimeString(
-    "en-US",
-    { hour12: true }
-  );
-  const newClassEndTime = new Date(newClassObj.endTime).toLocaleTimeString(
-    "en-US",
-    { hour12: true }
-  );
+  return await Class.create(newClassObj)
+    .then(async (obj) => {
+      await obj.save();
+      return obj;
+    })
+    .catch((error) => {
+      throw new Error(error.message);
+    });
 
-  let count = 0;
-  let length = 0;
-  Class.find({ vanue: newClassObj.venue, day: newClassObj.day }).then(
-    async (data) => {
-      length = data.length;
-      data.map((classD) => {
-        const currentClassStartTime = new Date(
-          classD.startTime
-        ).toLocaleTimeString("en-US", { hour12: true });
-        const currentClassEndTime = new Date(classD.endTime).toLocaleTimeString(
-          "en-US",
-          { hour12: true }
-        );
-        console.log(currentClassStartTime);
-        console.log(currentClassEndTime);
-
-        if (
-          (newClassStartTime >= currentClassEndTime &&
-            newClassEndTime > currentClassEndTime) ||
-          (newClassStartTime < currentClassStartTime &&
-            newClassEndTime <= currentClassEndTime)
-        ) {
-          count = count + 1;
-        }
-      });
-
-      if (count === length) {
-        return await Class.create(newClassObj)
-          .then(async (obj) => {
-            await obj.save();
-            return obj;
-          })
-          .catch((error) => {
-            throw new Error(error.message);
-          });
-      }else{
-        throw new Error("Time Slot already allocated");
-      }
-    }
-  );
+    
 };
 
 export const getAllClasses = async () => {

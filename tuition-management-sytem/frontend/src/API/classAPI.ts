@@ -14,7 +14,6 @@ export class ClassAPI {
         venue:string,
         endTime : Date
     })=>{
-        
         // create a new object with class details
         const classDetails = {
             name : values.name,
