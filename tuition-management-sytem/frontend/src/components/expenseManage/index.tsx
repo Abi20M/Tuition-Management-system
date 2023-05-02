@@ -76,7 +76,7 @@ const useStyles = createStyles((theme) => ({
   },
   header: {
     position: "sticky",
-    zIndex : 100,
+    zIndex: 100,
     top: 0,
     backgroundColor:
       theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
@@ -88,11 +88,10 @@ const useStyles = createStyles((theme) => ({
       left: 0,
       right: 0,
       bottom: 0,
-      borderBottom: `1px solid ${
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[3]
-          : theme.colors.gray[2]
-      }`,
+      borderBottom: `1px solid ${theme.colorScheme === "dark"
+        ? theme.colors.dark[3]
+        : theme.colors.gray[2]
+        }`,
     },
   },
 
@@ -173,7 +172,7 @@ const date = today.getDate();
 
 interface adminName {
   onTotalExpenseChange: (value: number) => void;
-  onLastFixedChange : (value: number) => void;
+  onLastFixedChange: (value: number) => void;
   user: {
     name: string;
     email: string;
@@ -195,131 +194,14 @@ const ExpenseManage = (props: adminName) => {
   const [editOpened, setEditOpened] = useState(false);
   const [categorySearchValue, setcategorySearchValue] = useState("");
   const [scrolled, setScrolled] = useState(false);
+  const [currentValue, setCurrentValue] = useState(0);
 
   const adminName = props.user.name;
 
-  // fetch expense data
-  useEffect(() => {
-    
-    const fetchData = async () => {
-      showNotification({
-        id: "loding-data",
-        loading: true,
-        title: "Loading data",
-        message: "expense data is loading..",
-        autoClose: false,
-        disallowClose: true,
-      });
+  let currentAmount = 0;
 
-      await getAllExpenses().then((res) => {
-        const data = res.map((item: any) => {
-          return {
-            _id: item._id,
-            id: item.id,
-            name: item.name,
-            description: item.description,
-            category: item.category,
-            amount: item.amount,
-          };
-        });
-        setData(data);
-        setLoading(false);
-        const payload = {
-          sortBy: null,
-          reversed: false,
-          search: "",
-        };
-        setSortedData(sortData(data, payload));
 
-        updateNotification({
-          id: "loding-data",
-          color: "teal",
-          title: "Data loaded successfully",
-          message:
-            "You can now manage expense by adding, editing or deleting them.",
-          icon: <IconCheck size={16} />,
-          autoClose: 3000,
-        });
 
-        //get total amount of expenses
-        let TotalExpenseValue = 0;
-        data.map((expesnse: any) => {
-          TotalExpenseValue += parseFloat(expesnse.amount);
-          setTotalExpense(TotalExpenseValue);
-        })
-
-        //pass total expense amount to overview
-        props.onTotalExpenseChange(TotalExpenseValue);
-      });
-
-    };
-    fetchData();
-    getLastFixedValue();
-
-  }, []);
-
-  //edit expense function
-  const editExpenses = async (values: {
-    _id: string,
-    id: string;
-    name: string;
-    description: string;
-    category: string;
-    amount: string;
-  }) => {
-    showNotification({
-      id: "edit-expense",
-      loading: true,
-      title: "Updating expense of " + values.name,
-      message: "Updating expense record..",
-      autoClose: false,
-      disallowClose: true,
-    });
-    ExpensesAPI.editExpenses(values)
-      .then((response) => {
-        updateNotification({
-          id: "edit-expense",
-          color: "teal",
-          title: "expense record updated successfully",
-          message: "Updated expense record of " + values.name,
-          icon: <IconCheck size={16} />,
-          autoClose: 5000,
-        });
-        editForm.reset();
-        setEditOpened(false);
-        const newData = data.map((item) => {
-          if (item._id === values._id) {
-            return {
-              _id: values._id,
-              id: values.id,
-              name: values.name,
-              description: values.description,
-              category: values.category,
-              amount: values.amount,
-            };
-          } else {
-            return item;
-          }
-        });
-        const payload = {
-          sortBy: null,
-          reversed: false,
-          search: "",
-        };
-        setData(newData);
-        setSortedData(sortData(newData, payload));
-      })
-      .catch((error) => {
-        updateNotification({
-          id: "edit-expense",
-          color: "red",
-          title: "Update failed",
-          message: "We were unable to update expense data.",
-          icon: <IconAlertTriangle size={16} />,
-          autoClose: 5000,
-        });
-      });
-  };
 
   //add fixed value function
   const addFixedValue = async (values: {
@@ -345,7 +227,7 @@ const ExpenseManage = (props: adminName) => {
         });
         addForm2.reset();
         setOpenedFix(false);
-       
+
         //update real time last fixed value
         const newLastFixed = parseFloat(values.fixedValue);
         setLastFixedValue(newLastFixed);
@@ -384,11 +266,11 @@ const ExpenseManage = (props: adminName) => {
           autoClose: 5000,
         });
 
-        //
+        //pass last fixed value to overview
         const newData = response.data;
         setLastFixedValue(parseFloat(newData[0].FixedAmount));
         props.onLastFixedChange(parseFloat(newData[0].FixedAmount));
-       
+
       })
       .catch((error) => {
         updateNotification({
@@ -447,13 +329,13 @@ const ExpenseManage = (props: adminName) => {
         };
         setData(newData);
         setSortedData(sortData(newData, payload));
-        
+
         //parse the total amount of expense to expense dashboard in pages
         const pastTotal = totalExpense;
         const newTotal = pastTotal + parseFloat(response.data.amount);
         setTotalExpense(newTotal);
         props.onTotalExpenseChange(newTotal);
-        
+
       })
       .catch((error) => {
         updateNotification({
@@ -497,9 +379,9 @@ const ExpenseManage = (props: adminName) => {
         setSortedData(sortData(newData, payload));
 
         // reduce removed expense from total
-        const newExpenseTotal = totalExpense - parseFloat(response.data.amount);
-        setTotalExpense(newExpenseTotal);
-        props.onTotalExpenseChange(newExpenseTotal);
+        const newDeleteExpenseTotal = totalExpense - parseFloat(response.data.amount);
+        setTotalExpense(newDeleteExpenseTotal);
+        props.onTotalExpenseChange(newDeleteExpenseTotal);
       })
       .catch((error) => {
         updateNotification({
@@ -512,6 +394,69 @@ const ExpenseManage = (props: adminName) => {
         });
       });
   };
+
+  // fetch expense data
+  useEffect(() => {
+
+    const fetchData = async () => {
+      showNotification({
+        id: "loding-data",
+        loading: true,
+        title: "Loading data",
+        message: "expense data is loading..",
+        autoClose: false,
+        disallowClose: true,
+      });
+
+      await getAllExpenses().then((res) => {
+        const data = res.map((item: any) => {
+          return {
+            _id: item._id,
+            id: item.id,
+            name: item.name,
+            description: item.description,
+            category: item.category,
+            amount: item.amount,
+          };
+        });
+        setData(data);
+        setLoading(false);
+        const payload = {
+          sortBy: null,
+          reversed: false,
+          search: "",
+        };
+        setSortedData(sortData(data, payload));
+
+        updateNotification({
+          id: "loding-data",
+          color: "teal",
+          title: "Data loaded successfully",
+          message:
+            "You can now manage expense by adding, editing or deleting them.",
+          icon: <IconCheck size={16} />,
+          autoClose: 3000,
+        });
+
+        //get total amount of expenses
+        let TotalExpenseValue = 0;
+        data.map((expesnse: any) => {
+          TotalExpenseValue += parseFloat(expesnse.amount);
+          setTotalExpense(TotalExpenseValue);
+        })
+
+        //pass total expense amount to overview
+        props.onTotalExpenseChange(TotalExpenseValue);
+      });
+
+    };
+    fetchData();
+    getLastFixedValue();
+   // const val = getCurrentAamout();
+    //setCurrentValue(val);
+
+  }, []);
+
 
   //declare edit form
   const editForm = useForm({
@@ -604,6 +549,12 @@ const ExpenseManage = (props: adminName) => {
           color="teal"
           leftIcon={<IconEdit size={14} />}
           onClick={() => {
+
+            //get current row update amount
+            currentAmount = (parseFloat(row.amount));
+
+            getCurrentAamout(parseFloat(row.amount));
+
             editForm.setValues({
               _id: row._id,
               id: row.id,
@@ -630,6 +581,85 @@ const ExpenseManage = (props: adminName) => {
     </tr>
 
   ));
+
+  //get current value
+  function getCurrentAamout (amount : number) {
+
+    setCurrentValue(amount);
+  };
+
+  
+
+  //edit expense function
+  const editExpenses = async (values: {
+    _id: string,
+    id: string;
+    name: string;
+    description: string;
+    category: string;
+    amount: string;
+  }) => {
+    showNotification({
+      id: "edit-expense",
+      loading: true,
+      title: "Updating expense of " + values.name,
+      message: "Updating expense record..",
+      autoClose: false,
+      disallowClose: true,
+    });
+    ExpensesAPI.editExpenses(values)
+      .then((response) => {
+        updateNotification({
+          id: "edit-expense",
+          color: "teal",
+          title: "expense record updated successfully",
+          message: "Updated expense record of " + values.name,
+          icon: <IconCheck size={16} />,
+          autoClose: 5000,
+        });
+        editForm.reset();
+        setEditOpened(false);
+        const newData = data.map((item) => {
+          if (item._id === values._id) {
+            return {
+              _id: values._id,
+              id: values.id,
+              name: values.name,
+              description: values.description,
+              category: values.category,
+              amount: values.amount,
+            };
+          } else {
+            return item;
+          }
+        });
+        const payload = {
+          sortBy: null,
+          reversed: false,
+          search: "",
+        };
+        setData(newData);
+        setSortedData(sortData(newData, payload));
+
+        //update total value of expense
+        const updatedVal = parseFloat(response.data.amount);
+        const newUpdatedTotal = (totalExpense + (updatedVal - currentValue));
+       
+        //pase to the overview tab
+        setTotalExpense(newUpdatedTotal);
+        props.onTotalExpenseChange(newUpdatedTotal);
+      })
+      .catch((error) => {
+        updateNotification({
+          id: "edit-expense",
+          color: "red",
+          title: "Update failed",
+          message: "We were unable to update expense data.",
+          icon: <IconAlertTriangle size={16} />,
+          autoClose: 5000,
+        });
+      });
+  };
 
 
   return (
@@ -836,10 +866,10 @@ const ExpenseManage = (props: adminName) => {
 
 
         <ScrollArea
-        mt={20}
-        sx={{ height: 700 }}
-        onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
-      >
+          mt={20}
+          sx={{ height: 700 }}
+          onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
+        >
           <Table
             horizontalSpacing="md"
             verticalSpacing="xs"
@@ -985,7 +1015,7 @@ const ExpenseManage = (props: adminName) => {
             </tr>
             <tr>
               <td colSpan={3} style={{ paddingRight: 20 }}>Total remaining Amount </td>
-              <td style={{ textAlign: "center" }}>{lastFixedValue - totalExpense } </td>
+              <td style={{ textAlign: "center" }}>{lastFixedValue - totalExpense} </td>
             </tr>
           </tbody>
         </Table>
