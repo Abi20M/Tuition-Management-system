@@ -19,6 +19,7 @@ import {
 import { useForm } from "@mantine/form";
 import LightDarkButton from "../../../components/lightDarkButton";
 import { adminAPI } from "../../../API/adminAPI";
+import ParentAPI from "../../../API/ParentAPI";
 import { showNotification, updateNotification } from "@mantine/notifications";
 import { IconAlertTriangle, IconCheck } from "@tabler/icons";
 import DarkLogo from "../../../assets/darkMainLogo.png";
@@ -44,7 +45,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 //pass the form data to the backend
-const validateAdmin = (values: {
+const validateParent = (values: {
   email: string;
   password: string;
   rememberMe: boolean;
@@ -60,8 +61,8 @@ const validateAdmin = (values: {
   });
 
   //call the API>adminAPI > loginAdmin funtion and call to the backend
-  adminAPI
-    .loginAdmin(values.email, values.password)
+  ParentAPI
+    .parentLogin(values.email, values.password)
     .then((response) => {
       console.log(response);
       console.log(response.data.accessToken);
@@ -78,11 +79,11 @@ const validateAdmin = (values: {
       }, 1000);
 
       //store admin details to local storage for further use
-      localStorage.setItem("admin", JSON.stringify(response.data));
+      localStorage.setItem("parent", JSON.stringify(response.data));
 
       //store Role key and value as admin in the localStorage, after 2sec browser will be redirected to the admin Dashboard
       setTimeout(() => {
-        localStorage.setItem("role", "admin");
+        localStorage.setItem("role", "parent");
         window.location.href = "/parent/dashboard";
       }, 2000);
     })
@@ -165,7 +166,7 @@ export const ParentLogin = () => {
 
                   {/* FORM STRUCTURE */}
                   <form
-                    onSubmit={form.onSubmit((values) => validateAdmin(values))}
+                    onSubmit={form.onSubmit((values) => validateParent(values))}
                   >
                     <Stack mt={5}>
                       <TextInput

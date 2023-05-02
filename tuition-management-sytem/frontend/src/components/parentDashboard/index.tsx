@@ -19,6 +19,8 @@ import { showNotification, updateNotification } from "@mantine/notifications";
 import { useEffect } from "react";
 import { IconCheck } from "@tabler/icons";
 import ParentAPI from "../../API/ParentAPI";
+import SubjectAPI from "../../API/SubjectAPI";
+import { ClassAPI } from "../../API/classAPI";
 
 //import ClassAPI from "../../api/ClassAPI";
 
@@ -67,18 +69,18 @@ const getAllStudents = async () => {
 };
 
 //Get all subject records from the database
-// const getAllSubject = async () => {
-//   const response = await SubjectAPI.getSubjects();
-//   const data = await response.data;
-//   return data;
-// };
+const getAllSubject = async () => {
+  const response = await SubjectAPI.getSubjects();
+  const data = await response.data;
+  return data;
+};
 
 //Get all classs records from the database
-// const getAllClasses = async () => {
-//   const response = await ClassAPI.getClasses();
-//   const data = await response.data;
-//   return data;
-// };
+const getAllClasses = async () => {
+  const response = await ClassAPI.getAllClasses();
+  const data = await response.data;
+  return data;
+};
 
 export const options = {
   responsive: true,
@@ -153,18 +155,18 @@ export const doughnutOptions = {
   },
 };
 
-// export const examResultsData2 = {
-//   labels: labels,
-//   datasets: [
-//     {
-//       label: "Exam Results",
-//       data: [0, 2, 0, 0, 1, 0, 0, 0, 0, 1],
-//       backgroundColor: "rgba(255, 99, 132, 0.2)",
-//       borderColor: "rgba(255, 99, 132, 1)",
-//       borderWidth: 1,
-//     },
-//   ],
-// };
+export const examResultsData2 = {
+  labels: labels,
+  datasets: [
+    {
+      label: "Exam Results",
+      data: [0, 2, 0, 0, 1, 0, 0, 0, 0, 1],
+      backgroundColor: "rgba(255, 99, 132, 0.2)",
+      borderColor: "rgba(255, 99, 132, 1)",
+      borderWidth: 1,
+    },
+  ],
+};
 
 export const examResultsData1 = {
   labels: labels,
@@ -250,39 +252,39 @@ const ParentOverview: React.FC = () => {
       });
       setFemaleCount(female.length);
 
-      // const resultSubjects = await getAllSubject();
-      // const subjects = resultSubjects.map((item: any) => ({
-      //   value: item._id,
-      //   label: item.name,
-      // }));
-      // subjects.unshift({ value: "all", label: "All" });
-      // setSubjects(subjects);
+      const resultSubjects = await getAllSubject();
+      const subjects = resultSubjects.map((item: any) => ({
+        value: item._id,
+        label: item.name,
+      }));
+      subjects.unshift({ value: "all", label: "All" });
+      setSubjects(subjects);
 
-      // const resultClasses = await getAllClasses();
-      // const classes = resultClasses.map((item: any) => ({
-      //   id: item._id,
-      //   name: item.name,
-      //   description: item.description,
-      //   teacher: item.teacher,
-      //   subject: item.subject,
-      //   date: item.date,
-      //   time: item.time,
-      //   duration: item.duration,
-      //   students: item.students,
-      // }));
+      const resultClasses = await getAllClasses();
+      const classes = resultClasses.map((item: any) => ({
+        id: item._id,
+        name: item.name,
+        description: item.description,
+        teacher: item.teacher,
+        subject: item.subject,
+        date: item.date,
+        time: item.time,
+        duration: item.duration,
+        students: item.students,
+      }));
 
       let classCount = 0;
 
       //if student id exists in the class item.students array, then increment the class count
-      // studentData.forEach((student: RowDataStudents) => {
-      //   classes.forEach((classItem: RowDataClasses) => {
-      //     classItem.students.forEach((studentId: string) => {
-      //       if (studentId === student.id) {
-      //         classCount = classCount + 1;
-      //       }
-      //     });
-      //   });
-      // });
+      studentData.forEach((student: RowDataStudents) => {
+        classes.forEach((classItem: RowDataClasses) => {
+          classItem.students.forEach((studentId: string) => {
+            if (studentId === student.id) {
+              classCount = classCount + 1;
+            }
+          });
+        });
+      });
 
       setClasses(classCount);
 
@@ -403,7 +405,7 @@ const ParentOverview: React.FC = () => {
             <Box sx={{ width: "70%", marginLeft: "15%" }}>
               <Doughnut data={genderData} options={doughnutOptions} />
             </Box>
-          </Paper>
+          </Paper> */}
           <Paper withBorder radius="md" p="xs" key="gender">
             <Text weight={700} size="xl" sx={{ fontSize: "1.5rem" }}>
               Grade Distribution of My Children
@@ -411,7 +413,7 @@ const ParentOverview: React.FC = () => {
             <Box sx={{ marginTop: "10%" }}>
               <Bar data={gradeData} options={options2} />
             </Box>
-          </Paper> */}
+          </Paper>
         </SimpleGrid>
         <Box
           sx={{

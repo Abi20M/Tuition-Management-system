@@ -11,7 +11,7 @@ export const createParent = async (req, res, next) => {
   const parent = new Parent({
     name: req.body.name,
     email: req.body.email,
-    password: req.body.password,
+    password: hashedPassword,
     phone: req.body.phone,
   });
 
@@ -82,9 +82,9 @@ export const deleteParent = async (req, res, next) => {
 //Parent login
 export const loginParent = async (req, res, next) => {
   await parentService
-    .loginParent(req.body.email, res.body.password)
+    .loginParent(req.body.email, req.body.password)
     .then((data) => {
-      req.handleResponse.successRespond(res)(err);
+      req.handleResponse.successRespond(res)(data);
       next();
     });
 };
