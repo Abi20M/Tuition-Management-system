@@ -1,7 +1,10 @@
 import { createStyles, Container, Tabs } from "@mantine/core";
-import AdminHeader from "../../components/adminHeader";
-//import ManageTeacher from "../../components/ManageTeacher";
-import WebsiteFooter from "../../components/Footer";
+//import TeacherHeader from "../../components/TeacherHeader";
+import MyStudentsTeacher from "../../components/MyStudentsTeacher";
+import MyClassesTeacher from "../../components/MyClassesTeacher";
+import TeacherOverview from "../../components/TeacherDashboard";
+import TeacherHeaderLogin from "../../components/TeacherHeader/TeacherHeaderLogin"
+// import WebsiteFooter from "../../components/Footer";
 
 const useStyles = createStyles((theme) => ({
   tabs: {
@@ -60,20 +63,20 @@ export const TeacherDashboard = () => {
   ));
 
   //get Admin information from the localStorage and we convert into that information into JSON object using JSON.parse()
-  const admin = JSON.parse(localStorage.getItem("admin") || "{}");
+  const teacher = JSON.parse(localStorage.getItem("teacher") || "{}");
 
   //user information object
-  // const user = {
-  //   name: admin.name,
-  //   email : admin.email,
+  const user = {
+    name: teacher.name,
+    email : teacher.email,
   //   telephone: admin.telephone,
   //   address : admin.address,
-  // };
+  };
 
   return (
     <div>
       {/* import admin Header */}
-    {/* <AdminHeader user ={user}/> */}
+    <TeacherHeaderLogin user ={user}/>
 
     {/* Tabs */}
     <Container>
@@ -90,13 +93,13 @@ export const TeacherDashboard = () => {
 
         {/* Here you can add your own Component to here */}
         <Tabs.Panel value="Dashboard">
-          <h1>Hello Overview</h1>
+        <TeacherOverview/>
         </Tabs.Panel>
         <Tabs.Panel value="My Students">
-          <h1>Hello Past details</h1>
+        <MyStudentsTeacher/>
         </Tabs.Panel>
         <Tabs.Panel value="My Classes">
-          <h1>Hello Past details</h1>
+        <MyClassesTeacher/>
         </Tabs.Panel>   
         <Tabs.Panel value="Schedule">
           <h1>Hello Past details</h1>
@@ -107,7 +110,7 @@ export const TeacherDashboard = () => {
       </Tabs>
     </Container>
 
-    <WebsiteFooter/>
+    {/* <WebsiteFooter/> */}
     </div>
   );
 };
