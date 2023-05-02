@@ -5,7 +5,6 @@ import WebsiteFooter from "../../components/Footer";
 import ManageParents from "../../components/ManageParents";
 import ManageStudents from "../../components/ManageStudents";
 import ManageTeachers from "../../components/ManageTeacher";
-//import ManageTeacher from "../../components/ManageTeacher";
 import ManageAdmins from "../../components/ManageAdmin";
 import AdminStats from "../../components/AdminDashboard";
 import { ManageExamsAdmin } from "../../components";

@@ -96,6 +96,13 @@ const Routes = (app) => {
   app.put("/teacher/:id", protect.adminProtect, teacherController.editTeacher);
   app.post("/teacher/login", teacherController.teacherLogin);
 
+  // //Teacher Routes - Accessible to Teachers only
+  // //get students of the specific teacher by teacher id
+  // app.get(
+  //   "/teacher/:id/students",
+  //   protect.teacherProtect,
+  //   teacherController.getStudents
+  // );
 
 
   //Parent Routes

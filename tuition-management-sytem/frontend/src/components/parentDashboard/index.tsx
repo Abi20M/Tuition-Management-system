@@ -197,7 +197,7 @@ const ParentOverview: React.FC = () => {
       showNotification({
         id: "loding-data",
         loading: true,
-        title: "Loading Teacher Dashboard Data",
+        title: "Loading Parent Dashboard Data",
         message: "Please wait while we load the data",
         autoClose: false,
         disallowClose: false,
@@ -291,8 +291,8 @@ const ParentOverview: React.FC = () => {
       updateNotification({
         id: "loding-data",
         color: "teal",
-        title: "Teacher Dashboard data loaded",
-        message: "Teacher Dashboard data loaded successfully",
+        title: "Parent Dashboard data loaded",
+        message: "Parent Dashboard data loaded successfully",
         icon: <IconCheck size={16} />,
         autoClose: 3000,
       });

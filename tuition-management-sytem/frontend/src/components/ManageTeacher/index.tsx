@@ -520,12 +520,12 @@ const ManageTeachers = ({ user }: adminName) => {
             {...addForm.getInputProps("email")}
             required
           />
-          <PasswordInput
+          {/* <PasswordInput
             placeholder="Your password"
             label="Password"
             {...addForm.getInputProps("password")}
             required
-          />
+          /> */}
           <TextInput
             label="Phone"
             placeholder="Enter phone"
