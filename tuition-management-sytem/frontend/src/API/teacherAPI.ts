@@ -71,6 +71,9 @@ class TeacherAPI {
   static getTeacherCount = () =>{
     return axios.get(`${BASE_URL}/teacher/count`,requestConfig);
   }
+  static getTeacherClasses = async () =>{
+    return axios.get(`${BASE_URL}teacher/class`,requestConfig);
+}
 }
 
 export default TeacherAPI;
