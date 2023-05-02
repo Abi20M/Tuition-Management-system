@@ -1,20 +1,28 @@
+import { Group } from "@mantine/core";
 import { ExpenseCount } from "../expenseOverview";
 import { ProgressCardColored } from "../expenseOverview";
 
 interface propType {
     totalExpenses: number
-    lastFixed : number
+    lastFixed: number
 }
-const ExpenseStatus =(prop : propType) =>{
+const ExpenseStatus = (prop: propType) => {
 
-    return(
-        <div>
-            <ExpenseCount />
-            <ProgressCardColored 
-            totalExpense  = {prop.totalExpenses}
-            lastFixed = {prop.lastFixed}
-            />
-        </div>
+    return (
+        
+            <Group 
+            position="apart"
+            style={{marginBottom : "500px"}}>
+                <ExpenseCount />
+                <ProgressCardColored
+                    totalExpense={prop.totalExpenses}
+                    lastFixed={prop.lastFixed}
+
+                />
+            </Group>
+
+
+           
     )
 }
 
