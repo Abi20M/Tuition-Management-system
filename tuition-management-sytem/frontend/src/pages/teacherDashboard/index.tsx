@@ -105,7 +105,7 @@ export const TeacherDashboard = () => {
           <h1>Hello Past details</h1>
         </Tabs.Panel>  
         <Tabs.Panel value="Students prograss">
-          <h1>Hello Past details</h1>
+          <h1>Hello </h1>
         </Tabs.Panel>  
       </Tabs>
     </Container>
