@@ -1363,7 +1363,7 @@ const ManageExams = ({
               <tbody>
                 {sortedAttendanceData.map((record) => (
                   <tr key={record.id}>
-                    <td>{record.studentId}</td>sss
+                    <td>{record.studentId}</td>
                     <td>{record.name}</td>
                     <td>
                       <Checkbox
