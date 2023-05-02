@@ -9,7 +9,13 @@ import { IconChartLine, IconCheck, IconFilePencil } from "@tabler/icons";
 import { useEffect, useState } from "react";
 import ExamAPI from "../../../../API/ExamAPI";
 import { showNotification, updateNotification } from "@mantine/notifications";
-import { sortData } from "../../../../components/ManageExams/ManageExams";
+import {
+  AttendanceData,
+  ExamMarksData,
+  StudentsData,
+  sortData,
+} from "../../../../components/ManageExams/ManageExams";
+import StudentAPI from "../../../../API/studentAPI";
 
 export interface ExamData {
   id: string;
@@ -20,6 +26,8 @@ export interface ExamData {
   status: string;
   date: string;
   time: string;
+  marks: ExamMarksData[];
+  attendance: AttendanceData[];
 }
 
 export interface ClassData {
@@ -101,6 +109,13 @@ export const getAllExams = async () => {
   return data;
 };
 
+//Get all students records from the database
+const getAllStudents = async () => {
+  const response = await StudentAPI.getStudents();
+  const data = await response.data;
+  return data;
+};
+
 const TeacherExamPortalDashboard = () => {
   //change the tab Title
   document.title = "Teacher Dashboard - Exam Portal";
@@ -119,6 +134,7 @@ const TeacherExamPortalDashboard = () => {
     GradeDistribution[]
   >([]);
   const [average, setAverage] = useState<Average[]>([]);
+  const [students, setStudents] = useState<StudentsData[]>([]);
 
   const fetchData = async () => {
     showNotification({
@@ -155,6 +171,23 @@ const TeacherExamPortalDashboard = () => {
       date: item.date,
       time: item.time,
     }));
+
+    const studentsResult = await getAllStudents();
+    const studentsData = studentsResult.map((item: any) => {
+      return {
+        id: item._id,
+        studentId: item.id,
+        name: item.name,
+        email: item.email,
+        phone: item.phone,
+        school: item.school,
+        grade: item.grade,
+        birthDate: item.birthDate,
+        address: item.address,
+        gender: item.gender,
+        parent: item.parent,
+      };
+    });
 
     const gradeDistribution: GradeDistribution[] = [];
     classes.forEach((item: any) => {
@@ -228,6 +261,7 @@ const TeacherExamPortalDashboard = () => {
     setAverage(average);
     setClassData(classes);
     setExamData(examDataFetched);
+    setStudents(studentsData);
     setLoading(false);
     const payload = {
       sortBy: null,
@@ -290,6 +324,10 @@ const TeacherExamPortalDashboard = () => {
               loading={loading}
               sortedData={sortedData}
               setSortedData={setSortedData}
+              resultOverview={resultOverview}
+              gradeDistribution={gradeDistribution}
+              average={average}
+              students={students}
             />
           </Tabs.Panel>
         </Tabs>

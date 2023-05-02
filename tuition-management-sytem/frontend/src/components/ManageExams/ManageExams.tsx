@@ -27,6 +27,7 @@ import {
   IconClock,
   IconCheckupList,
   IconRocket,
+  IconFileAnalytics,
 } from "@tabler/icons";
 import { IconEdit, IconTrash } from "@tabler/icons";
 import { openConfirmModal } from "@mantine/modals";
@@ -36,9 +37,13 @@ import { IconCheck, IconAlertTriangle } from "@tabler/icons";
 import { useForm } from "@mantine/form";
 import { DatePicker, TimeRangeInput } from "@mantine/dates";
 import {
+  Average,
   ClassData,
   ExamData,
+  GradeDistribution,
+  ResultOverview,
 } from "../../pages/ExamPortal/Teacher/TeacherExamPortalDashboard/TeacherExamPortalDashboard";
+import ExamsReport from "./ExamsReport";
 
 export interface StudentsData {
   id: string;
@@ -149,7 +154,12 @@ function Th({ children, reversed, sorted, onSort }: ThProps) {
 function filterData(data: ExamData[], search: string) {
   const query = search.toLowerCase().trim();
   return data.filter((item) =>
-    keys(data[0]).some((key) => item[key].toLowerCase().includes(query))
+    keys(data[0]).some((key) => {
+      if (key === "marks" || key === "attendance") {
+        return false;
+      }
+      return item[key].toLowerCase().includes(query);
+    })
   );
 }
 
@@ -190,6 +200,9 @@ export function sortData(
 
   return filterData(
     [...data].sort((a, b) => {
+      if (sortBy === "marks" || sortBy === "attendance") {
+        return 0;
+      }
       if (payload.reversed) {
         return b[sortBy].localeCompare(a[sortBy]);
       }
@@ -270,6 +283,10 @@ interface ManageExamsProps {
   loading: boolean;
   sortedData: ExamData[];
   setSortedData: (sortedData: ExamData[]) => void;
+  resultOverview: ResultOverview;
+  gradeDistribution: GradeDistribution[];
+  average: Average[];
+  students: StudentsData[];
 }
 
 const ManageExams = ({
@@ -280,6 +297,10 @@ const ManageExams = ({
   loading,
   sortedData,
   setSortedData,
+  resultOverview,
+  gradeDistribution,
+  average,
+  students,
 }: ManageExamsProps) => {
   const [selectedExam, setSelectedExam] = useState({
     id: "",
@@ -303,6 +324,8 @@ const ManageExams = ({
   const [attendance, setAttendance] = useState<AttendanceData[]>([]);
   const [attendanceSearch, setAttendanceSearch] = useState("");
   const [sortedAttendanceData, setSortedAttendanceData] = useState(attendance);
+
+  const [reportOpened, setReportOpened] = useState(false);
 
   const setSorting = (field: keyof ExamData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
@@ -684,6 +707,12 @@ const ManageExams = ({
           }
         });
         setMarks(newData);
+        const payload = {
+          sortBy: null,
+          reversed: false,
+          search: "",
+        };
+        setSortedMarksData(sortMarksData(newData, payload));
         setAddMarksOpened(false);
       })
       .catch((error) => {
@@ -957,6 +986,23 @@ const ManageExams = ({
 
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+      <Modal
+        opened={reportOpened}
+        onClose={() => {
+          setReportOpened(false);
+        }}
+        size="1000px"
+      >
+        <ExamsReport
+          exams={exams}
+          classes={classes}
+          resultOverview={resultOverview}
+          gradeDistribution={gradeDistribution}
+          average={average}
+          role="teacher"
+          students={students}
+        />
+      </Modal>
       <Modal
         opened={marksOpened}
         onClose={() => {
@@ -1356,7 +1402,12 @@ const ManageExams = ({
         </Box>
       </Modal>
       <Box sx={{ margin: "20px", width: "100%" }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
           <TextInput
             placeholder="Search by any field"
             mb="md"
@@ -1365,14 +1416,34 @@ const ManageExams = ({
             onChange={handleSearchChange}
             sx={{ width: "300px" }}
           />
-          <Button
-            variant="gradient"
-            gradient={{ from: "indigo", to: "cyan" }}
-            sx={{ width: "200px", marginRight: "20px" }}
-            onClick={() => setAddOpened(true)}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              alignItems: "center",
+            }}
+            mb="md"
           >
-            Add Exam
-          </Button>
+            <Button
+              color="red"
+              leftIcon={<IconFileAnalytics size={16} />}
+              sx={{ width: "200px", marginRight: "20px" }}
+              onClick={() => {
+                setReportOpened(true);
+              }}
+            >
+              Generate Report
+            </Button>
+            <Button
+              variant="gradient"
+              gradient={{ from: "indigo", to: "cyan" }}
+              sx={{ width: "200px", marginRight: "20px" }}
+              onClick={() => setAddOpened(true)}
+            >
+              Add Exam
+            </Button>
+          </Box>
         </Box>
         <ScrollArea>
           <Table

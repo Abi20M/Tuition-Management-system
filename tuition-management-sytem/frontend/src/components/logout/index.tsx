@@ -2,6 +2,7 @@ const logout = () => {
   localStorage.removeItem("role");
   localStorage.removeItem("admin");
   localStorage.removeItem("teacher");
+  localStorage.removeItem("student");
   window.location.href = "/";
 };
 

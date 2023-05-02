@@ -150,28 +150,26 @@ const ExamPortalTeacherDashboard = ({
   return (
     <>
       <Box>
-        <Box>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginTop: "40px",
-            }}
-          >
-            <Box sx={{ width: "305px", height: "400px" }}>
-              <Pie data={pieChartData} options={pieChartOptions} />
-            </Box>
-            <Box sx={{ width: "600px", height: "400px" }}>
-              <Line data={averageChartData} options={averageChartOptions} />
-            </Box>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: "40px",
+          }}
+        >
+          <Box sx={{ width: "305px", height: "400px" }}>
+            <Pie data={pieChartData} options={pieChartOptions} />
           </Box>
-          <Box sx={{ width: "100%", height: "450px" }}>
-            <Bar
-              data={gradeDistributionData}
-              options={gradeDistributionOptions}
-            />
+          <Box sx={{ width: "600px", height: "400px" }}>
+            <Line data={averageChartData} options={averageChartOptions} />
           </Box>
+        </Box>
+        <Box sx={{ width: "100%", height: "450px" }}>
+          <Bar
+            data={gradeDistributionData}
+            options={gradeDistributionOptions}
+          />
         </Box>
       </Box>
     </>

@@ -157,15 +157,9 @@ export const saveAttendance = async (id, attendanceArr) => {
     .findByIdAndUpdate(id)
     .then(async (data) => {
       if (data) {
+        data.attendance = [];
         for (let i = 0; i < attendanceArr.length; i++) {
-          const index = data.attendance.findIndex(
-            (attendance) => attendance.id == attendanceArr[i].id
-          );
-          if (index > -1) {
-            data.attendance[index] = attendanceArr[i];
-          } else {
-            data.attendance.push(attendanceArr[i]);
-          }
+          data.attendance.push(attendanceArr[i]);
         }
         await data.save();
         return data;
