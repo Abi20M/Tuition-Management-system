@@ -561,10 +561,10 @@ const ManageStudents = ({ user }: adminName) => {
         /^\d{10}$/.test(value)
           ? null
           : "Phone number must be 10 digits long number",
-      // birthDate: (value) =>
-      // /^\d{2}\/\d{2}\/\d{4}$/.test(value)
-      //     ? null
-      //     : "Invalid date of birth, date of birth must be in YYYY-MM-DD format",
+      birthDate: (value) =>
+        /^\d{4}-\d{2}-\d{2}$/.test(value)
+          ? null
+          : "Invalid date of birth, date of birth must be in YYYY-MM-DD format",
 
       grade: (value) =>
         parseInt(value) <= 0 || parseInt(value) > 13 ? "Invalid Grade" : null,
@@ -736,7 +736,9 @@ const ManageStudents = ({ user }: adminName) => {
                   phone: row.phone,
                   school: row.school,
                   grade: row.grade,
-                  birthDate: new Date(row.birthDate).toLocaleDateString("en-GB"),
+                  birthDate: new Date(row.birthDate).toLocaleDateString(
+                    "en-GB"
+                  ),
                   gender: row.gender,
                   address: row.address,
                   parent: row.parent,
@@ -814,13 +816,11 @@ const ManageStudents = ({ user }: adminName) => {
             required
           />
 
-          <DatePicker
-            placeholder="Select Birth Date"
+          <TextInput
             label="Birth Date"
-            withAsterisk
-            required
-            allowFreeInput
+            placeholder="Enter birth date"
             {...addForm.getInputProps("birthDate")}
+            required
           />
 
           <TextInput
