@@ -74,7 +74,7 @@ export const updateExam = async (id, examObj) => {
           classObj.name,
           data
         );
-        if (oldExam.class !== "Cancelled" && examObj.class === "Cancelled") {
+        if (oldExam.status !== "Cancelled" && examObj.status === "Cancelled") {
           await examMailService.sendExamCancelNotification(
             students,
             classObj.name,
