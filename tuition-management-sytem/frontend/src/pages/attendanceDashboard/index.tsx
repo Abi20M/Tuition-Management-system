@@ -1,9 +1,7 @@
 import { createStyles, Container, Tabs } from "@mantine/core";
 import AdminHeader from "../../components/adminHeader";
-import ParentHeader from "../../components/ParentHeader";
-import ManageParents from "../../components/ManageParents";
 import WebsiteFooter from "../../components/Footer";
-import ParentOverview from "../../components/parentDashboard"
+import React, { useState } from 'react';
 
 
 
@@ -44,14 +42,14 @@ const useStyles = createStyles((theme) => ({
 
 //create tabs List
 const tabs = [
-  "Dashboard",
-  "My Children",
-  
+  "Attendance Section",
+ 
 ];
 
-export const ParentDashboard = () => {
+export const AttendanceDashboard = () => {
+    
   //change the tab Title
-  document.title = "Parent Dashboard - Tuition Management System";
+  document.title = "Attendance Dashboard - Tuition Management System";
 
   const { classes, theme, cx } = useStyles();
 
@@ -62,30 +60,27 @@ export const ParentDashboard = () => {
   ));
 
   //get Admin information from the localStorage and we convert into that information into JSON object using JSON.parse()
-  const parent = JSON.parse(localStorage.getItem("parent") || "{}");
+  const admin = JSON.parse(localStorage.getItem("admin") || "{}");
 
   //user information object
   const user = {
-    _id: parent._id,
-    id: parent.id,
-    name: parent.name,
-    email:parent.email,
-    phone: parent.phone,
-    
+    _id : admin._id,
+    customId : admin.adminId,
+    name: admin.name,
+    email : admin.email,
+    telephone : admin.telephone,
+    address : admin.address
   };
 
   return (
     <div>
       {/* import admin Header */}
-    {/* <AdminHeader user ={user}/> */}
-
-    {/* import parent Header */}
-    <ParentHeader user = {user}/>
+    <AdminHeader user ={user}/>
 
     {/* Tabs */}
     <Container>
       <Tabs
-        defaultValue="Overview"
+        defaultValue="Attendance Section"
         variant="outline"
         classNames={{
           root: classes.tabs,
@@ -97,13 +92,9 @@ export const ParentDashboard = () => {
         <Tabs.List grow>{items}</Tabs.List>
 
         {/* Here you can add your own Component to here */}
-        <Tabs.Panel value="Overview">
-          <h1>Hello Overview</h1>
+        <Tabs.Panel value="Attendance Section">
+          <h1>Hello attendance</h1>
         </Tabs.Panel>
-        <Tabs.Panel value="My Children">
-          <ParentOverview/>
-        </Tabs.Panel>
-         
       </Tabs>
     </Container>
 

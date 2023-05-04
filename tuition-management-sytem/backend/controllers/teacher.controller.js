@@ -1,9 +1,13 @@
 import Teacher from "../models/teacher.model";
 import teacherServices from "../services/Teacher.service";
 import bcrypt from 'bcrypt';
+// import generatePassword from "../utils/passowrdGenerator";
 
 //create teacher function
 export const createTeacher = async (req, res, next) => {
+// //genarate password
+//   const autoPassword = generatePassword();
+
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
@@ -29,6 +33,18 @@ export const createTeacher = async (req, res, next) => {
 
 };
 
+export const getStudents = async (req, res, next) => {
+  await teacherService
+    .getStudents(req.params.id)
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+      next();
+    })
+    .catch((err) => {
+      req.handleResponse.errorRespond(res)(err);
+      next();
+    });
+};
 //get all teacher Details
 export const getAllTeacher = async (req, res, next) => {
   await teacherServices
@@ -108,4 +124,5 @@ export const getTeacherCount = async (req, res) => {
     editTeacher,
     teacherLogin,
     getTeacherCount,
+    getStudents,
 }
