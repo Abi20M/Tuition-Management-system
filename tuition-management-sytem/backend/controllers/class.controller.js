@@ -18,10 +18,12 @@ export const createClass = async (req, res, next) => {
   await classServices
     .createClass(classObj)
     .then((data) => {
+      console.log("then"+data)
       req.handleResponse.successRespond(res)(data);
       next();
     })
     .catch((error) => {
+      console.log("Error: " + error)
       req.handleResponse.errorRespond(res)(error);
       next();
     });

@@ -1,7 +1,11 @@
 import { createStyles, Container, Tabs } from "@mantine/core";
 import AdminHeader from "../../components/adminHeader";
 import ExpenseManage from "../../components/expenseManage";
+import ExpenseStatus from "../../components/expenseStatus";
 import WebsiteFooter from "../../components/Footer";
+import React, { useState } from 'react';
+
+
 
 const useStyles = createStyles((theme) => ({
   tabs: {
@@ -46,6 +50,17 @@ const tabs = [
 ];
 
 export const ExpenseDashboard = () => {
+  const [totalExpense, setTotalExpense] = useState(0);
+  const [fixedValue,setFixedValue] = useState(0);
+
+    const handleTotalAmountExpense = (newTotalExpense:number) => {
+      setTotalExpense(newTotalExpense);
+    }
+
+    const handleLastFixedAmountExpense = (newLastFixedExpense:number) => {
+      setFixedValue(newLastFixedExpense);
+    }
+    
   //change the tab Title
   document.title = "Expenses Dashboard - Tuition Management System";
 
@@ -91,10 +106,10 @@ export const ExpenseDashboard = () => {
 
         {/* Here you can add your own Component to here */}
         <Tabs.Panel value="Overview">
-          <h1>Hello Overview</h1>
+          <ExpenseStatus totalExpenses = {totalExpense} lastFixed = {fixedValue}/>
         </Tabs.Panel>
         <Tabs.Panel value="Manage Expenses">
-          <ExpenseManage/>
+          <ExpenseManage onTotalExpenseChange={handleTotalAmountExpense} user = {user} onLastFixedChange = {handleLastFixedAmountExpense}/>
         </Tabs.Panel>
         <Tabs.Panel value="Past Expenses Details">
           <h1>Hello Past details</h1>

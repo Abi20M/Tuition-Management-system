@@ -1,13 +1,14 @@
+const logout = () => {
+  localStorage.removeItem("role");
+  localStorage.removeItem("admin");
+  localStorage.removeItem("teacher");
+  localStorage.removeItem("student");
+  window.location.href = "/";
+};
 
-const logout = ( ) =>{
-    localStorage.removeItem('admin');
-
-    window.location.href = '/';
-}
-
-const Logout = () =>{
-    logout();
-    return <div/>
-}
+const Logout = () => {
+  logout();
+  return <div />;
+};
 
 export default Logout;
