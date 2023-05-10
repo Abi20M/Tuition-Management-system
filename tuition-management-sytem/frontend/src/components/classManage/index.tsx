@@ -44,11 +44,7 @@ import { ClassPDF } from "../PDFRender/ClassPDFTemplate";
 import { openConfirmModal } from "@mantine/modals";
 import StudentAPI from "../../API/studentAPI";
 import TeacherAPI from "../../API/teacherAPI";
-<<<<<<< HEAD
-import SubjectAPI from "../../API/subjectAPI";
-=======
 import subjectAPI from "../../API/subjectAPI";
->>>>>>> development
 
 const useStyles = createStyles((theme) => ({
   th: {
@@ -291,7 +287,9 @@ const ClassManage = ({ user }: adminName) => {
   const [selectedEnrollClassId, setSelectedEnrollClassId] = useState("");
   const [studentDetails, setStudentDetails] = useState<StudentDetails[]>([]);
   const [selectEnrollStudent, setSelectEnrollStudent] = useState(false);
-  const [enrolledStudents, setEnrolledStudents] = useState<StudentDetails[]>([]);
+  const [enrolledStudents, setEnrolledStudents] = useState<StudentDetails[]>(
+    []
+  );
 
   //set admin name
   const adminName = user.name;
@@ -607,14 +605,20 @@ const ClassManage = ({ user }: adminName) => {
       <td>{row.teacher}</td>
       <td>{row.subject}</td>
       <td>{row.day}</td>
-      <td>{new Date(Date.parse(row.startTime)).toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "numeric",
-            hour12: true})}</td>
-      <td>{new Date(Date.parse(row.endTime)).toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "numeric",
-            hour12: true})}</td>
+      <td>
+        {new Date(Date.parse(row.startTime)).toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "numeric",
+          hour12: true,
+        })}
+      </td>
+      <td>
+        {new Date(Date.parse(row.endTime)).toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "numeric",
+          hour12: true,
+        })}
+      </td>
       <td>{row.venue}</td>
       <td>
         <Menu
@@ -756,7 +760,7 @@ const ClassManage = ({ user }: adminName) => {
 
   // validate add Class Form
   const form = useForm({
-    validateInputOnChange : true,
+    validateInputOnChange: true,
     initialValues: {
       name: "",
       teacher: "",
@@ -771,7 +775,29 @@ const ClassManage = ({ user }: adminName) => {
       name: (val) =>
         val.length >= 2
           ? null
-          : "Invalid class name, Class name should have more than 3 characters!",  
+          : "Invalid class name, Class name should have more than 3 characters!",
+      startTime: (time) =>
+        time.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "numeric",
+        }) <
+        new Date("1970-01-01T" + "08:00:00").toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "numeric",
+        })
+          ? "Class start time should be withing working hours"
+          : null,
+      endTime: (time) =>
+        time.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "numeric",
+        }) >
+        new Date("1970-01-01T" + "23:00:00").toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "numeric",
+        })
+          ? "Class end time should be withing working hours"
+          : null,
     },
   });
 
@@ -1065,7 +1091,30 @@ const ClassManage = ({ user }: adminName) => {
       name: (val) =>
         val.length >= 2
           ? null
-          : "Invalid class name, Class name should have more than 3 characters!", 
+          : "Invalid class name, Class name should have more than 3 characters!",
+
+      startTime: (time) =>
+        time.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "numeric",
+        }) <
+        new Date("1970-01-01T" + "08:00:00").toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "numeric",
+        })
+          ? "Class start time should be withing working hours"
+          : null,
+      endTime: (time) =>
+        time.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "numeric",
+        }) >
+        new Date("1970-01-01T" + "23:00:00").toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "numeric",
+        })
+          ? "Class end time should be withing working hours"
+          : null,
     },
   });
 
