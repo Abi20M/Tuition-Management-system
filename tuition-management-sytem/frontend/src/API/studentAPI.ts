@@ -103,6 +103,27 @@ class StudentAPI {
     return axios.put(`${BASE_URL}/student/changePassword/${values.documentId}`,password,  requestConfigJson);
     
   }
+
+    //update Fee
+  static updateFee = (values: {
+      _id : string,
+      id: string;
+      name: string;
+      amount: string;
+      status: string;
+    }) => {
+      let student = {
+        id : values.id,
+        name: values.name,
+        amount: values.amount,
+        status: values.status
+      };
+      return axios.put(
+        `${BASE_URL}/fee/${values._id}`,
+        student,
+        requestConfigJson
+      );
+  };
 }
 
 export default StudentAPI;
