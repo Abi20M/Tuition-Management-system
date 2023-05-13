@@ -1,5 +1,6 @@
 import axios from "axios";
 import requestConfig from "./requestConfig";
+import requestConfigJson from "./requestConfig";
 
 const BASE_URL = "http://localhost:3001";
 
@@ -12,7 +13,7 @@ class ParentAPI {
   static addParent = (values: {
     name: string;
     email: string;
-    password: string;
+    //password: string;
     phone: string;
   }) => {
     return axios.post(`${BASE_URL}/parent`, values, requestConfig);
@@ -49,7 +50,7 @@ class ParentAPI {
       email: email,
       password: password,
     };
-    return axios.post(`${BASE_URL}/parent/login`, data, requestConfig);
+    return axios.post(`${BASE_URL}/parent/login`, data);
   };
 
   //get sudents by parent id
@@ -66,6 +67,25 @@ class ParentAPI {
 
   static getParentCount = () =>{
     return axios.get(`${BASE_URL}/parent/count`,requestConfig);
+    
+  }
+
+  static setNewPassword = (values : {
+    documentId : string,
+    parentId : string,
+    currentPassword : string,
+    newPassword : string
+    
+  }) =>{
+
+    let password = {
+      parentId : values.parentId,
+      currentPassword : values.currentPassword,
+      newPassword : values.newPassword
+    }
+
+    return axios.put(`${BASE_URL}/parent/changePassword/${values.documentId}`,password,  requestConfig);
+    
   }
 }
 

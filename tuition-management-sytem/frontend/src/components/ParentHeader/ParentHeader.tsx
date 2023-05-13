@@ -17,7 +17,7 @@ import { IconLogout, IconChevronDown } from "@tabler/icons";
 import adminDashboardLogoDark from "../../assets/adminDashboardLogoDark.png";
 import adminDashboardLogoLight from "../../assets/adminDashboardLogoLight.png";
 import defaultUserImage from "../../assets/defaultprofile.png";
-import LightDarkButton from "../../components/lightDarkButton";
+import LightDarkButton from "../lightDarkButton";
 
 // Custom Theme
 const useStyles = createStyles((theme) => ({
@@ -64,15 +64,23 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
+interface HeaderProps {
+  user: {
+     _id: string;
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+  };
+}
 
-
-const TeacherHeader = () => {
+const ParentHeader = ({ user }: HeaderProps) => {
   const { classes, cx } = useStyles();
   const [opened, { toggle }] = useDisclosure(false);
   const [userMenuOpened, setUserMenuOpened] = useState(false);
   const { colorScheme } = useMantineColorScheme();
   const dark = colorScheme === "dark";
-  const user = JSON.parse(localStorage.getItem("teacher") || "{}");
+ // const user = JSON.parse(localStorage.getItem("parent") || "{}");
 
   return (
     <Box className={classes.header}>
@@ -130,7 +138,7 @@ const TeacherHeader = () => {
                 </UnstyledButton>
               </Menu.Target>
               <Menu.Dropdown>
-                <Menu.Label>TEACHER</Menu.Label>
+                <Menu.Label>Parent</Menu.Label>
                 <Menu.Label>{user.email.toUpperCase()}</Menu.Label>
                 <Menu.Divider />
                 <Menu.Item icon={<IconLogout size={14} stroke={1.5} />}>
@@ -153,4 +161,4 @@ const TeacherHeader = () => {
   );
 };
 
-export default TeacherHeader;
+export default ParentHeader;

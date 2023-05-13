@@ -19,6 +19,11 @@ const ParentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isPasswordChanged: {
+    default : false,
+    type: Boolean,
+    require : true,
+  },
   phone: {
     type: String,
     required: true,

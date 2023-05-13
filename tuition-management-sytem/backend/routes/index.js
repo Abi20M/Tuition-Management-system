@@ -1,3 +1,4 @@
+
 import { loginAdmin } from "../controllers/admin.controller";
 import protect from "../middleware/Auth.middleware";
 import classController from "../controllers/class.controller";
@@ -95,25 +96,29 @@ const Routes = (app) => {
   app.put("/teacher/:id", protect.adminProtect, teacherController.editTeacher);
   app.post("/teacher/login", teacherController.teacherLogin);
 
+  // //Teacher Routes - Accessible to Teachers only
+  // //get students of the specific teacher by teacher id
+  // app.get(
+  //   "/teacher/:id/students",
+  //   protect.teacherProtect,
+  //   teacherController.getStudents
+  // );
 
 
   //Parent Routes
     //parent login
+  app.post("/parent/login" , parentController.loginParent);
+  
     // app.post("/parent/login" , parentController.loginParent);
   app.post("/parent", protect.adminProtect, parentController.createParent);
   app.get("/parent", protect.adminProtect, parentController.getAllParents);
-  app.get(
-    "/parent/count",
-    protect.adminProtect,
-    parentController.getParentCount
-  );
+  app.get("/parent/count",protect.adminProtect,parentController.getParentCount);
   app.put("/parent/:id", protect.adminProtect, parentController.updateParent);
-  app.delete(
-    "/parent/:id",
-    protect.adminProtect,
-    parentController.deleteParent
-  );
+  app.delete("/parent/:id",protect.adminProtect,parentController.deleteParent);
+  app.put("/parent/changePassword/:id",protect.parentProtect, parentController.changeParentPassword);
 
+
+//Student Routes
   //Student Routes
   app.post("/student", protect.adminProtect, studentController.createStudent);
   app.get(
