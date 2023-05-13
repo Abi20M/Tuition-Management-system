@@ -138,6 +138,9 @@ export const FeePDF = ({ data, user}: any) => {
                     <Text style={styles.headerFont}>Name</Text>
                   </View>
                   <View style={styles.HeaderCol}>
+                    <Text style={styles.headerFont}>Amount</Text>
+                  </View>
+                  <View style={styles.HeaderCol}>
                     <Text style={styles.headerFont}>Status</Text>
                   </View>
                 </View>  
@@ -151,6 +154,9 @@ export const FeePDF = ({ data, user}: any) => {
                         </View>
                         <View style={styles.tableCol}>
                           <Text style={styles.tableCell}>{data.name}</Text>
+                        </View>
+                        <View style={styles.tableCol}>
+                          <Text style={styles.tableCell}>{data.amount}</Text>
                         </View>
                         <View style={styles.tableCol}>
                           <Text style={styles.tableCell}>{data.status}</Text>
