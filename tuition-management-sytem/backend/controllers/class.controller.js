@@ -20,12 +20,10 @@ export const createClass = async (req, res, next) => {
     .then((data) => {
       console.log("then"+data)
       req.handleResponse.successRespond(res)(data);
-      next();
     })
     .catch((error) => {
-      console.log("Error: " + error)
-      req.handleResponse.errorRespond(res)(error);
-      next();
+      console.log(error.message)
+      req.handleResponse.errorRespond(res)(error.message);
     });
 };
 

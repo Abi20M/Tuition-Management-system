@@ -776,28 +776,34 @@ const ClassManage = ({ user }: adminName) => {
         val.length >= 2
           ? null
           : "Invalid class name, Class name should have more than 3 characters!",
-      startTime: (time) =>
-        time.toLocaleTimeString("en-US", {
-          hour: "numeric",
-          minute: "numeric",
-        }) <
-        new Date("1970-01-01T" + "08:00:00").toLocaleTimeString("en-US", {
-          hour: "numeric",
-          minute: "numeric",
-        })
-          ? "Class start time should be withing working hours"
-          : null,
-      endTime: (time) =>
-        time.toLocaleTimeString("en-US", {
-          hour: "numeric",
-          minute: "numeric",
-        }) >
-        new Date("1970-01-01T" + "23:00:00").toLocaleTimeString("en-US", {
-          hour: "numeric",
-          minute: "numeric",
-        })
-          ? "Class end time should be withing working hours"
-          : null,
+      // startTime: (time) =>
+      //   time.toLocaleTimeString("en-US", {
+      //     hour: "numeric",
+      //     minute: "numeric",
+      //   }) <
+      //   new Date("1970-01-01T" + "08:00:00").toLocaleTimeString("en-US", {
+      //     hour: "numeric",
+      //     minute: "numeric",
+      //   }) || time.toLocaleTimeString("en-US", {
+      //     hour: "numeric",
+      //     minute: "numeric",
+      //   }) >         new Date("1970-01-01T" + "23:00:00").toLocaleTimeString("en-US", {
+      //     hour: "numeric",
+      //     minute: "numeric",
+      //   })
+      //     ? "Class start time should be withing working hours"
+      //     : null,
+      // endTime: (time) =>
+      //   time.toLocaleTimeString("en-US", {
+      //     hour: "numeric",
+      //     minute: "numeric",
+      //   }) >
+      //   new Date("1970-01-01T" + "23:00:00").toLocaleTimeString("en-US", {
+      //     hour: "numeric",
+      //     minute: "numeric",
+      //   })
+      //     ? "Class end time should be withing working hours"
+      //     : null,
     },
   });
 
@@ -811,10 +817,18 @@ const ClassManage = ({ user }: adminName) => {
     venue: string;
     endTime: Date;
   }) => {
-    await ClassAPI.addClass(values)
+    showNotification({
+      id: "class-add",
+      disallowClose: false,
+      autoClose: 1800,
+      title: "trying adding new class",
+      message: `we are trying to add new class`,
+      loading: true,
+    });
 
+    await ClassAPI.addClass(values)
       .then((data) => {
-        showNotification({
+        updateNotification({
           id: "class-add",
           disallowClose: false,
           autoClose: 1800,
@@ -855,9 +869,9 @@ const ClassManage = ({ user }: adminName) => {
         updateNotification({
           id: "class-add",
           disallowClose: false,
-          autoClose: 1800,
+          autoClose: 2500,
           title: "Something Went Wrong!",
-          message: `class not added!`,
+          message: `${error.response.data.message}`,
           color: "red",
           icon: <IconX />,
           loading: false,
