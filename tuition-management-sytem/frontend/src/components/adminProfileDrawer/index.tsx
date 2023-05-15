@@ -3,6 +3,7 @@ import {
   Button,
   Container,
   Group,
+  Text,
   Input,
   Modal,
   Stack,
@@ -27,6 +28,9 @@ import defaultUser from "../../assets/defaultprofile.png";
 import { showNotification, updateNotification } from "@mantine/notifications";
 import adminAPI from "../../API/adminAPI";
 import { useForm } from "@mantine/form";
+import { openConfirmModal } from "@mantine/modals";
+import Logout from "../logout";
+import { useNavigate } from "react-router-dom";
 
 interface admin {
   _id: string;
@@ -55,6 +59,7 @@ export const AdminDrawer = (props : iProps) => {
   const [openedPassword, setOpenedPassword] = useState(false);
   const { sidePannel } = props;
   const [editOpened, setEditOpened] = useState(false);
+  const navigate = useNavigate();
 
   const [data, setData] = useState<admin>({
     _id: props.adminDetails._id,
@@ -125,6 +130,31 @@ export const AdminDrawer = (props : iProps) => {
       });
   };
 
+  const deleteLogedInUser = (adminObjectId : string) =>{
+    adminAPI.deleteAdmin(adminObjectId).then((res)=>{
+      showNotification({
+        id: "delete-admin",
+        color: "teal",
+        title: "admin record deleted successfully",
+        message: "The admin record has been deleted successfully",
+        icon: <IconCheck size={16} />,
+        autoClose: 1000,
+      });
+      setTimeout(() =>{
+        navigate("/logout");
+      },1000)
+      
+    }).catch((error)=>{
+      updateNotification({
+        id: "delete-admin",
+        color: "red",
+        title: "Deleting admin record failed",
+        message: "We were unable to delete the admin record",
+        icon: <IconAlertTriangle size={16} />,
+        autoClose: 5000,
+      });
+    })
+  }
   //declare edit form
   const editForm = useForm({
     validateInputOnChange: true,
@@ -151,8 +181,34 @@ export const AdminDrawer = (props : iProps) => {
     },
   });
 
+  const openDeleteModal = (id: string) =>
+  openConfirmModal({
+    title: "Delete this admin record?",
+    centered: true,
+    children: (
+      <Text size="sm">
+        Are you sure you want to delete this admin record? This action cannot
+        be undone.
+      </Text>
+    ),
+    labels: { confirm: "Delete admin record", cancel: "No don't delete it" },
+    confirmProps: { color: "red" },
+    onCancel: () => {
+      showNotification({
+        title: "Cancelled",
+        message: "The admin record was not deleted",
+        color: "red",
+      });
+    },
+    onConfirm: () => {
+      deleteLogedInUser(id);
+    },
+  });
+
   return (
     <Container>
+
+      
       <Modal
         opened={editOpened}
         onClose={() => {
@@ -281,6 +337,7 @@ export const AdminDrawer = (props : iProps) => {
           variant={"light"}
           color={"red"}
           leftIcon={<IconTrash size={10} />}
+          onClick={() =>openDeleteModal(props.adminDetails._id)}
         >
           Delete Profile
         </Button>

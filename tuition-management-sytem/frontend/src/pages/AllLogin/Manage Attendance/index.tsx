@@ -19,7 +19,7 @@ import {
   } from "@mantine/core";
   import { useForm } from "@mantine/form";
   import adminDarkModeLogo from "../../../assets/adminDarkModeLogo.png";
-  import adminLoginLogo2 from "../../../assets/studentLoginLogo.jpg";
+  import attendanceLogo from "../../../assets/attendancelogo.png"
   import {
     GoogleButton,
     FacebookButton,
@@ -150,7 +150,7 @@ import { IconAlertTriangle, IconCheck } from "@tabler/icons";
             <Grid grow>
               <Grid.Col md={6} lg={3}>
                 <Image
-                  src={dark ? adminDarkModeLogo : adminLoginLogo2}
+                  src={dark ? attendanceLogo : attendanceLogo}
                   mt={dark ? 40 : 60}
                   ml={10}
                   p={dark ? 50 : 20}
