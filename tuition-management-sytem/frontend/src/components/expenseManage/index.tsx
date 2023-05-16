@@ -336,6 +336,12 @@ const ExpenseManage = (props: adminName) => {
         setTotalExpense(newTotal);
         props.onTotalExpenseChange(newTotal);
 
+        //get remaining amount 
+        var remainingAmount = lastFixedValue - newTotal;
+        if (remainingAmount <= 0) {
+          sendAdminDetalis();
+        }
+
       })
       .catch((error) => {
         updateNotification({
@@ -382,6 +388,12 @@ const ExpenseManage = (props: adminName) => {
         const newDeleteExpenseTotal = totalExpense - parseFloat(response.data.amount);
         setTotalExpense(newDeleteExpenseTotal);
         props.onTotalExpenseChange(newDeleteExpenseTotal);
+
+        //get remaining amount 
+        var remainingAmount = lastFixedValue - newDeleteExpenseTotal;
+        if (remainingAmount <= 0) {
+          sendAdminDetalis();
+        }
       })
       .catch((error) => {
         updateNotification({
@@ -447,16 +459,26 @@ const ExpenseManage = (props: adminName) => {
 
         //pass total expense amount to overview
         props.onTotalExpenseChange(TotalExpenseValue);
+
       });
 
     };
     fetchData();
     getLastFixedValue();
-   // const val = getCurrentAamout();
-    //setCurrentValue(val);
 
   }, []);
 
+
+  //pass the admin details
+  const sendAdminDetalis = async () => {
+
+    //store the loged admin details 
+    const admin = JSON.parse(localStorage.getItem("admin") || "{}");
+    const { name, email } = admin;
+
+    ExpensesAPI.getAdminDetails({ name, email })
+
+  };
 
   //declare edit form
   const editForm = useForm({
@@ -583,12 +605,12 @@ const ExpenseManage = (props: adminName) => {
   ));
 
   //get current value
-  function getCurrentAamout (amount : number) {
+  function getCurrentAamout(amount: number) {
 
     setCurrentValue(amount);
   };
 
-  
+
 
   //edit expense function
   const editExpenses = async (values: {
@@ -644,10 +666,16 @@ const ExpenseManage = (props: adminName) => {
         //update total value of expense
         const updatedVal = parseFloat(response.data.amount);
         const newUpdatedTotal = (totalExpense + (updatedVal - currentValue));
-       
+
         //pase to the overview tab
         setTotalExpense(newUpdatedTotal);
         props.onTotalExpenseChange(newUpdatedTotal);
+
+        //get remaining amount 
+        var remainingAmount = lastFixedValue - newUpdatedTotal;
+        if (remainingAmount <= 0) {
+          sendAdminDetalis();
+        }
       })
       .catch((error) => {
         updateNotification({

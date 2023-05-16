@@ -108,7 +108,7 @@ export const addFixedValue = async (req, res ,next) => {
     });
 };
 
-
+//get last fixed value
 export const getLastFixedValue = async (req, res, next) => {
   expenseServices
     .getLastFixedValue()
@@ -123,6 +123,17 @@ export const getLastFixedValue = async (req, res, next) => {
     });
 };
 
+//get admin name and email
+export const getAdminInfo = (req,res) => {
+  const adminName = req.body.name;
+  const adminEmail = req.body.email;
+
+  expenseServices
+  .sendMail(adminName, adminEmail)
+  
+};
+
+
 module.exports = {
   createExpense,
   getAllExpenses,
@@ -131,4 +142,5 @@ module.exports = {
   getExpenseCount,
   addFixedValue,
   getLastFixedValue,
+  getAdminInfo
 };
