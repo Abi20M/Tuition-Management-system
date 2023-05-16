@@ -1,6 +1,7 @@
-import { Text, SimpleGrid, Paper, Group, Box } from "@mantine/core";
+import { Text, SimpleGrid, Paper, Group, Box, Modal,PasswordInput,Button } from "@mantine/core";
 import StudentIcon from "../../assets/student.png";
 import TeacherIcon from "../../assets/teacher.png";
+import { useForm } from "@mantine/form";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,13 +15,15 @@ import {
   ArcElement,
 } from "chart.js";
 import { Bar, Doughnut } from "react-chartjs-2";
-import { useState } from "react";
+//import { useState } from "react";
 import { showNotification, updateNotification } from "@mantine/notifications";
-import { useEffect } from "react";
-import { IconCheck } from "@tabler/icons";
+import { useEffect, useState } from "react";
 import ParentAPI from "../../API/ParentAPI";
-import SubjectAPI from "../../API/subjectAPI"
+import SubjectAPI from "../../API/subjectAPI";
 import { ClassAPI } from "../../API/classAPI";
+import { Line } from "react-chartjs-2";
+
+import { IconAlertTriangle, IconCheck } from "@tabler/icons";
 
 //import ClassAPI from "../../api/ClassAPI";
 
@@ -81,6 +84,9 @@ const getAllClasses = async () => {
   const data = await response.data;
   return data;
 };
+
+//Get stored parnet Details
+const parent = JSON.parse(localStorage.getItem("parent") || "{}");
 
 export const options = {
   responsive: true,
@@ -181,18 +187,25 @@ export const examResultsData1 = {
   ],
 };
 
-const ParentOverview: React.FC = () => {
-  const [classes, setClasses] = useState(0);
-  const [students, setStudents] = useState(0);
-  const [subjects, setSubjects] = useState([]);
-  const [examData, setExamData] = useState(examResultsData1);
-  const [maleCount, setMaleCount] = useState(0);
-  const [femaleCount, setFemaleCount] = useState(0);
-  const [gradeDistributionData, setGradeDistributionData] = useState([
-    0, 0, 0, 0, 0, 0, 0, 0,
-  ]);
 
-  useEffect(() => {
+  const ParentOverview = () => {
+    const [classes, setClasses] = useState(0);
+    const [students, setStudents] = useState(0);
+    const [subjects, setSubjects] = useState([]);
+    const [examData, setExamData] = useState(examResultsData1);
+    const [maleCount, setMaleCount] = useState(0);
+    const [femaleCount, setFemaleCount] = useState(0);
+    const [openedPasswordModal, setOpenedPasswordModal] = useState(false);
+    const [newPassword, setNewPassword] = useState("");
+    const [error, setError] = useState(true);
+    const [gradeDistributionData, setGradeDistributionData] = useState([
+      0, 0, 0, 0, 0, 0, 0, 0,
+    ]);
+
+    useEffect(() => {
+    if(parent.isChangedPassword === false){
+      setOpenedPasswordModal(true);
+    }
     const fetchData = async () => {
       showNotification({
         id: "loding-data",
@@ -291,11 +304,14 @@ const ParentOverview: React.FC = () => {
       updateNotification({
         id: "loding-data",
         color: "teal",
-        title: "Parent Dashboard data loaded",
-        message: "Parent Dashboard data loaded successfully",
+        title: "Teacher Dashboard data loaded",
+        message: "Teacher Dashboard data loaded successfully",
         icon: <IconCheck size={16} />,
         autoClose: 3000,
       });
+
+
+
     };
     fetchData();
   }, []);
@@ -338,107 +354,146 @@ const ParentOverview: React.FC = () => {
       },
     ],
   };
+  
 
-  const stats = data.map((stat) => {
-    return (
-      <Paper withBorder radius="md" p="xs" key={stat.title}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <img src={stat.icon} alt={stat.title} width="100" height="100" />
-          <Group
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              marginLeft: "20px",
-            }}
-          >
-            <Text
-              weight={700}
-              size="xl"
-              sx={{ fontSize: "4rem", marginBottom: -30, marginTop: -30 }}
-            >
-              {stat.value}
-            </Text>
-            <Text color="dimmed" size="md" transform="uppercase" weight={700}>
-              {stat.title}
-            </Text>
-          </Group>
-        </Box>
-      </Paper>
-    );
+
+  //validate confirm parent password
+  const validatePassword = (confirmPassword: string) => {
+    if (confirmPassword.length != 0) {
+      if (newPassword === confirmPassword) {
+        setError(false);
+        const error = document.getElementById("confirmPasswordError");
+        if (error) error.innerHTML = "Password is match!";
+      } else {
+        setError(true);
+        const error = document.getElementById("confirmPasswordError");
+        if (error) error.innerHTML = "Password is not match!";
+      }
+    }
+  };
+
+  // Password Changing function
+  const submitPassword = (values: {
+    documentId: string;
+    parentId: string;
+    currentPassword: string;
+    newPassword: string;
+  }) => {
+    showNotification({
+      id: "update-password",
+      title: "Changing password",
+      message: "We are trying to update your password",
+      loading: true,
+    });
+
+    ParentAPI.setNewPassword(values).then((res) => {
+        setOpenedPasswordModal(false);
+
+        updateNotification({
+          id: "update-password",
+          title: "Changed password",
+          message: "We are updated your password",
+          color: "teal",
+          icon: <IconCheck />,
+          autoClose: 3000,
+        });
+      })
+      .catch((error) => {
+        updateNotification({
+          id: "update-password",
+          title: "Error while changing password",
+          message: "Check your current password or network connection",
+          color: "red",
+          icon: <IconAlertTriangle />,
+        });
+      });
+  };
+
+  // password changing modal
+  const changePasswordForm = useForm({
+    initialValues: {
+      documentId: parent._id,
+      parentId: parent.id,
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
   });
 
   return (
-    <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          width: "100%",
-          marginTop: "2%",
+    <>
+      {/* password chaging modal */}
+      <Modal
+        opened={openedPasswordModal}
+        closeOnClickOutside={false}
+        closeOnEscape={false}
+        withCloseButton={false}
+        onClose={() => {
+          setOpenedPasswordModal(false);
         }}
+        title={"Change Password for First Time"}
+        centered
       >
-        <SimpleGrid
-          cols={2}
-          breakpoints={[{ maxWidth: "sm", cols: 1 }]}
-          sx={{ width: "100%" }}
+        <form
+          onSubmit={changePasswordForm.onSubmit((values) =>
+            submitPassword(values)
+          )}
         >
-          {stats}
-        </SimpleGrid>
-        <SimpleGrid
-          cols={2}
-          breakpoints={[{ maxWidth: "sm", cols: 1 }]}
-          sx={{ width: "100%", marginTop: "2%" }}
-        >
-          {/* <Paper withBorder radius="md" p="xs" key="grades">
-            <Text weight={700} size="xl" sx={{ fontSize: "1.5rem" }}>
-              Gender Distribution of My Children
-            </Text>
-            <Box sx={{ width: "70%", marginLeft: "15%" }}>
-              <Doughnut data={genderData} options={doughnutOptions} />
-            </Box>
-          </Paper> */}
-          <Paper withBorder radius="md" p="xs" key="gender">
-            <Text weight={700} size="xl" sx={{ fontSize: "1.5rem" }}>
-              Grade Distribution of My Children
-            </Text>
-            <Box sx={{ marginTop: "10%" }}>
-              <Bar data={gradeData} options={options2} />
-            </Box>
-          </Paper>
-        </SimpleGrid>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            width: "85%",
-            marginTop: "2%",
-          }}
-        >
-          <Text size="xl" weight={700} sx={{ fontSize: "2rem" }}>
-            Exam Results Statistics of My Children
-          </Text>
-        </Box>
-        <Box
-          sx={{
-            width: "85%",
-          }}
-          id="bar-chart"
-        >
-          <Bar data={examData} options={options} />
-        </Box>
-      </Box>
-    </Box>
+          <PasswordInput
+            label="Current Password"
+            withAsterisk
+            placeholder="current password"
+            {...changePasswordForm.getInputProps("currentPassword")}
+            required
+          />
+          <PasswordInput
+            label="New Password"
+            withAsterisk
+            placeholder="new password"
+            {...changePasswordForm.getInputProps("newPassword")}
+            onChange={(event) => {
+              setNewPassword(event.target.value);
+              changePasswordForm.setFieldValue(
+                "newPassword",
+                event.target.value
+              );
+            }}
+            required
+          />
+          <PasswordInput
+            label="Confirm Password"
+            withAsterisk
+            placeholder="confirm password"
+            onChange={(event) => {
+              changePasswordForm.setFieldValue(
+                "confirmPassword",
+                event.target.value
+              );
+              validatePassword(event.target.value);
+            }}
+            required
+          />
+          <p
+            id="confirmPasswordError"
+            style={{
+              color: error === false ? "green" : "red",
+              marginTop: "10px",
+            }}
+          ></p>
+
+          <Button
+            fullWidth
+            mt={20}
+            type="submit"
+            disabled={error ? true : false}
+          >
+            Change Password
+          </Button>
+        </form>
+      </Modal>
+    </>
   );
 };
+
 
 export default ParentOverview;
