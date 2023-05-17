@@ -187,84 +187,84 @@ const MyClassesTeacher: React.FC = () => {
   const [students, setStudents] = useState([]);
 
   // fetch class data
-  useEffect(() => {
-    const fetchData = async () => {
-      showNotification({
-        id: "loding-data",
-        loading: true,
-        title: "Loading data",
-        message: "Please wait while we load the data",
-        autoClose: false,
-        disallowClose: true,
-      });
-      const resultClasses = await getAllClasses();
-      const classes = resultClasses.map((item: any) => ({
-        id: item._id,
-        name: item.name,
-        teacher: item.teacher,
-        subject: item.subject,
-        date: item.date,
-        startTime: item.startTime,
-        endTime: item.endTime,
-        venue: item.venue,
-      }));
-      //filter classes by teacher id
-      const teacher = JSON.parse(localStorage.getItem("teacher") || "{}");
-      const teacherID = teacher._id;
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     showNotification({
+  //       id: "loding-data",
+  //       loading: true,
+  //       title: "Loading data",
+  //       message: "Please wait while we load the data",
+  //       autoClose: false,
+  //       disallowClose: true,
+  //     });
+  //     const resultClasses = await getAllClasses();
+  //     const classes = resultClasses.map((item: any) => ({
+  //       id: item._id,
+  //       name: item.name,
+  //       teacher: item.teacher,
+  //       subject: item.subject,
+  //       date: item.date,
+  //       startTime: item.startTime,
+  //       endTime: item.endTime,
+  //       venue: item.venue,
+  //     }));
+  //     //filter classes by teacher id
+  //     const teacher = JSON.parse(localStorage.getItem("teacher") || "{}");
+  //     const teacherID = teacher._id;
 
-      const filteredClasses = classes.filter(
-        (item: any) => item.teacher === teacherID
-      );
+  //     const filteredClasses = classes.filter(
+  //       (item: any) => item.teacher === teacherID
+  //     );
 
-      const resultTeachers = await getAllTeachers();
-      const teachers = resultTeachers.map((item: any) => ({
-        id: item._id,
-        name: item.name,
-      }));
+  //     const resultTeachers = await getAllTeachers();
+  //     const teachers = resultTeachers.map((item: any) => ({
+  //       id: item._id,
+  //       name: item.name,
+  //     }));
 
-    //   const resultSubjects = await getAllSubject();
-    //   const subjects = resultSubjects.map((item: any) => ({
-    //     id: item._id,
-    //     name: item.name,
-    //   }));
+  //   //   const resultSubjects = await getAllSubject();
+  //   //   const subjects = resultSubjects.map((item: any) => ({
+  //   //     id: item._id,
+  //   //     name: item.name,
+  //   //   }));
 
-      const resultStudents = await getAllStudents();
-      const students = resultStudents.map((item: any) => ({
-        id: item._id,
-        name: item.name,
-        email: item.email,
-        phone: item.phone,
-        school: item.school,
-        grade: item.grade,
-        birthDate: item.birthDate,
-        address: item.address,
-        parent: item.parent,
-      }));
+  //     const resultStudents = await getAllStudents();
+  //     const students = resultStudents.map((item: any) => ({
+  //       id: item._id,
+  //       name: item.name,
+  //       email: item.email,
+  //       phone: item.phone,
+  //       school: item.school,
+  //       grade: item.grade,
+  //       birthDate: item.birthDate,
+  //       address: item.address,
+  //       parent: item.parent,
+  //     }));
 
-      const payload = {
-        sortBy: null,
-        reversed: false,
-        search: "",
-      };
+  //     const payload = {
+  //       sortBy: null,
+  //       reversed: false,
+  //       search: "",
+  //     };
 
-      setData(filteredClasses);
-      setTeachers(teachers);
-      setSubjects(subjects);
-      setStudents(students);
-      setSortedData(sortData(filteredClasses, payload));
-      setLoading(false);
-      updateNotification({
-        id: "loding-data",
-        color: "teal",
-        title: "Data loaded successfully",
-        message:
-          "You can now manage classs by adding, editing or deleting them.",
-        icon: <IconCheck size={16} />,
-        autoClose: 3000,
-      });
-    };
-    fetchData();
-  }, []);
+  //     setData(filteredClasses);
+  //     setTeachers(teachers);
+  //     setSubjects(subjects);
+  //     setStudents(students);
+  //     setSortedData(sortData(filteredClasses, payload));
+  //     setLoading(false);
+  //     updateNotification({
+  //       id: "loding-data",
+  //       color: "teal",
+  //       title: "Data loaded successfully",
+  //       message:
+  //         "You can now manage classs by adding, editing or deleting them.",
+  //       icon: <IconCheck size={16} />,
+  //       autoClose: 3000,
+  //     });
+  //   };
+  //   fetchData();
+  // }, []);
 
   const [search, setSearch] = useState("");
   const [sortedData, setSortedData] = useState(data);

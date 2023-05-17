@@ -12,6 +12,9 @@ import {
   Button,
   Modal,
   PasswordInput,
+  Select,
+  Menu,
+  ActionIcon,
 } from "@mantine/core";
 import { keys } from "@mantine/utils";
 import {
@@ -19,29 +22,70 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconSearch,
+  IconChartBar,
+  IconDots,
+  IconLink,
   IconFileAnalytics,
+  IconMoneybag,
+  IconReportMoney,
 } from "@tabler/icons";
 import { IconEdit, IconTrash } from "@tabler/icons";
 import { openConfirmModal } from "@mantine/modals";
 import { showNotification, updateNotification } from "@mantine/notifications";
-import FeeAPI from "../../API/FeeAPI";
+import StudentAPI from "../../API/studentAPI";
+import { adminAPI } from "../../API/adminAPI";
+
 import { IconCheck, IconAlertTriangle } from "@tabler/icons";
 import { useForm } from "@mantine/form";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { FeePDF } from "../PDFRender/FeePDFTemplate";
+import { DatePicker } from "@mantine/dates";
 
+export const options = {
+  responsive: true,
+  plugins: {
+    legend: {
+      position: "top" as const,
+    },
+    title: {
+      display: true,
+      text: "Past 6 Exam Scores",
+    },
+  },
+};
 
-//Interface for fee data - (Raw data)
+const labels = ["Exam 1", "Exam 2", "Exam 3", "Exam 4", "Exam 5", "Exam 6"];
+
+export const performanceDataSample = {
+  labels,
+  datasets: [
+    {
+      label: "English",
+      data: [65, 59, 80, 81, 56, 55, 40],
+      borderColor: "rgb(255, 99, 132)",
+      backgroundColor: "rgba(255, 99, 132, 0.5)",
+    },
+    {
+      label: "Math",
+      data: [28, 48, 40, 19, 86, 27, 90],
+      borderColor: "rgb(53, 162, 235)",
+      backgroundColor: "rgba(53, 162, 235, 0.5)",
+    },
+  ],
+};
+
+//Interface for student data - (Raw data)
 interface RowData {
   _id: string;
   id: string;
   name: string;
+  amount: string;
   status: string;
 }
 
-//Get all fee records from the database
-const getAllFees = async () => {
-  const response = await FeeAPI.getFees();
+//Get all students records from the database
+const getAllStudents = async () => {
+  const response = await StudentAPI.getStudents();
   const data = await response.data;
   return data;
 };
@@ -70,8 +114,6 @@ const useStyles = createStyles((theme) => ({
     borderRadius: 21,
   },
 }));
-
-
 
 //Interface for Table header props
 interface ThProps {
@@ -136,50 +178,53 @@ function sortData(
   );
 }
 
- //get current Full Date
- const today = new Date();
+//get current Full Date
+const today = new Date();
 
- const year = today.getFullYear();
- const month = today.getMonth() + 1;
- const date = today.getDate();
+const year = today.getFullYear();
+const month = today.getMonth() + 1;
+const date = today.getDate();
 
- interface adminName {
-   user: {
-     name: string;
-     email:string;
-   };
- }
+interface adminName {
+  user: {
+    name: string;
+    email: string;
+  };
+}
 
-const ManageFees= ({ user }: adminName) => {
+const ManageFees = ({ user }: adminName) => {
   const [data, setData] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [performanceOpened, setPerformanceOpened] = useState(false);
+  const [performanceData, setPerformanceData] = useState(performanceDataSample);
 
-
-  //set admin name
   const adminName = user.name;
 
-  
-
-  // fetch fee data
+  // fetch student data
   useEffect(() => {
     const fetchData = async () => {
       showNotification({
         id: "loding-data",
         loading: true,
         title: "Loading data",
-        message: "fee data is loading..",
-        autoClose: 3000,
-        disallowClose: true,
+        message: "Please wait while we load the data",
+        autoClose: false,
+        disallowClose: false,
       });
-      const result = await getAllFees();
+      const result = await getAllStudents();
+
       const data = result.map((item: any) => {
         return {
           _id: item._id,
-          id : item.id,
+          id: item.id,
           name: item.name,
+          amount: item.amount,
+          status: item.status,
         };
       });
+
       setData(data);
+
       setLoading(false);
       const payload = {
         sortBy: null,
@@ -192,7 +237,7 @@ const ManageFees= ({ user }: adminName) => {
         color: "teal",
         title: "Data loaded successfully",
         message:
-          "You can now manage fee by adding, editing or deleting them.",
+          "You can now manage student's fees by adding, editing or deleting them.",
         icon: <IconCheck size={16} />,
         autoClose: 3000,
       });
@@ -207,40 +252,42 @@ const ManageFees= ({ user }: adminName) => {
   const [opened, setOpened] = useState(false);
   const [editOpened, setEditOpened] = useState(false);
 
-  //edit fee form
-  const editFee = async (values: {
+  //update Fee form
+  const updateFee = async (values: {
     _id: string;
-    id : string;
+    id: string;
     name: string;
-    status: string;
+    amount: string,
+    status: string,
   }) => {
     showNotification({
-      id: "edit-fee",
+      id: "Update-Student's Fees",
       loading: true,
-      title: "Updating fee of " + values.name,
-      message: "Updating fee record..",
+      title: "Updating fee of the student " + values.name,
+      message: "Please wait while we update the student",
       autoClose: false,
       disallowClose: true,
     });
-    FeeAPI.editFee(values)
+    StudentAPI.updateFee(values)
       .then((response) => {
         updateNotification({
-          id: "edit-fee",
+          id: "Update-Student's Fees",
           color: "teal",
-          title: "fee record updated successfully",
-          message: "Updated fee record of " + values.name,
+          title: "student's fees updated successfully",
+          message: "Fee of the student " + values.name + " been updated successfully",
           icon: <IconCheck size={16} />,
           autoClose: 5000,
         });
         editForm.reset();
         setEditOpened(false);
         const newData = data.map((item) => {
-          if (item._id === values._id) {
+          if (item.id === values.id) {
             return {
               _id: values._id,
               id: values.id,
               name: values.name,
-              status: values.status
+              amount: values.amount,
+              status: values.status,
             };
           } else {
             return item;
@@ -256,105 +303,10 @@ const ManageFees= ({ user }: adminName) => {
       })
       .catch((error) => {
         updateNotification({
-          id: "edit-fee",
+          id: "Update-Student's Fees",
           color: "red",
           title: "Update failed",
-          message: "We were unable to update fee data.",
-          icon: <IconAlertTriangle size={16} />,
-          autoClose: 5000,
-        });
-      });
-  };
-
-  //add fee
-  const addFee = async (values: {
-    name: string;
-    status: string;
-  }) => {
-    showNotification({
-      id: "add-fee",
-      loading: true,
-      title: "Adding fee record",
-      message: "Please wait while we add fee record..",
-      autoClose: false,
-      disallowClose: true,
-    });
-    FeeAPI.addFee(values)
-      .then((response) => {
-        updateNotification({
-          id: "add-fee",
-          color: "teal",
-          title: "fee added successfully",
-          message: "fee data added successfully.",
-          icon: <IconCheck size={16} />,
-          autoClose: 5000,
-        });
-        addForm.reset();
-        setOpened(false);
-        const newData = [
-          ...data,
-          {
-            _id: response.data._id,
-            id : response.data.id,
-            name: values.name,
-            status: values.status,
-          },
-        ];
-        const payload = {
-          sortBy: null,
-          reversed: false,
-          search: "",
-        };
-        setData(newData);
-        setSortedData(sortData(newData, payload));
-      })
-      .catch((error) => {
-        updateNotification({
-          id: "add-fee",
-          color: "red",
-          title: "Adding fee failed",
-          message: "We were unable to add the fee to the database",
-          icon: <IconAlertTriangle size={16} />,
-          autoClose: 5000,
-        });
-      });
-  };
-
-  //delete fee
-  const deleteFee = async (id: string) => {
-    showNotification({
-      id: "delete-fee",
-      loading: true,
-      title: "Deleting fee",
-      message: "Please wait while we delete the fee record",
-      autoClose: false,
-      disallowClose: true,
-    });
-    FeeAPI.deleteFee(id)
-      .then((response) => {
-        updateNotification({
-          id: "delete-fee",
-          color: "teal",
-          title: "fee record deleted successfully",
-          message: "The fee record has been deleted successfully",
-          icon: <IconCheck size={16} />,
-          autoClose: 5000,
-        });
-        const newData = data.filter((item) => item._id !== id);
-        const payload = {
-          sortBy: null,
-          reversed: false,
-          search: "",
-        };
-        setData(newData);
-        setSortedData(sortData(newData, payload));
-      })
-      .catch((error) => {
-        updateNotification({
-          id: "delete-fee",
-          color: "red",
-          title: "Deleting fee record failed",
-          message: "We were unable to delete the fee record",
+          message: "We were unable to update student's fee data.",
           icon: <IconAlertTriangle size={16} />,
           autoClose: 5000,
         });
@@ -368,24 +320,16 @@ const ManageFees= ({ user }: adminName) => {
       _id: "",
       id: "",
       name: "",
+      amount: "",
       status: "",
     },
     validate: {
       name: (value) =>
         value.length < 2 ? "Name must have at least 2 letters" : null,
-    },
-  });
-
-  //declare add form
-  const addForm = useForm({
-    validateInputOnChange: true,
-    initialValues: {
-      name: "",
-      status: "",
-    },
-    validate: {
-      name: (value) =>
-        value.length < 2 ? "Name must have at least 2 letters" : null,
+      amount: (value) =>
+        /^\d+(\.\d{1,2})?$/.test(value)
+          ? null
+          : "Price must be a valid number with up to 2 decimal places",
     },
   });
 
@@ -404,64 +348,30 @@ const ManageFees= ({ user }: adminName) => {
     );
   };
 
-  //Open delete modal
-  const openDeleteModal = (id: string) =>
-    openConfirmModal({
-      title: "Delete this fee record?",
-      centered: true,
-      children: (
-        <Text size="sm">
-          Are you sure you want to delete this fee record? This action cannot
-          be undone.
-        </Text>
-      ),
-      labels: {
-        confirm: "Delete fee record",
-        cancel: "No don't delete it",
-      },
-      confirmProps: { color: "red" },
-      onCancel: () => {
-        showNotification({
-          title: "Cancelled",
-          message: "The Fee record was not deleted",
-          color: "teal",
-        });
-      },
-      onConfirm: () => {
-        deleteFee(id);
-      },
-    });
-
   //create rows
   const rows = sortedData.map((row) => (
     <tr key={row._id}>
       <td>{row.id}</td>
       <td>{row.name}</td>
+      <td>{row.amount}</td>
       <td>{row.status}</td>
       <td>
         <Button
           color="teal"
-          leftIcon={<IconEdit size={14} />}
+          leftIcon={<IconReportMoney size={14} />}
           onClick={() => {
             editForm.setValues({
               _id: row._id,
               id: row.id,
               name: row.name,
+              amount: row.amount,
               status: row.status,
             });
             setEditOpened(true);
           }}
-          sx={{ margin: "5px", width: "100px" }}
+          sx={{ margin: "5px", width: "150px" }}
         >
-          Edit
-        </Button>
-        <Button
-          color="red"
-          leftIcon={<IconTrash size={14} />}
-          onClick={() => openDeleteModal(row._id)}
-          sx={{ margin: "5px", width: "100px" }}
-        >
-          Delete
+          Update Fee
         </Button>
       </td>
     </tr>
@@ -470,43 +380,14 @@ const ManageFees= ({ user }: adminName) => {
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
       <Modal
-        opened={opened}
-        onClose={() => {
-          addForm.reset();
-          setOpened(false);
-        }}
-        title="Add fee Record"
-      >
-        <form onSubmit={addForm.onSubmit((values) => addFee(values))}>
-          <TextInput
-            label="Name"
-            placeholder="Enter name"
-            {...addForm.getInputProps("name")}
-            required
-          />
-            <TextInput
-            label="Status"
-            placeholder="Enter Payment Status"
-            {...addForm.getInputProps("status")}
-          />
-          <Button
-            color="teal"
-            sx={{ marginTop: "10px", width: "100%" }}
-            type="submit"
-          >
-            Add
-          </Button>
-        </form>
-      </Modal>
-      <Modal
         opened={editOpened}
         onClose={() => {
           editForm.reset();
           setEditOpened(false);
         }}
-        title="Edit fee Record"
+        title="Update Student's Fee"
       >
-        <form onSubmit={editForm.onSubmit((values) => editFee(values))}>
+        <form onSubmit={editForm.onSubmit((values) => updateFee(values))}>
           <TextInput
             label="ID"
             placeholder="Enter ID"
@@ -517,39 +398,59 @@ const ManageFees= ({ user }: adminName) => {
           <TextInput
             label="Name"
             placeholder="Enter name"
+            disabled
             {...editForm.getInputProps("name")}
             required
           />
           <TextInput
-            label="Status"
-            placeholder="Enter Payment Status"
-            {...addForm.getInputProps("status")}
+            label="Amount"
+            placeholder="Enter amount"
+            {...editForm.getInputProps("amount")}
             required
           />
+          <Select
+            label="Status"
+            placeholder="Status"
+            {...editForm.getInputProps("status")}
+            required
+            data={[
+              { value: "Paid", label: "Paid" },
+              { value: "Not-Paid", label: "Not-Paid" },
+            ]}
+            defaultValue={editForm.values.status}
+          />
+
           <Button
             color="teal"
             sx={{ marginTop: "10px", width: "100%" }}
             type="submit"
           >
-            Save
+            Submit
           </Button>
         </form>
       </Modal>
-      {/* search button */}
       <Box sx={{ margin: "20px", width: "100%" }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: 10,
+          }}
+        >
           <TextInput
-           placeholder="Search by any field"
-           icon={<IconSearch size={14} stroke={1.5} />}
-           value={search}
-           onChange={handleSearchChange}
-           sx={{ minWidth: 475 }}
+            placeholder="Search by any field"
+            mb="md"
+            icon={<IconSearch size={14} stroke={1.5} />}
+            value={search}
+            onChange={handleSearchChange}
+            sx={{ width: "475px" }}
           />
 
-
-        <PDFDownloadLink
-            document={<FeePDF data={data} user={adminName} />}
-            fileName={`FEESDETAILS_${year}_${month}_${date}`}
+          <PDFDownloadLink
+            document={
+              <FeePDF data={data} user={adminName} />
+            }
+            fileName={`FeesManagement_${year}_${month}_${date}`}
           >
             {({ loading }) =>
               loading ? (
@@ -568,26 +469,20 @@ const ManageFees= ({ user }: adminName) => {
               )
             }
           </PDFDownloadLink>
-         
 
-         
-
-    
-          
-          <Button
-            variant="gradient"
-            gradient={{ from: "indigo", to: "cyan" }}
-            sx={{ width: "200px", marginRight: "20px" }}
-            onClick={() => setOpened(true)}
-          >
-            Add Fee
-          </Button>
         </Box>
-        <ScrollArea>
+        <ScrollArea
+          sx={{
+            height: 700,
+            width: 1500,
+            marginLeft: -300,
+            marginBottom: -163,
+          }}
+        >
           <Table
             horizontalSpacing="md"
             verticalSpacing="xs"
-            sx={{ tableLayout: "auto", width: "100%" }}
+            sx={{ minWidth: 700 }}
           >
             <thead>
               <tr>
@@ -606,12 +501,20 @@ const ManageFees= ({ user }: adminName) => {
                   Name
                 </Th>
                 <Th
+                  sorted={sortBy === "amount"}
+                  reversed={reverseSortDirection}
+                  onSort={() => setSorting("amount")}
+                >
+                  Amount (Rs)
+                </Th>
+                <Th
                   sorted={sortBy === "status"}
                   reversed={reverseSortDirection}
                   onSort={() => setSorting("status")}
                 >
                   Status
                 </Th>
+
                 <th>Action</th>
               </tr>
             </thead>
