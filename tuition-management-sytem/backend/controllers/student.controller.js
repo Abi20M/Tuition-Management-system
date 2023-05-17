@@ -146,6 +146,46 @@ export const changeStudentPassword = async (req, res) => {
     });
 };
 
+// //Dash board chart Maker
+// export const releaseUnofficialResults = async (req, res, next) => {
+//   await examService
+//     .releaseUnofficialResults(req.params.id)
+//     .then((data) => {
+//       req.handleResponse.successRespond(res)(data);
+//       next();
+//     })
+//     .catch((err) => {
+//       req.handleResponse.errorRespond(res)(err);
+//       next();
+//     });
+// };
+
+// export const releaseOfficialResults = async (req, res, next) => {
+//   await examService
+//     .releaseOfficialResults(req.params.id)
+//     .then((data) => {
+//       req.handleResponse.successRespond(res)(data);
+//       next();
+//     })
+//     .catch((err) => {
+//       req.handleResponse.errorRespond(res)(err);
+//       next();
+//     });
+// };
+
+// export const getExamsByStudent = async (req, res, next) => {
+//   await examService
+//     .getExamsByStudent(req.params.id)
+//     .then((data) => {
+//       req.handleResponse.successRespond(res)(data);
+//       next();
+//     })
+//     .catch((err) => {
+//       req.handleResponse.errorRespond(res)(err);
+//       next();
+//     });
+// };
+
 module.exports = {
   createStudent,
   getStudent,
