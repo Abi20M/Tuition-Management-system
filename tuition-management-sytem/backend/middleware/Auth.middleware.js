@@ -107,7 +107,7 @@ export const teacherProtect = async (req,res,next) =>{
             token = req.headers.authorization.split(' ')[1];
             const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-            if(decoded.role != 'admin'){
+            if(decoded.role != 'teacher'){
                 return res.status(401).json({ message: "Not authorized to access this route" });
             }else{
                 req.admin = await Teacher.findById(decoded.id).select("password");
@@ -158,6 +158,8 @@ export const parentProtect = async (req, res, next) => {
     );
   }
 };
+
+
 
 module.exports = {
   adminProtect,

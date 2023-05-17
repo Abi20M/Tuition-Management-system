@@ -95,13 +95,19 @@ const Routes = (app) => {
   app.put("/teacher/:id", protect.adminProtect, teacherController.editTeacher);
   app.post("/teacher/login", teacherController.teacherLogin);
 
-  // //Teacher Routes - Accessible to Teachers only
-  // //get students of the specific teacher by teacher id
-  // app.get(
-  //   "/teacher/:id/students",
-  //   protect.teacherProtect,
-  //   teacherController.getStudents
-  // );
+  //Teacher Routes - Accessible to Teachers only
+  //get students of the specific teacher by teacher id
+  app.get(
+    "/teacher/:id/students",
+    protect.teacherProtect,
+    teacherController.getStudents
+  );
+
+  app.get(
+    "/teacher/:id/class",
+    protect.teacherProtect,
+    teacherController.getAllClasses
+  );
 
 
   //Parent Routes
@@ -110,7 +116,7 @@ const Routes = (app) => {
   
     // app.post("/parent/login" , parentController.loginParent);
   app.post("/parent", protect.adminProtect, parentController.createParent);
-  app.get("/parent", protect.adminProtect, parentController.getAllParents);
+  app.get("/parent", protect.adminOrTeacherProtect, parentController.getAllParents);
   app.get("/parent/count",protect.adminProtect,parentController.getParentCount);
   app.put("/parent/:id", protect.adminProtect, parentController.updateParent);
   app.delete("/parent/:id",protect.adminProtect,parentController.deleteParent);

@@ -34,17 +34,22 @@ export const createTeacher = async (req, res, next) => {
 };
 
 export const getStudents = async (req, res, next) => {
-  await teacherService
-    .getStudents(req.params.id)
+  const teacherId = req.params.id;
+
+  await teacherServices
+    .getStudents(teacherId)
     .then((data) => {
       req.handleResponse.successRespond(res)(data);
       next();
     })
-    .catch((err) => {
-      req.handleResponse.errorRespond(res)(err);
+    .catch((error) => {
+      req.handleResponse.errorRespond(res)(error);
       next();
     });
 };
+
+
+
 //get all teacher Details
 export const getAllTeacher = async (req, res, next) => {
   await teacherServices
@@ -115,6 +120,21 @@ export const getTeacherCount = async (req, res) => {
         req.handleResponse.errorRespond(res)(error);
       });
   };
+
+  export const getAllClasses = async (req, res, next) => {
+    const teacherId = req.params.id;
+  
+    await teacherServices
+      .getAllClasses(teacherId)
+      .then((data) => {
+        req.handleResponse.successRespond(res)(data);
+        next();
+      })
+      .catch((error) => {
+        req.handleResponse.errorRespond(res)(error);
+        next();
+      });
+  };
   
   
   module.exports = {
@@ -125,4 +145,5 @@ export const getTeacherCount = async (req, res) => {
     teacherLogin,
     getTeacherCount,
     getStudents,
+    getAllClasses,
 }

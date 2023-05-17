@@ -168,7 +168,7 @@ export const verifyTeacher = async (token) => {
 export const getStudents = async (id) => {
   //get classes from class model where teacher id is equal to id
   let students = [];
-  return await classes
+  return await Class
     .find({ teacher: id })
     .then(async (data) => {
       if (data) {
@@ -198,6 +198,25 @@ export const getStudents = async (id) => {
     });
 };
 
+
+export const getAllClasses = async (id) => {
+  //get classes from class model where teacher id is equal to id
+  
+  return await Class
+    .find({ teacher: id })
+    .then(async (data) => {
+      if (data) {
+       return data;
+      } else {
+        throw new Error("Teacher not found");
+      }
+    })
+    .catch((err) => {
+      throw new Error(err.message);
+    });
+};
+
+
 export const getTeacherCountService = async () => {
   return await teacher.countDocuments();
 };
@@ -211,6 +230,7 @@ module.exports = {
   verifyTeacher,
   getStudents,
   getTeacherCountService,
+  getAllClasses,
 };
 
 // my
