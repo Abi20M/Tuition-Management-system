@@ -30,6 +30,7 @@ import { useEffect, useState } from "react";
 import ExamAPI from "../../API/ExamAPI";
 import { showNotification, updateNotification } from "@mantine/notifications";
 import { sortData } from "../../components/MyExams/MyExams";
+import StudentClasses from "./studentClasses";
 
 export interface ExamData {
   id: string;
@@ -300,16 +301,8 @@ const StudentDashboard = () => {
                average={average}
              />
            </Tabs.Panel>
-           <Tabs.Panel value="exams">
-             <MyExams
-               exams={examData}
-               classes={classData}
-               setExams={setExamData}
-               setClasses={setClassData}
-               loading={loading}
-               sortedData={sortedData}
-               setSortedData={setSortedData}
-             />
+           <Tabs.Panel value="classes">
+             <StudentClasses/>
            </Tabs.Panel>
          </Tabs>
        </Container>
