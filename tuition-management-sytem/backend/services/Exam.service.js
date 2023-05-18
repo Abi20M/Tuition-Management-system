@@ -283,6 +283,8 @@ export const getExamsByStudent = async (id) => {
           result: "Not Released",
           marks: exam.marks,
           attendance: exam.attendance,
+          duration: exam.duration,
+          durationUnit: exam.durationUnit,
         });
       } else {
         examData.push({
@@ -297,6 +299,8 @@ export const getExamsByStudent = async (id) => {
           result: result,
           marks: exam.marks,
           attendance: exam.attendance,
+          duration: exam.duration,
+          durationUnit: exam.durationUnit,
         });
       }
     });
