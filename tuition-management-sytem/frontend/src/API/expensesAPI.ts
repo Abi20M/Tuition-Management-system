@@ -71,7 +71,10 @@ class ExpensesAPI {
   }
 
 
-
+  //get fees amount
+  static getFeeAmount = () => {
+    return axios.get(`${BASE_URL}/fees/amount`,requestConfig)
+  }
 
 }
 

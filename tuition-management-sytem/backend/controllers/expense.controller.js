@@ -149,6 +149,21 @@ export const getCategories = async (req, res,next) =>{
   });
 };
 
+//get fees 
+export const getFeesAmount = async (req, res, next) => {
+  expenseServices
+    .getFeesAmount()
+    .then((data) => {
+      
+      req.handleResponse.successRespond(res)(data);
+      next();
+    })
+    .catch((error) => {
+      req.handleResponse.errorRespond(res)(error);
+      next();
+    });
+};
+
 module.exports = {
   createExpense,
   getAllExpenses,
@@ -158,5 +173,6 @@ module.exports = {
   addFixedValue,
   getLastFixedValue,
   getAdminInfo,
-  getCategories
+  getCategories,
+  getFeesAmount
 };
