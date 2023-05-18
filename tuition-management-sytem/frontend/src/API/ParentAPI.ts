@@ -1,6 +1,6 @@
 import axios from "axios";
 import requestConfig from "./requestConfig";
-import requestConfigJson from "./requestConfig";
+
 
 const BASE_URL = "http://localhost:3001";
 
@@ -57,12 +57,12 @@ class ParentAPI {
   static getStudents = () => {
     const parent = JSON.parse(localStorage.getItem("parent") || "{}");
     const parentID = parent._id;
-    return axios.get(`${BASE_URL}/parent/${parentID}/students`, requestConfig);
+    return axios.get(`${BASE_URL}/parent/students/${parentID}`, requestConfig);
   };
 
   //get all exams by student
   static getExamsByStudentId = (id: string) => {
-    return axios.get(`${BASE_URL}/student/${id}/exams`, requestConfig);
+    return axios.get(`${BASE_URL}/student/exams/${id}`, requestConfig);
   };
 
   static getParentCount = () =>{

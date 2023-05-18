@@ -127,6 +127,22 @@ export const changeParentPassword = async (req, res) => {
   });
 };
 
+//get students by parent id
+export const getStudents = async (req, res, next) => {
+  await parentService
+    .getStudents(req.params.id)    
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+      next();
+    })
+    .catch((err) => {
+      req.handleResponse.errorRespond(res)(err);
+      next();
+    });
+};
+
+
+
 
 
 module.exports = {
@@ -138,4 +154,5 @@ module.exports = {
   loginParent,
   getParentCount,
   changeParentPassword,
+  getStudents,
 };
