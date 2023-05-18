@@ -1,5 +1,6 @@
 import axios from "axios";
 import requestConfigJson from "./requestConfig";
+import requestConfig from "./requestConfig";
 
 const BASE_URL = "http://localhost:3001";
 
@@ -104,6 +105,12 @@ class StudentAPI {
     
   }
 
+  static getStudentGender = ()=>{
+    return axios.get(`${BASE_URL}/student/gender`,requestConfigJson)
+  }
+  static getStudentGrade = () =>{
+    return axios.get(`${BASE_URL}/student/grade`,requestConfig);
+  }
     //update Fee
   static updateFee = (values: {
       _id : string,
