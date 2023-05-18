@@ -510,6 +510,8 @@ const ManageExams = ({
     status: string;
     date: string;
     time: string;
+    duration: number;
+    durationUnit: string;
   }) => {
     showNotification({
       id: "edit-exam",
@@ -544,6 +546,8 @@ const ManageExams = ({
               attendance: response.data.attendance,
               marks: response.data.marks,
               className: item.className,
+              duration: values.duration,
+              durationUnit: values.durationUnit,
             };
           } else {
             return item;
@@ -577,6 +581,8 @@ const ManageExams = ({
     status: string;
     date: string;
     time: string;
+    duration: number;
+    durationUnit: string;
   }) => {
     showNotification({
       id: "add-exam",
@@ -613,6 +619,8 @@ const ManageExams = ({
             attendance: response.data.attendance,
             marks: response.data.marks,
             className: className,
+            duration: values.duration,
+            durationUnit: values.durationUnit,
           },
         ];
         const payload = {

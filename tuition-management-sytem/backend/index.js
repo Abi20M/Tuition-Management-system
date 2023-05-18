@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 6000;
 app.use(logger);
 
 //Cross Origin Resource Sharing Options
-const whiteList = ["http://localhost:3000"];
+const whiteList = ["http://localhost:3002"];
 
 const corsOptions = {
   origin: (origin, callback) => {
