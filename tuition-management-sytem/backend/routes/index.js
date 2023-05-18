@@ -112,6 +112,9 @@ const Routes = (app) => {
     teacherController.getStudents
   );
 
+  // change password route
+  app.put("/teacher/changePassword/:id", protect.teacherProtect, teacherController.changeTeacherPassword)
+
   app.get(
     "/teacher/:id/class",
     protect.teacherProtect,
@@ -119,9 +122,11 @@ const Routes = (app) => {
   );
 
   app.post("/class/count/:name",
-  protect.teacherProtect,
-  teacherController.getClassCount
+    protect.teacherProtect,
+    teacherController.getClassCount
   )
+
+
 
   //Parent Routes
   //parent login
@@ -130,7 +135,7 @@ const Routes = (app) => {
   // app.post("/parent/login" , parentController.loginParent);
   app.post("/parent", protect.adminProtect, parentController.createParent);
   app.get("/parent", protect.adminOrTeacherProtect, parentController.getAllParents);
-  app.get("/parent/count",protect.adminProtect,parentController.getParentCount);
+  app.get("/parent/count", protect.adminProtect, parentController.getParentCount);
   app.put("/parent/:id", protect.adminProtect, parentController.updateParent);
   app.delete("/parent/:id", protect.adminProtect, parentController.deleteParent);
   app.put("/parent/changePassword/:id", protect.parentProtect, parentController.changeParentPassword);

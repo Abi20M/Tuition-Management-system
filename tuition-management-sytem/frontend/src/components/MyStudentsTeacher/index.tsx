@@ -390,7 +390,7 @@ const MyStudentsTeacher: React.FC = () => {
           })
         }
       </td>
-      <td>
+      {/* <td>
         <Button
           color="green"
           leftIcon={<IconChartBar size={16} />}
@@ -401,7 +401,7 @@ const MyStudentsTeacher: React.FC = () => {
         >
           Performance
         </Button>
-      </td>
+      </td> */}
     </tr>
   ));
 
@@ -520,7 +520,7 @@ const MyStudentsTeacher: React.FC = () => {
                 >
                   Parent Phone
                 </Th>
-                <th>Action</th>
+                {/* <th>Action</th> */}
               </tr>
             </thead>
             <tbody>
