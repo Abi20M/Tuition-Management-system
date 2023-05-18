@@ -48,6 +48,10 @@ import {
     parent: string;
   }
   
+  const teacher = JSON.parse(localStorage.getItem("teacher") || "{}");
+  const teacherID = teacher._id;
+  
+
   //Get all students records from the database
   const getAllStudents = async () => {
     const response = await TeacherAPI.getStudents();
@@ -61,6 +65,15 @@ import {
     const data = await response.data;
     return data;
   };
+
+  // //get class count
+  // const getClassCount = async () =>  {
+  //   const response = await ClassAPI.getClassCount(teacher.name);
+  //   const data = await response.data;
+
+  //   return data;
+  // }
+
   
   export const options = {
     responsive: true,
@@ -71,13 +84,13 @@ import {
       },
     },
     scales: {
-      xAxes: {
+      x : {
         title: {
           display: true,
           text: "Results",
         },
       },
-      yAxes: {
+      y : {
         title: {
           display: true,
           text: "No Of Students",
@@ -95,13 +108,13 @@ import {
       },
     },
     scales: {
-      xAxes: {
+      x : {
         title: {
           display: true,
           text: "Grades",
         },
       },
-      yAxes: {
+      y : {
         title: {
           display: true,
           text: "No Of Students",
@@ -194,9 +207,12 @@ import {
           date: item.date,
           time: item.time,
         }));
+
+        //class count
+        // const classCount = await getClassCount();
+        // setClasses(classCount);
         //filter classes by teacher id
-        const teacher = JSON.parse(localStorage.getItem("teacher") || "{}");
-        const teacherID = teacher._id;
+     
         const filteredClasses = classes.filter(
           (item: any) => item.teacher === teacherID
         );
@@ -255,7 +271,7 @@ import {
       },
       {
         title: "My Classes",
-        value: classes,
+        value: 5,
         icon: TeacherIcon,
       },
     ];

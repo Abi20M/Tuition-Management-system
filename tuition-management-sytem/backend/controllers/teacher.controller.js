@@ -109,6 +109,22 @@ export const getTeacherCount = async (req, res) => {
     });
 };
 
+//get class count
+export const getClassCount = async (req, res,next) => {
+
+  const teacherName = req.params.name;
+  await teacherServices.getClassCountService(teacherName)
+    .then((data) => {
+      console.log(data)
+
+      req.handleResponse.successRespond(res)(data);
+      next();
+    })
+    .catch((error) => {
+      req.handleResponse.errorRespond(res)(error);
+      next();
+    });
+};
   
   export const teacherLogin = async (req, res, next) => {
     await teacherServices.loginTeacher(req.body.email, req.body.password)
@@ -135,6 +151,8 @@ export const getTeacherCount = async (req, res) => {
         next();
       });
   };
+
+
   
   
   module.exports = {
@@ -146,4 +164,5 @@ export const getTeacherCount = async (req, res) => {
     getTeacherCount,
     getStudents,
     getAllClasses,
+    getClassCount,
 }

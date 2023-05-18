@@ -21,11 +21,12 @@ import {
   IconPlus,
 } from "@tabler/icons";
 import { showNotification, updateNotification } from "@mantine/notifications";
-import {ClassAPI} from "../../API/classAPI";
-import SubjectAPI from "../../API/subjectAPI";
+// import {ClassAPI} from "../../API/classAPI";
+// import SubjectAPI from "../../API/subjectAPI";
+// import StudentAPI from "../../API/studentAPI";
 import TeacherAPI from "../../API/teacherAPI";
-import StudentAPI from "../../API/studentAPI";
 import { IconCheck } from "@tabler/icons";
+
 
 //Interface for class data - (Raw data)
 interface RowData {
@@ -185,9 +186,10 @@ function sortData(
 const MyClassesTeacher: React.FC = () => {
   const [data, setData] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [teachers, setTeachers] = useState([]);
-  const [subjects, setSubjects] = useState([]);
-  const [students, setStudents] = useState([]);
+  // const [teachers, setTeachers] = useState([]);
+  // const [subjects, setSubjects] = useState([]);
+  // const [students, setStudents] = useState([]);
+  
 
  // fetch class data
   useEffect(() => {
@@ -212,13 +214,13 @@ const MyClassesTeacher: React.FC = () => {
         endTime: item.endTime,
         venue: item.venue,
       }));
-      // //filter classes by teacher id
-      // const teacher = JSON.parse(localStorage.getItem("teacher") || "{}");
-      // const teacherID = teacher._id;
+      //filter classes by teacher id
+      const teacher = JSON.parse(localStorage.getItem("teacher") || "{}");
+      const teacherID = teacher._id;
 
-      // const filteredClasses = classes.filter(
-      //   (item: any) => item.teacher === teacherID
-      // );
+      const filteredClasses = classes.filter(
+        (item: any) => item.teacher === teacherID
+      );
 
       // const resultTeachers = await getAllTeachers();
       // const teachers = resultTeachers.map((item: any) => ({
@@ -245,12 +247,14 @@ const MyClassesTeacher: React.FC = () => {
       //   parent: item.parent,
       // }));
 
+      setData(data);
       const payload = {
         sortBy: null,
         reversed: false,
         search: "",
       };
 
+      
       // setData(filteredClasses);
       // setTeachers(teachers);
       // setSubjects(subjects);

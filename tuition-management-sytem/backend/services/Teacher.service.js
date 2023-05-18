@@ -220,6 +220,21 @@ export const getAllClasses = async (id) => {
 export const getTeacherCountService = async () => {
   return await teacher.countDocuments();
 };
+
+
+export const getClassCountService = async (name) => {
+  
+  try{
+
+    const count = await Class.countDocuments(name);
+    console.log(count)
+    return count;
+
+  } catch(error){
+    return error.message;
+  }
+   
+};
 module.exports = {
   createTeacher,
   getTeacher,
@@ -230,6 +245,7 @@ module.exports = {
   verifyTeacher,
   getStudents,
   getTeacherCountService,
+  getClassCountService,
   getAllClasses,
 };
 

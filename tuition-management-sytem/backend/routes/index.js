@@ -109,6 +109,11 @@ const Routes = (app) => {
     teacherController.getAllClasses
   );
 
+  app.post("/class/count/:name",
+  protect.teacherProtect,
+  teacherController.getClassCount
+  )
+
 
   //Parent Routes
     //parent login

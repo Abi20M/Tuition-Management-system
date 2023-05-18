@@ -33,6 +33,11 @@ export class ClassAPI {
         return axios.get(`${BASE_URL}/class`,requestConfig);
     }
 
+    //get class count
+    static getClassCount = (teacherName : string)=>{
+        return axios.post(`${BASE_URL}/class/count/${teacherName}`,requestConfig);
+      }
+
       //get enrollnments by class id
   static getEnrollments = (id: string) => {
     return axios.get(`${BASE_URL}/class/${id}/students`, requestConfig);
