@@ -328,41 +328,17 @@ const AdminStats = () => {
 
       {/* Pie chart */}
       <Group position="apart" mt={30}>
-        {/* <Paper
-          shadow="xl"
-          radius={"md"}
-          withBorder
-          sx={{
-            width: "450px",
-            paddingLeft: 25,
-            paddingTop: "20px",
-            paddingBottom: "20px",
-          }}
-        > */}
         <Paper sx={{ width: "305px", height: "400px" }}>
           <Pie data={pieChartData} options={pieChartOptions} />
         </Paper>
-        {/* </Paper> */}
 
         {/* barchart */}
-        {/* <Paper
-          shadow="xl"
-          radius={"md"}
-          withBorder
-          sx={{
-            width: "450px",
-            paddingLeft: 10,
-            height: "465px",
-            paddingTop: 30,
-          }}
-        > */}
         <Paper sx={{ width: "600px", height: "400px" }}>
           <Bar
             data={gradeDistributionData}
             options={gradeDistributionOptions}
           />
         </Paper>
-        {/* </Paper> */}
       </Group>
     </>
   );
