@@ -203,7 +203,7 @@ export const examResultsData1 = {
     ]);
 
     useEffect(() => {
-    if(parent.isChangedPassword === false){
+    if(parent.isChangedPassoword === false){
       setOpenedPasswordModal(true);
     }
     const fetchData = async () => {
@@ -213,7 +213,7 @@ export const examResultsData1 = {
         title: "Loading Parent Dashboard Data",
         message: "Please wait while we load the data",
         autoClose: false,
-        disallowClose: false,
+        disallowClose: true,
       });
 
       const studentResult = await getAllStudents();
@@ -354,9 +354,44 @@ export const examResultsData1 = {
       },
     ],
   };
+
+  const stats = data.map((stat) => {
+    return (
+      <Paper withBorder radius="md" p="xs" key={stat.title}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <img src={stat.icon} alt={stat.title} width="100" height="100" />
+          <Group
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              marginLeft: "20px",
+            }}
+          >
+            <Text
+              weight={700}
+              size="xl"
+              sx={{ fontSize: "4rem", marginBottom: -30, marginTop: -30 }}
+            >
+              {stat.value}
+            </Text>
+            <Text color="dimmed" size="md" transform="uppercase" weight={700}>
+              {stat.title}
+            </Text>
+          </Group>
+        </Box>
+      </Paper>
+    );
+  });
   
-
-
+  
   //validate confirm parent password
   const validatePassword = (confirmPassword: string) => {
     if (confirmPassword.length != 0) {
@@ -494,6 +529,8 @@ export const examResultsData1 = {
     </>
   );
 };
+
+
 
 
 export default ParentOverview;

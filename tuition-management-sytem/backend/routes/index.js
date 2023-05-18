@@ -116,6 +116,13 @@ const Routes = (app) => {
   app.delete("/parent/:id",protect.adminProtect,parentController.deleteParent);
   app.put("/parent/changePassword/:id",protect.parentProtect, parentController.changeParentPassword);
 
+  //get sudents by parent id
+  app.get(
+    "/parent/students/:id",
+    protect.parentProtect,
+    parentController.getStudents
+  );
+
 
 //Student Routes
   //Student Routes

@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 import parentMail from "../Mails/parent.mails";
+import Student from '../models/student.model'
 
 //generate Parent Id
 const generateParentId = async () => {
@@ -208,6 +209,17 @@ export const verifyParent = async (token) => {
   });
 };
 
+export const getStudents = async (id) => {
+  return await Student
+    .find({ parent: id })
+    .then((data) => {
+      return data;
+    })
+    .catch((err) => {
+      throw new Error(err.message);
+    });
+};
+
 export const getParentCountService = async () => {
   return await parent.countDocuments();
 };
@@ -221,4 +233,5 @@ module.exports = {
   verifyParent,
   getParentCountService,
   changeParentPassword,
+  getStudents,
 };

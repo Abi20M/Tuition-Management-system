@@ -57,7 +57,7 @@ class ParentAPI {
   static getStudents = () => {
     const parent = JSON.parse(localStorage.getItem("parent") || "{}");
     const parentID = parent._id;
-    return axios.get(`${BASE_URL}/parent/${parentID}/students`, requestConfig);
+    return axios.get(`${BASE_URL}/parent/students/${parentID}`, requestConfig);
   };
 
   //get all exams by student

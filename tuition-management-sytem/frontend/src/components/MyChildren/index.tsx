@@ -81,6 +81,7 @@ export const performanceDataSample = {
 
 //Interface for student data - (Raw data)
 interface RowData {
+  _id: string;
   id: string;
   name: string;
   email: string;
@@ -91,6 +92,7 @@ interface RowData {
   address: string;
   gender: string;
   parent: string;
+  fee: string;
 }
 
 //Get all students records from the database
@@ -210,12 +212,13 @@ const MyChildren: React.FC = () => {
         title: "Loading data",
         message: "Please wait while we load the data",
         autoClose: true,
-        disallowClose: false,
+        disallowClose: true,
       });
       const result = await getAllStudents();
       const data = result.map((item: any) => {
         return {
-          id: item._id,
+          _id: item._id,
+          id: item.id,
           name: item.name,
           email: item.email,
           phone: item.phone,
@@ -224,6 +227,7 @@ const MyChildren: React.FC = () => {
           birthDate: item.birthDate,
           address: item.address,
           parent: item.parent,
+          fee: item.status,
         };
       });
 
@@ -275,39 +279,39 @@ const MyChildren: React.FC = () => {
       loading: true,
       title: "Loading student performance",
       message: "Please wait while we load the student performance",
-      autoClose: false,
-      disallowClose: true,
+      autoClose: true,
+      disallowClose: false,
     });
 
-      const resultExams = await getExamsByStudentId(id);
-      const exams = resultExams.map((item: any) => ({
-        id: item._id,
-        name: item.name,
-        description: item.description,
-        subject: item.subject,
-        date: item.date,
-        time: item.time,
-        marks: item.marks,
-      }));
+    const resultExams = await getExamsByStudentId(id);
+    const exams = resultExams.map((item: any) => ({
+      id: item._id,
+      name: item.name,
+      description: item.description,
+      subject: item.subject,
+      date: item.date,
+      time: item.time,
+      marks: item.marks,
+    }));
 
-      //get the last 6 exams
-      const lastSixExams = exams.slice(Math.max(exams.length - 6, 0));
-      //get the last 6 exams marks of logged in student
-      const studentID = id;
-      const studentMarks = [0, 0, 0, 0, 0, 0];
+    //get the last 6 exams
+    const lastSixExams = exams.slice(Math.max(exams.length - 6, 0));
+    //get the last 6 exams marks of logged in student
+    const studentID = id;
+    const studentMarks = [0, 0, 0, 0, 0, 0];
 
-      for (let i = 0; i < lastSixExams.length; i++) {
-        for (let j = 0; j < lastSixExams[i].marks.length; j++) {
-          if (lastSixExams[i].marks[j].id === studentID) {
-            studentMarks[i] = lastSixExams[i].marks[j].marks;
-          }
+    for (let i = 0; i < lastSixExams.length; i++) {
+      for (let j = 0; j < lastSixExams[i].marks.length; j++) {
+        if (lastSixExams[i].marks[j].id === studentID) {
+          studentMarks[i] = lastSixExams[i].marks[j].marks;
         }
       }
+    }
 
-      //reverse the array to show the latest exam first
-      studentMarks.reverse();
+    //reverse the array to show the latest exam first
+    studentMarks.reverse();
 
-      const performanceData = {
+    const performanceData = {
       labels,
       datasets: [
         {
@@ -332,19 +336,18 @@ const MyChildren: React.FC = () => {
 
   //create rows
   const rows = sortedData.map((row) => (
-    <tr key={row.id}>
-      <td>{row.id.slice(0, 8)}</td>
+    <tr key={row._id}>
+      <td>{row.id}</td>
       <td>{row.name}</td>
       <td>{row.email}</td>
       <td>{row.phone}</td>
-      <td>{row.school}</td>
+      <td>{row.fee}</td>
       <td>{row.grade}</td>
-      <td>{row.birthDate.slice(0, 10)}</td>
       <td>
         <Button
           color="green"
-          leftIcon={<IconChartBar size={16} />}
-          sx={{ margin: "5px", width: "100px" }}
+          leftIcon={<IconChartBar size={8} />}
+          sx={{ margin: "5px", width: "130px" }}
           onClick={() => {
             loadStudentPerformance(row.id);
           }}
@@ -381,7 +384,7 @@ const MyChildren: React.FC = () => {
           <Table
             horizontalSpacing="md"
             verticalSpacing="xs"
-            sx={{ tableLayout: "fixed", width: "100%" }}
+            sx={{ tableLayout: "auto", width: "100%" }}
           >
             <thead>
               <tr>
@@ -414,11 +417,11 @@ const MyChildren: React.FC = () => {
                   Phone
                 </Th>
                 <Th
-                  sorted={sortBy === "school"}
+                  sorted={sortBy === "fee"}
                   reversed={reverseSortDirection}
-                  onSort={() => setSorting("school")}
+                  onSort={() => setSorting("fee")}
                 >
-                  School
+                  Fee
                 </Th>
                 <Th
                   sorted={sortBy === "grade"}
