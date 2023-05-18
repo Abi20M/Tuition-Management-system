@@ -149,6 +149,14 @@ export const changeStudentPassword = async (req, res) => {
 export const getClassesByStudentId = (req, res) => {
   studentService
     .getClassesByStudentId(req.params.id)
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+    })
+    .catch((err) => {
+      req.handleResponse.errorRespond(res)(err);
+    });
+};
+
 export const getStudentsGenderDistribution = (req, res) => {
   studentService
     .genderDistribution()
@@ -238,3 +246,4 @@ module.exports = {
   getStudentsGrade,
   updateFee,
 };
+

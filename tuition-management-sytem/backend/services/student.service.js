@@ -219,7 +219,7 @@ export const verifyStudent = async (token) => {
   });
 };
 
-const getClassesByStudentId = async(id)=>{ 
+export const getClassesByStudentId = async(id)=>{ 
   return await Class.find({students : {_id : id}}).then((data)=>{
     return data;
   }).catch((error) =>{
