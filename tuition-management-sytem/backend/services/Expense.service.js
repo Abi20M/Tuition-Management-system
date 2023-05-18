@@ -4,7 +4,6 @@ import ExpenseMail from "../Mails/expense.mails"
 import Student from "../models/student.model"
 
 
-import ExpenseMail from "../Mails/expense.mails"
 
 //generate expense Id
 const generateExpenseId = async () => {
@@ -130,31 +129,6 @@ export const getCategories = async () => {
   }
 };
 
-//expense exceeded function
-export const sendMail = async (name,email) => {
-  try {
-
-    ExpenseMail.sendExceedMail(name, email)
-
-  } catch (error) {
-    return error.message;
-  }
-
-};
-
-//get expense category
-export const getCategories = async () => {
-
-  try{
-    // Fetch all expenses and select only the category field
-    const expenses = await Expense.find({}, 'category'); 
-
-    return expenses;
-  }catch(error){
-
-    throw new Error("Failed to reach data");
-  }
-};
 
 //get fees
 const getFeesAmount = async () => {
