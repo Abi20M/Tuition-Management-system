@@ -51,7 +51,7 @@ export const ExpenseCount = () => {
   }, []);
 
   //call above function in every 5mins to collect updated data
-  setInterval(fetchUserCounts, 100000)
+  setInterval(fetchUserCounts, 200000)
 
   return (
     <Group position="center" p={5}>
@@ -160,7 +160,7 @@ export const DoughnutChart = () => {
     fetchExpenseCategories();
   }, [])
 
-  //setInterval(fetchExpenseCategories, 100000)
+  setInterval(fetchExpenseCategories, 200000)
 
 
   var category1 = 0, category2 = 0, category3 = 0, category4 = 0, category5 = 0, category6 = 0, category7 = 0, category8 = 0;
