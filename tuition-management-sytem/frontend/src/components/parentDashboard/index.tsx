@@ -19,7 +19,7 @@ import { showNotification, updateNotification } from "@mantine/notifications";
 import { useEffect } from "react";
 import { IconCheck } from "@tabler/icons";
 import ParentAPI from "../../API/ParentAPI";
-import SubjectAPI from "../../API/subjectAPI"
+import SubjectAPI from "../../API/subjectAPI";
 import { ClassAPI } from "../../API/classAPI";
 
 //import ClassAPI from "../../api/ClassAPI";
