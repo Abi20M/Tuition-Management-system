@@ -54,9 +54,19 @@ class TeacherAPI {
   //get students of the specific teacher by teacher id
   static getStudents = () => {
     const teacher = JSON.parse(localStorage.getItem("teacher") || "{}");
-    const teacherId = teacher._id;
+    const teacherId = teacher.name;
     return axios.get(
       `${BASE_URL}/teacher/${teacherId}/students`,
+      requestConfig
+    );
+  };
+
+  // //get class of the specific teacher by teacher id
+  static getAllClasses = () => {
+    const teacher = JSON.parse(localStorage.getItem("teacher") || "{}");
+    const teacherId = teacher.name;
+    return axios.get(
+      `${BASE_URL}/teacher/${teacherId}/class`,
       requestConfig
     );
   };
@@ -65,6 +75,8 @@ class TeacherAPI {
   static getExamsByStudentId = (id: string) => {
     return axios.get(`${BASE_URL}/student/${id}/exams`, requestConfig);
   };
+
+  
 
 
   // get Teacher count

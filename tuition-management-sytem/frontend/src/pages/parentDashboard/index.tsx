@@ -4,6 +4,10 @@ import ParentHeader from "../../components/ParentHeader";
 import ManageParents from "../../components/ManageParents";
 import WebsiteFooter from "../../components/Footer";
 import ParentOverview from "../../components/parentDashboard"
+import MyChildren from "../../components/MyChildren";
+import  MyExams  from "../../components/ManageExams/index";
+import { LineGraph } from "../../components/parentDashboard/indexx";
+import { ParentOver } from "../../components/parentDashboard/indexx";
 
 
 
@@ -46,6 +50,7 @@ const useStyles = createStyles((theme) => ({
 const tabs = [
   "Dashboard",
   "My Children",
+  // "MyExams",
   
 ];
 
@@ -85,7 +90,7 @@ export const ParentDashboard = () => {
     {/* Tabs */}
     <Container>
       <Tabs
-        defaultValue="Overview"
+        defaultValue="Dashboard"
         variant="outline"
         classNames={{
           root: classes.tabs,
@@ -97,12 +102,18 @@ export const ParentDashboard = () => {
         <Tabs.List grow>{items}</Tabs.List>
 
         {/* Here you can add your own Component to here */}
-        <Tabs.Panel value="Overview">
-          <h1>Hello Overview</h1>
+        <Tabs.Panel value="Dashboard">
+          <ParentOver/>
+          <ParentOverview/>
+          <LineGraph/>
         </Tabs.Panel>
         <Tabs.Panel value="My Children">
-          <ParentOverview/>
+          <MyChildren/>
         </Tabs.Panel>
+
+        {/* <Tabs.Panel value="My Exams">
+          <LineGraph/>
+        </Tabs.Panel> */}
          
       </Tabs>
     </Container>

@@ -21,7 +21,6 @@ import {
   IconChartBar,
 } from "@tabler/icons";
 import { showNotification, updateNotification } from "@mantine/notifications";
-import TeacherAPI from "../../API/teacherAPI";
 import ParentAPI from "../../API/ParentAPI";
 import { IconCheck } from "@tabler/icons";
 
@@ -82,7 +81,7 @@ export const performanceDataSample = {
 
 //Interface for student data - (Raw data)
 interface RowData {
-  _id:string;
+  _id: string;
   id: string;
   name: string;
   email: string;
@@ -90,40 +89,25 @@ interface RowData {
   school: string;
   grade: string;
   birthDate: string;
-  gender: string;
   address: string;
+  gender: string;
   parent: string;
-}
-
-//Interface for parent data - (Raw data)
-interface RowDataParent {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
+  fee: string;
 }
 
 //Get all students records from the database
 const getAllStudents = async () => {
-  const response = await TeacherAPI.getStudents();
-  const data = await response.data;
-  return data;
-};
-
-//Get all parent records from the database
-const getAllParents = async () => {
-  const response = await ParentAPI.getParents();
+  const response = await ParentAPI.getStudents();
   const data = await response.data;
   return data;
 };
 
 //Get all exams from the database
 const getExamsByStudentId = async (id: string) => {
-  const response = await TeacherAPI.getExamsByStudentId(id);
+  const response = await ParentAPI.getExamsByStudentId(id);
   const data = await response.data;
   return data;
 };
-
 
 //Stylings
 const useStyles = createStyles((theme) => ({
@@ -213,10 +197,9 @@ function sortData(
   );
 }
 
-const MyStudentsTeacher: React.FC = () => {
+const MyChildren: React.FC = () => {
   const [data, setData] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [parents, setParents] = useState<RowDataParent[]>([]);
   const [performanceOpened, setPerformanceOpened] = useState(false);
   const [performanceData, setPerformanceData] = useState(performanceDataSample);
 
@@ -228,37 +211,27 @@ const MyStudentsTeacher: React.FC = () => {
         loading: true,
         title: "Loading data",
         message: "Please wait while we load the data",
-        autoClose: false,
+        autoClose: true,
         disallowClose: true,
       });
       const result = await getAllStudents();
-      const resultParent = await getAllParents();
       const data = result.map((item: any) => {
         return {
           _id: item._id,
-          id:item.id,
+          id: item.id,
           name: item.name,
           email: item.email,
           phone: item.phone,
           school: item.school,
           grade: item.grade,
           birthDate: item.birthDate,
-          gender: item.gender,
           address: item.address,
           parent: item.parent,
-        };
-      });
-      const dataParent = resultParent.map((item: any) => {
-        return {
-          id: item._id,
-          name: item.name,
-          email: item.email,
-          phone: item.phone,
+          fee: item.status,
         };
       });
 
       setData(data);
-      setParents(dataParent);
       setLoading(false);
       const payload = {
         sortBy: null,
@@ -306,8 +279,8 @@ const MyStudentsTeacher: React.FC = () => {
       loading: true,
       title: "Loading student performance",
       message: "Please wait while we load the student performance",
-      autoClose: false,
-      disallowClose: true,
+      autoClose: true,
+      disallowClose: false,
     });
 
     const resultExams = await getExamsByStudentId(id);
@@ -368,39 +341,19 @@ const MyStudentsTeacher: React.FC = () => {
       <td>{row.name}</td>
       <td>{row.email}</td>
       <td>{row.phone}</td>
-      <td>{row.school}</td>
+      <td>{row.fee}</td>
       <td>{row.grade}</td>
-      <td>{row.birthDate.slice(0, 10)}</td>
-      <td>{row.gender}</td>
-      <td>{row.address}</td>
       <td>
-        {parents.map((parentObj: RowDataParent) => {
-          if (parentObj.id === row.parent) {
-            return parentObj.name;
-          }
-        })}
-      </td>
-      <td>
-        {
-          //parents phone
-          parents.map((parentObj: RowDataParent) => {
-            if (parentObj.id === row.parent) {
-              return parentObj.phone;
-            }
-          })
-        }
-      </td>
-      <td>
-        <Button
+        {/* <Button
           color="green"
-          leftIcon={<IconChartBar size={16} />}
-          sx={{ margin: "5px", width: "100px" }}
+          leftIcon={<IconChartBar size={8} />}
+          sx={{ margin: "5px", width: "130px" }}
           onClick={() => {
             loadStudentPerformance(row.id);
           }}
         >
           Performance
-        </Button>
+        </Button> */}
       </td>
     </tr>
   ));
@@ -424,22 +377,14 @@ const MyStudentsTeacher: React.FC = () => {
             icon={<IconSearch size={14} stroke={1.5} />}
             value={search}
             onChange={handleSearchChange}
-            sx={{ width: "600px" }}
+            sx={{ width: "300px" }}
           />
         </Box>
-        <ScrollArea
-          sx={{
-            height: 700,
-            width: 1500,
-            marginLeft: -300,
-            marginBottom: -163,
-          }}
-        >
+        <ScrollArea style={{marginBottom:"200px"}}>
           <Table
-            highlightOnHover
             horizontalSpacing="md"
             verticalSpacing="xs"
-            sx={{ minwidth: 700 }}
+            sx={{ tableLayout: "auto", width: "100%" }}
           >
             <thead>
               <tr>
@@ -472,11 +417,11 @@ const MyStudentsTeacher: React.FC = () => {
                   Phone
                 </Th>
                 <Th
-                  sorted={sortBy === "school"}
+                  sorted={sortBy === "fee"}
                   reversed={reverseSortDirection}
-                  onSort={() => setSorting("school")}
+                  onSort={() => setSorting("fee")}
                 >
-                  School
+                  Fee
                 </Th>
                 <Th
                   sorted={sortBy === "grade"}
@@ -485,42 +430,14 @@ const MyStudentsTeacher: React.FC = () => {
                 >
                   Grade
                 </Th>
-                <Th
+                {/* <Th
                   sorted={sortBy === "birthDate"}
                   reversed={reverseSortDirection}
                   onSort={() => setSorting("birthDate")}
                 >
                   Birth Date
-                </Th>
-                <Th
-                  sorted={sortBy === "gender"}
-                  reversed={reverseSortDirection}
-                  onSort={() => setSorting("gender")}
-                >
-                  Gender
-                </Th>
-                <Th
-                  sorted={sortBy === "address"}
-                  reversed={reverseSortDirection}
-                  onSort={() => setSorting("address")}
-                >
-                  Address
-                </Th>
-                <Th
-                  sorted={sortBy === "parent"}
-                  reversed={reverseSortDirection}
-                  onSort={() => setSorting("parent")}
-                >
-                  Parent
-                </Th>
-                <Th
-                  sorted={sortBy === "parent"}
-                  reversed={reverseSortDirection}
-                  onSort={() => setSorting("parent")}
-                >
-                  Parent Phone
-                </Th>
-                <th>Action</th>
+                </Th> */}
+                {/* <th>Action</th> */}
               </tr>
             </thead>
             <tbody>
@@ -551,4 +468,4 @@ const MyStudentsTeacher: React.FC = () => {
   );
 };
 
-export default MyStudentsTeacher;
+export default MyChildren;

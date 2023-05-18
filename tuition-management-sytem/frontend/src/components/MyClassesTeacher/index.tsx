@@ -21,14 +21,16 @@ import {
   IconPlus,
 } from "@tabler/icons";
 import { showNotification, updateNotification } from "@mantine/notifications";
-import {ClassAPI} from "../../API/classAPI";
-//import SubjectAPI from "../../API/subjectAPI";
+// import {ClassAPI} from "../../API/classAPI";
+// import SubjectAPI from "../../API/subjectAPI";
+// import StudentAPI from "../../API/studentAPI";
 import TeacherAPI from "../../API/teacherAPI";
-import StudentAPI from "../../API/studentAPI";
 import { IconCheck } from "@tabler/icons";
+
 
 //Interface for class data - (Raw data)
 interface RowData {
+  _id:string;
   id: string;
   name: string;
   teacher: string;
@@ -57,25 +59,27 @@ interface RowDataStudents {
 }
 
 //Get all students records from the database
-const getAllStudents = async () => {
-  const response = await StudentAPI.getStudents();
-  const data = await response.data;
-  return data;
-};
+// const getAllStudents = async () => {
+//   const response = await StudentAPI.getStudents();
+//   const data = await response.data;
+//   return data;
+// };
 
 //Get all classs records from the database
 const getAllClasses = async () => {
-  const response = await ClassAPI.getAllClasses();
+  const response = await TeacherAPI.getAllClasses();
   const data = await response.data;
   return data;
 };
 
+
+
 //Get all teacher records from the database
-const getAllTeachers = async () => {
-  const response = await TeacherAPI.getTeachers();
-  const data = await response.data;
-  return data;
-};
+// const getAllTeachers = async () => {
+//   const response = await TeacherAPI.getTeachers();
+//   const data = await response.data;
+//   return data;
+// };
 
 //Get all subject records from the database
 // const getAllSubject = async () => {
@@ -85,11 +89,11 @@ const getAllTeachers = async () => {
 // };
 
 //get enrollnment records from the database
-const getEnrollments = async (id: string) => {
-  const response = await ClassAPI.getEnrollments(id);
-  const data = await response.data;
-  return data;
-};
+// const getEnrollments = async (id: string) => {
+//   const response = await ClassAPI.getEnrollments(id);
+//   const data = await response.data;
+//   return data;
+// };
 
 //Stylings
 const useStyles = createStyles((theme) => ({
@@ -182,89 +186,93 @@ function sortData(
 const MyClassesTeacher: React.FC = () => {
   const [data, setData] = useState<RowData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [teachers, setTeachers] = useState([]);
-  const [subjects, setSubjects] = useState([]);
-  const [students, setStudents] = useState([]);
+  // const [teachers, setTeachers] = useState([]);
+  // const [subjects, setSubjects] = useState([]);
+  // const [students, setStudents] = useState([]);
+  
 
-  // fetch class data
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     showNotification({
-  //       id: "loding-data",
-  //       loading: true,
-  //       title: "Loading data",
-  //       message: "Please wait while we load the data",
-  //       autoClose: false,
-  //       disallowClose: true,
-  //     });
-  //     const resultClasses = await getAllClasses();
-  //     const classes = resultClasses.map((item: any) => ({
-  //       id: item._id,
-  //       name: item.name,
-  //       teacher: item.teacher,
-  //       subject: item.subject,
-  //       date: item.date,
-  //       startTime: item.startTime,
-  //       endTime: item.endTime,
-  //       venue: item.venue,
-  //     }));
-  //     //filter classes by teacher id
-  //     const teacher = JSON.parse(localStorage.getItem("teacher") || "{}");
-  //     const teacherID = teacher._id;
+ // fetch class data
+  useEffect(() => {
+    const fetchData = async () => {
+      showNotification({
+        id: "loding-data",
+        loading: true,
+        title: "Loading data",
+        message: "Please wait while we load the data",
+        autoClose: false,
+        disallowClose: true,
+      });
+      const resultClasses = await getAllClasses();
+      const classes = resultClasses.map((item: any) => ({
+        _id: item._id,
+        id:item.id,
+        name: item.name,
+        teacher: item.teacher,
+        subject: item.subject,
+        date: item.day,
+        startTime: item.startTime,
+        endTime: item.endTime,
+        venue: item.venue,
+      }));
+      //filter classes by teacher id
+      const teacher = JSON.parse(localStorage.getItem("teacher") || "{}");
+      const teacherID = teacher._id;
 
-  //     const filteredClasses = classes.filter(
-  //       (item: any) => item.teacher === teacherID
-  //     );
+      const filteredClasses = classes.filter(
+        (item: any) => item.teacher === teacherID
+      );
 
-  //     const resultTeachers = await getAllTeachers();
-  //     const teachers = resultTeachers.map((item: any) => ({
-  //       id: item._id,
-  //       name: item.name,
-  //     }));
+      // const resultTeachers = await getAllTeachers();
+      // const teachers = resultTeachers.map((item: any) => ({
+      //   id: item._id,
+      //   name: item.name,
+      // }));
 
-  //   //   const resultSubjects = await getAllSubject();
-  //   //   const subjects = resultSubjects.map((item: any) => ({
-  //   //     id: item._id,
-  //   //     name: item.name,
-  //   //   }));
+      // const resultSubjects = await getAllSubject();
+      // const subjects = resultSubjects.map((item: any) => ({
+      //   id: item._id,
+      //   name: item.name,
+      // }));
 
-  //     const resultStudents = await getAllStudents();
-  //     const students = resultStudents.map((item: any) => ({
-  //       id: item._id,
-  //       name: item.name,
-  //       email: item.email,
-  //       phone: item.phone,
-  //       school: item.school,
-  //       grade: item.grade,
-  //       birthDate: item.birthDate,
-  //       address: item.address,
-  //       parent: item.parent,
-  //     }));
+      // const resultStudents = await getAllStudents();
+      // const students = resultStudents.map((item: any) => ({
+      //   id: item._id,
+      //   name: item.name,
+      //   email: item.email,
+      //   phone: item.phone,
+      //   school: item.school,
+      //   grade: item.grade,
+      //   birthDate: item.birthDate,
+      //   address: item.address,
+      //   parent: item.parent,
+      // }));
 
-  //     const payload = {
-  //       sortBy: null,
-  //       reversed: false,
-  //       search: "",
-  //     };
+      setData(data);
+      const payload = {
+        sortBy: null,
+        reversed: false,
+        search: "",
+      };
 
-  //     setData(filteredClasses);
-  //     setTeachers(teachers);
-  //     setSubjects(subjects);
-  //     setStudents(students);
-  //     setSortedData(sortData(filteredClasses, payload));
-  //     setLoading(false);
-  //     updateNotification({
-  //       id: "loding-data",
-  //       color: "teal",
-  //       title: "Data loaded successfully",
-  //       message:
-  //         "You can now manage classs by adding, editing or deleting them.",
-  //       icon: <IconCheck size={16} />,
-  //       autoClose: 3000,
-  //     });
-  //   };
-  //   fetchData();
-  // }, []);
+      
+      // setData(filteredClasses);
+      // setTeachers(teachers);
+      // setSubjects(subjects);
+      // setStudents(students);
+      setSortedData(sortData(classes, payload));
+      setLoading(false);
+      updateNotification({
+        id: "loding-data",
+        color: "teal",
+        title: "Data loaded successfully",
+        message:
+          "You can now manage classs by adding, editing or deleting them.",
+        icon: <IconCheck size={16} />,
+        autoClose: 3000,
+      });
+    };
+    fetchData();
+  }, []);
 
   const [search, setSearch] = useState("");
   const [sortedData, setSortedData] = useState(data);
@@ -276,33 +284,33 @@ const MyClassesTeacher: React.FC = () => {
   const [editClassID, setEditClassID] = useState("");
 
   //get enroll data from api
-  const getEnrollData = async (id: string) => {
-    showNotification({
-      id: "loding-enroll",
-      loading: true,
-      title: "Loading data",
-      message: "Please wait while we load the data",
-      autoClose: false,
-      disallowClose: true,
-    });
-    const result = await getEnrollments(id);
-    const enrollments = result.map((item: any) => ({
-      id: item._id,
-      name: item.name,
-      email: item.email,
-      phone: item.phone,
-    }));
-    setEnrollData(enrollments);
-    setEnrollOpened(true);
-    updateNotification({
-      id: "loding-enroll",
-      color: "teal",
-      title: "Data loaded successfully",
-      message: "You can now manage enrollments",
-      icon: <IconCheck size={16} />,
-      autoClose: 3000,
-    });
-  };
+  // const getEnrollData = async (id: string) => {
+  //   showNotification({
+  //     id: "loding-enroll",
+  //     loading: true,
+  //     title: "Loading data",
+  //     message: "Please wait while we load the data",
+  //     autoClose: false,
+  //     disallowClose: true,
+  //   });
+  //   const result = await getEnrollments(id);
+  //   const enrollments = result.map((item: any) => ({
+  //     id: item._id,
+  //     name: item.name,
+  //     email: item.email,
+  //     phone: item.phone,
+  //   }));
+  //   setEnrollData(enrollments);
+  //   setEnrollOpened(true);
+  //   updateNotification({
+  //     id: "loding-enroll",
+  //     color: "teal",
+  //     title: "Data loaded successfully",
+  //     message: "You can now manage enrollments",
+  //     icon: <IconCheck size={16} />,
+  //     autoClose: 3000,
+  //   });
+  // };
 
   const setSorting = (field: keyof RowData) => {
     const reversed = field === sortBy ? !reverseSortDirection : false;
@@ -321,21 +329,32 @@ const MyClassesTeacher: React.FC = () => {
 
   //create rows
   const rows = sortedData.map((row) => (
-    <tr key={row.id}>
-      <td>{row.id.slice(0, 8)}</td>
+    <tr key={row._id}>
+      <td>{row.id}</td>
       <td>{row.name}</td>
-      <td>
+      <td>{row.subject}</td>
+      <td>{row.date}</td>
+      <td>{new Date(row.startTime).toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true})}</td>
+      <td>{new Date(row.endTime).toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true})}</td>
+      <td>{row.venue}</td>
+      {/* <td>
         {subjects.map((subject: RowDataSubjects) => {
           if (subject.id === row.subject) {
             return subject.name;
           }
         })}
-      </td>
-      <td>{row.date}</td>
+      </td> */}
+      {/* <td>{row.date}</td>
       <td>{row.startTime}</td>
       <td>{row.endTime}</td>
-      <td>{row.venue}</td>
-      <td>
+      <td>{row.venue}</td> */}
+      {/* <td>
         <Button
           color="yellow"
           leftIcon={<IconPlus size={14} />}
@@ -347,7 +366,7 @@ const MyClassesTeacher: React.FC = () => {
         >
           Enrolments
         </Button>
-      </td>
+      </td> */}
     </tr>
   ));
 
@@ -468,7 +487,7 @@ const MyClassesTeacher: React.FC = () => {
                 >
                   Venue
                 </Th>
-                <th>Action</th>
+                {/* <th>Action</th> */}
               </tr>
             </thead>
             <tbody>
