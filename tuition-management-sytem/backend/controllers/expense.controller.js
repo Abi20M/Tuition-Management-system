@@ -174,5 +174,6 @@ module.exports = {
   getLastFixedValue,
   getAdminInfo,
   getCategories,
-  getFeesAmount
+  getFeesAmount,
+  
 };
