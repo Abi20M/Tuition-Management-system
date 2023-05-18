@@ -111,6 +111,26 @@ class StudentAPI {
   static getStudentGrade = () =>{
     return axios.get(`${BASE_URL}/student/grade`,requestConfig);
   }
+    //update Fee
+  static updateFee = (values: {
+      _id : string,
+      id: string;
+      name: string;
+      amount: string;
+      status: string;
+    }) => {
+      let student = {
+        id : values.id,
+        name: values.name,
+        amount: values.amount,
+        status: values.status
+      };
+      return axios.put(
+        `${BASE_URL}/fee/${values._id}`,
+        student,
+        requestConfigJson
+      );
+  };
 }
 
 export default StudentAPI;

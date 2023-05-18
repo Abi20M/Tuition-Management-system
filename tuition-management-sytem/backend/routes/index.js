@@ -8,7 +8,6 @@ import studentController from "../controllers/student.controller";
 import adminController from "../controllers/admin.controller";
 import subjectController from "../controllers/subject.controller";
 import examController from "../controllers/Exam.controller";
-import feeController from "../controllers/Fee.controller";
 
 const Routes = (app) => {
   //normal validation root of the user
@@ -83,6 +82,11 @@ const Routes = (app) => {
     protect.adminProtect,
     expenseController.getLastFixedValue
   );
+  app.post("/admin/details",protect.adminProtect,expenseController.getAdminInfo)
+  app.get("/expenses/categories",protect.adminProtect,expenseController.getCategories)
+  app.get("/fees/amount",protect.adminProtect,expenseController.getFeesAmount)
+
+
 
   //teacher Routes
   app.get("/teacher", protect.adminProtect, teacherController.getAllTeacher);
@@ -115,22 +119,11 @@ const Routes = (app) => {
   // app.post("/parent/login" , parentController.loginParent);
   app.post("/parent", protect.adminProtect, parentController.createParent);
   app.get("/parent", protect.adminProtect, parentController.getAllParents);
-  app.get(
-    "/parent/count",
-    protect.adminProtect,
-    parentController.getParentCount
-  );
+  app.get("/parent/count", protect.adminProtect, parentController.getParentCount);
   app.put("/parent/:id", protect.adminProtect, parentController.updateParent);
-  app.delete(
-    "/parent/:id",
-    protect.adminProtect,
-    parentController.deleteParent
-  );
-  app.put(
-    "/parent/changePassword/:id",
-    protect.parentProtect,
-    parentController.changeParentPassword
-  );
+  app.delete("/parent/:id", protect.adminProtect, parentController.deleteParent);
+  app.put("/parent/changePassword/:id", protect.parentProtect, parentController.changeParentPassword);
+
 
   //Student Routes
   //Student Routes
@@ -171,11 +164,8 @@ const Routes = (app) => {
   //Student Login
   app.post("/student/login", studentController.loginStudent);
   //Student Routes - Accessible to Students only
-  app.put(
-    "/student/changePassword/:id",
-    protect.studentProtect,
-    studentController.changeStudentPassword
-  );
+  app.put("/student/changePassword/:id", protect.studentProtect, studentController.changeStudentPassword);
+
 
   //Subject Routes
   app.post("/subject", protect.adminProtect, subjectController.createSubject);
@@ -197,11 +187,7 @@ const Routes = (app) => {
   );
 
   //Fee Routes
-  app.post("/fee", protect.adminProtect, feeController.createFee);
-  app.get("/fee", protect.adminProtect, feeController.getAllFees);
-  app.get("/fee/count", protect.adminProtect, feeController.getFeeCount);
-  app.put("/fee/:id", protect.adminProtect, feeController.updateFee);
-  app.delete("/fee/:id", protect.adminProtect, feeController.deleteFee);
+  app.put("/fee/:id", protect.adminProtect, studentController.updateFee);
 
   //Manage Exams
   app.post("/exam", protect.adminOrTeacherProtect, examController.createExam);

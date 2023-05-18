@@ -167,6 +167,19 @@ export const getStudentsGrade = (req, res) => {
       req.handleResponse.errorRespond(res)(err);
     });
 };
+export const updateFee = async (req, res, next) => {
+  await studentService
+    .updateStudent(req.params.id, req.body)
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+      next();
+    })
+    .catch((err) => {
+      req.handleResponse.errorRespond(res)(err);
+      next();
+    });
+};
+
 module.exports = {
   createStudent,
   getStudent,
@@ -179,4 +192,5 @@ module.exports = {
   changeStudentPassword,
   getStudentsGenderDistribution,
   getStudentsGrade,
+  updateFee,
 };
