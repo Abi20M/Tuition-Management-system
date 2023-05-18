@@ -82,6 +82,8 @@ const Routes = (app) => {
   app.get("/expenses/categories",protect.adminProtect,expenseController.getCategories)
   app.get("/fees/amount",protect.adminProtect,expenseController.getFeesAmount)
 
+
+
   //teacher Routes
   app.get("/teacher", protect.adminProtect, teacherController.getAllTeacher);
   app.get(

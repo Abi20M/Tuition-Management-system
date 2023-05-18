@@ -34,6 +34,7 @@ import { IconCheck, IconAlertTriangle } from "@tabler/icons";
 import { useForm } from "@mantine/form";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { ExpensePDF } from "../PDFRender/ExpensePDFTemplate";
+import { ExpenseCount } from "../expenseOverview";
 
 //Interface for expense data - (Raw data)
 interface RowData {
@@ -503,6 +504,7 @@ const ExpenseManage = (props: adminName) => {
     fetchData();
     getLastFixedValue();
     getTotalFees();
+
 
   }, []);
 
