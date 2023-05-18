@@ -4,8 +4,6 @@ import ExpenseMail from "../Mails/expense.mails"
 import Student from "../models/student.model"
 
 
-import ExpenseMail from "../Mails/expense.mails"
-
 //generate expense Id
 const generateExpenseId = async () => {
   //get last expense object, if there is a expense, then return that expense object, otherwise return empty array
@@ -101,32 +99,6 @@ const getLastFixedValue = async () => {
     return lastDocument;
   } catch (error) {
     return error.message;
-  }
-};
-
-//expense exceeded function
-export const sendMail = async (name,email) => {
-  try {
-
-    ExpenseMail.sendExceedMail(name, email)
-
-  } catch (error) {
-    return error.message;
-  }
-
-};
-
-//get expense category
-export const getCategories = async () => {
-
-  try{
-    // Fetch all expenses and select only the category field
-    const expenses = await Expense.find({}, 'category'); 
-
-    return expenses;
-  }catch(error){
-
-    throw new Error("Failed to reach data");
   }
 };
 

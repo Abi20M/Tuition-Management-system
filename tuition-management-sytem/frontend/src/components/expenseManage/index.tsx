@@ -1057,7 +1057,7 @@ const ExpenseManage = (props: adminName) => {
             </tr>
             <tr>
               <td colSpan={3} style={{ paddingRight: 20 }}>Total amount of expenses</td>
-              <td style={{ textAlign: "center" }}> {totalExpense}</td>
+              <td style={{ textAlign: "center" }}> {totalExpense - feesAmount}</td>
             </tr>
             <tr>
               <td colSpan={3} style={{ paddingRight: 20 }}>Total remaining Amount </td>
