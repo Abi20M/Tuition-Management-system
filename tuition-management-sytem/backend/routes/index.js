@@ -22,7 +22,7 @@ const Routes = (app) => {
   //class Routes
   app.get(
     "/class",
-    protect.adminOrTeacherProtect,
+    protect.adminOrTeacherOrParent,
     classController.getAllClasses
   );
   app.get(
@@ -135,6 +135,14 @@ const Routes = (app) => {
   app.delete("/parent/:id", protect.adminProtect, parentController.deleteParent);
   app.put("/parent/changePassword/:id", protect.parentProtect, parentController.changeParentPassword);
 
+  //get sudents by parent id
+  app.get(
+    "/parent/students/:id",
+    protect.parentProtect,
+    parentController.getStudents
+  );
+
+  app.get("/student/exams/:id",protect.parentProtect,studentController.getExamsByStudentId)
 
   //Student Routes
   //Student Routes

@@ -287,16 +287,16 @@ export const updateFee = async (id, studentObj) => {
     });
 };
 
-// export const getExamsByStudentId = async (id) => {
-//   let allExams = await exam.find();
-//   //check if student id is in marks array
-//   let studentExams = allExams.filter((exam) => {
-//     return exam.marks.some((mark) => {
-//       return mark.id == id;
-//     });
-//   });
-//   return studentExams;
-// };
+export const getExamsByStudentId = async (id) => {
+  let allExams = await exam.find();
+  //check if student id is in marks array
+  let studentExams = allExams.filter((exam) => {
+    return exam.marks.some((mark) => {
+      return mark.id == id;
+    });
+  });
+  return studentExams;
+};
 
 module.exports = {
   createStudent,
@@ -307,9 +307,10 @@ module.exports = {
   getStudentCountService,
   loginStudent,
   changeStudentPassword,
+  updateFee,
   genderDistribution,
   getStudentsGradeService,
-  updateFee
+  updateFee,
   //   verifyStudent,
-  //   getExamsByStudentId,
+     getExamsByStudentId,
 };

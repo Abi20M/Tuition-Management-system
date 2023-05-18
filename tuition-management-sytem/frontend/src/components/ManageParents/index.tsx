@@ -219,6 +219,7 @@ const ManageParents= ({ user }: adminName) => {
     name: string;
     email: string;
     phone: string;
+    
   }) => {
     showNotification({
       id: "edit-parent",
