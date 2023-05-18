@@ -4,7 +4,7 @@ const teacherSchema = new mongoose.Schema({
   id: {
     type: String,
     required: true,
-    unique : true,
+    unique: true,
   },
   name: {
     type: String,
@@ -17,13 +17,17 @@ const teacherSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+  }, isPasswordChanged: {
+    default: false,
+    type: Boolean,
+    require: true,
   },
   phone: {
     type: String,
     required: true,
   },
 
-},{timestamps:true});
+}, { timestamps: true });
 
 const Teacher = mongoose.model("Teacher", teacherSchema);
 

@@ -111,13 +111,6 @@ const getAllParents = async () => {
   return data;
 };
 
-// //Get all exams from the database
-// const getExamsByStudentId = async (id: string) => {
-//   const response = await adminAPI.getExamsByStudentId(id);
-//   const data = await response.data;
-//   return data;
-// };
-
 //Stylings
 const useStyles = createStyles((theme) => ({
   th: {
@@ -622,45 +615,6 @@ const ManageStudents = ({ user }: adminName) => {
       disallowClose: true,
     });
 
-    // const resultExams = await getExamsByStudentId(id);
-    // const exams = resultExams.map((item: any) => ({
-    //   id: item._id,
-    //   name: item.name,
-    //   description: item.description,
-    //   subject: item.subject,
-    //   date: item.date,
-    //   time: item.time,
-    //   marks: item.marks,
-    // }));
-
-    // //get the last 6 exams
-    // const lastSixExams = exams.slice(Math.max(exams.length - 6, 0));
-    // //get the last 6 exams marks of logged in student
-    // const studentID = id;
-    // const studentMarks = [0, 0, 0, 0, 0, 0];
-
-    // for (let i = 0; i < lastSixExams.length; i++) {
-    //   for (let j = 0; j < lastSixExams[i].marks.length; j++) {
-    //     if (lastSixExams[i].marks[j].id === studentID) {
-    //       studentMarks[i] = lastSixExams[i].marks[j].marks;
-    //     }
-    //   }
-    // }
-
-    //   //reverse the array to show the latest exam first
-    //   studentMarks.reverse();
-
-    //   const performanceData = {
-    //   labels,
-    //   datasets: [
-    //     {
-    //       label: "Student Performance (Last 6 Exams)",
-    //       data: studentMarks,
-    //       borderColor: "rgb(255, 99, 132)",
-    //       backgroundColor: "rgba(255, 99, 132, 0.5)",
-    //     },
-    //   ],
-    // };
     setPerformanceData(performanceData);
     setPerformanceOpened(true);
     updateNotification({

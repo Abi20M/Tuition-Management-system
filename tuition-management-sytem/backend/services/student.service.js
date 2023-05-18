@@ -1,10 +1,10 @@
 import student from "../models/student.model";
 // import exam from "../models/Exam.model";
-// import classes from "../models/Classes.model";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 import studentMail from "../Mails/student.mail";
+import Class from '../models/class.model';
 
 //generate student Id
 const generateStudentId = async () => {
@@ -219,6 +219,15 @@ export const verifyStudent = async (token) => {
   });
 };
 
+export const getClassesByStudentId = async(id)=>{ 
+  return await Class.find({students : {_id : id}}).then((data)=>{
+    return data;
+  }).catch((error) =>{
+    throw new Error("Invalid student ID")
+  })
+}
+
+
 export const genderDistribution = async() =>{
 
   let studentGender = [{Male : 0, Female : 0}];
@@ -298,6 +307,7 @@ export const getExamsByStudentId = async (id) => {
   return studentExams;
 };
 
+
 module.exports = {
   createStudent,
   getStudent,
@@ -307,6 +317,7 @@ module.exports = {
   getStudentCountService,
   loginStudent,
   changeStudentPassword,
+  getClassesByStudentId,
   updateFee,
   genderDistribution,
   getStudentsGradeService,

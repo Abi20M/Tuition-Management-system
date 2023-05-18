@@ -146,6 +146,17 @@ export const changeStudentPassword = async (req, res) => {
     });
 };
 
+export const getClassesByStudentId = (req, res) => {
+  studentService
+    .getClassesByStudentId(req.params.id)
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+    })
+    .catch((err) => {
+      req.handleResponse.errorRespond(res)(err);
+    });
+};
+
 export const getStudentsGenderDistribution = (req, res) => {
   studentService
     .genderDistribution()
@@ -156,6 +167,46 @@ export const getStudentsGenderDistribution = (req, res) => {
       req.handleResponse.errorRespond(res)(err);
     });
 };
+// //Dash board chart Maker
+// export const releaseUnofficialResults = async (req, res, next) => {
+//   await examService
+//     .releaseUnofficialResults(req.params.id)
+//     .then((data) => {
+//       req.handleResponse.successRespond(res)(data);
+//       next();
+//     })
+//     .catch((err) => {
+//       req.handleResponse.errorRespond(res)(err);
+//       next();
+//     });
+// };
+
+// export const releaseOfficialResults = async (req, res, next) => {
+//   await examService
+//     .releaseOfficialResults(req.params.id)
+//     .then((data) => {
+//       req.handleResponse.successRespond(res)(data);
+//       next();
+//     })
+//     .catch((err) => {
+//       req.handleResponse.errorRespond(res)(err);
+//       next();
+//     });
+// };
+
+// export const getExamsByStudent = async (req, res, next) => {
+//   await examService
+//     .getExamsByStudent(req.params.id)
+//     .then((data) => {
+//       req.handleResponse.successRespond(res)(data);
+//       next();
+//     })
+//     .catch((err) => {
+//       req.handleResponse.errorRespond(res)(err);
+//       next();
+//     });
+// };
+
 
 export const getStudentsGrade = (req, res) => {
   studentService
@@ -190,7 +241,9 @@ module.exports = {
   getExamsByStudentId,
   getStudentCount,
   changeStudentPassword,
+  getClassesByStudentId,
   getStudentsGenderDistribution,
   getStudentsGrade,
   updateFee,
 };
+
