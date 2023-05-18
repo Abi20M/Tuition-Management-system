@@ -29,6 +29,8 @@ export interface ExamData {
   marks: ExamMarksData[];
   attendance: AttendanceData[];
   className: string;
+  duration: number;
+  durationUnit: string;
 }
 
 export interface ClassData {
@@ -173,6 +175,8 @@ const TeacherExamPortalDashboard = () => {
         marks: item.marks,
         className: classes.find((classItem: any) => classItem.id === item.class)
           .name,
+        duration: item.duration,
+        durationUnit: item.durationUnit,
       };
     });
 

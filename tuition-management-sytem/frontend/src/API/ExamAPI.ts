@@ -17,6 +17,8 @@ class ExamAPI {
     status: string;
     date: string;
     time: string;
+    duration: number;
+    durationUnit: string;
   }) => {
     return axios.post(`${BASE_URL}/exam`, values, requestConfig);
   };
@@ -36,6 +38,8 @@ class ExamAPI {
     status: string;
     date: string;
     time: string;
+    duration: number;
+    durationUnit: string;
   }) => {
     let exam = {
       examId: values.examId,

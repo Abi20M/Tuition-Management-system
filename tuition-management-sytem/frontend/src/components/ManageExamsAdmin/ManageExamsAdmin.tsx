@@ -150,7 +150,7 @@ function filterData(data: ExamData[], search: string) {
   const query = search.toLowerCase().trim();
   return data.filter((item) =>
     keys(data[0]).some((key) => {
-      if (key === "marks" || key === "attendance") {
+      if (key === "marks" || key === "attendance" || key === "duration") {
         return false;
       }
       return item[key].toLowerCase().includes(query);
@@ -195,7 +195,11 @@ export function sortData(
 
   return filterData(
     [...data].sort((a, b) => {
-      if (sortBy === "marks" || sortBy === "attendance") {
+      if (
+        sortBy === "marks" ||
+        sortBy === "attendance" ||
+        sortBy === "duration"
+      ) {
         return 0;
       }
 

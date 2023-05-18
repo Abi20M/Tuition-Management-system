@@ -156,7 +156,7 @@ function filterData(data: ExamData[], search: string) {
   const query = search.toLowerCase().trim();
   return data.filter((item) =>
     keys(data[0]).some((key) => {
-      if (key === "marks" || key === "attendance") {
+      if (key === "marks" || key === "attendance" || key === "duration") {
         return false;
       }
       return item[key].toLowerCase().includes(query);
@@ -201,7 +201,11 @@ export function sortData(
 
   return filterData(
     [...data].sort((a, b) => {
-      if (sortBy === "marks" || sortBy === "attendance") {
+      if (
+        sortBy === "marks" ||
+        sortBy === "attendance" ||
+        sortBy === "duration"
+      ) {
         return 0;
       }
       if (payload.reversed) {
@@ -968,7 +972,7 @@ const ManageExams = ({
       if (diffInMinutes < duration || diffInMinutes > duration) {
         addForm.setFieldError(
           "time",
-          "Exam dureation should be " + duration + " " + durationUnit
+          "Exam duration should be " + duration + " " + durationUnit
         );
         return false;
       }
@@ -980,7 +984,7 @@ const ManageExams = ({
       if (diffInHours < duration || diffInHours > duration) {
         addForm.setFieldError(
           "time",
-          "Exam dureation should be " + duration + " " + durationUnit
+          "Exam duration should be " + duration + " " + durationUnit
         );
         return false;
       }
@@ -1015,7 +1019,7 @@ const ManageExams = ({
       if (diffInMinutes < duration || diffInMinutes > duration) {
         editForm.setFieldError(
           "time",
-          "Exam dureation should be " + duration + " " + durationUnit
+          "Exam duration should be " + duration + " " + durationUnit
         );
         return false;
       }
@@ -1027,7 +1031,7 @@ const ManageExams = ({
       if (diffInHours < duration || diffInHours > duration) {
         editForm.setFieldError(
           "time",
-          "Exam dureation should be " + duration + " " + durationUnit
+          "Exam duration should be " + duration + " " + durationUnit
         );
         return false;
       }
@@ -1066,6 +1070,8 @@ const ManageExams = ({
                   status: row.status,
                   date: row.date.slice(0, 10),
                   time: row.time,
+                  duration: row.duration,
+                  durationUnit: row.durationUnit,
                 });
                 setEditOpened(true);
               }}
@@ -1469,6 +1475,7 @@ const ManageExams = ({
               pattern="[0-9]*"
               min={editForm.values.durationUnit === "minutes" ? 30 : 1}
               max={editForm.values.durationUnit === "minutes" ? 300 : 5}
+              defaultValue={editForm.values.duration}
             />
             <Select
               label=" "
@@ -1487,7 +1494,7 @@ const ManageExams = ({
           <TimeRangeInput
             label="Time"
             icon={<IconClock size={16} />}
-            format="12"
+            format="24"
             clearable
             onChange={(time) => {
               if (time[0] && time[1]) {
