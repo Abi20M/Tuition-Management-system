@@ -146,7 +146,7 @@ const Routes = (app) => {
   app.post("/student/login", studentController.loginStudent);
   //Student Routes - Accessible to Students only
   app.put("/student/changePassword/:id",protect.studentProtect, studentController.changeStudentPassword);
-
+  app.get("/student/:id/classes",protect.studentProtect, studentController.getClassesByStudentId)
 
   //Subject Routes
   app.post("/subject", protect.adminProtect, subjectController.createSubject);

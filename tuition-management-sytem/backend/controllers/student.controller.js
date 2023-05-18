@@ -146,6 +146,16 @@ export const changeStudentPassword = async (req, res) => {
     });
 };
 
+export const getClassesByStudentId = (req, res) => {
+  studentService
+    .getClassesByStudentId(req.params.id)
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+    })
+    .catch((err) => {
+      req.handleResponse.errorRespond(res)(err);
+    });
+};
 // //Dash board chart Maker
 // export const releaseUnofficialResults = async (req, res, next) => {
 //   await examService
@@ -196,4 +206,5 @@ module.exports = {
   getExamsByStudentId,
   getStudentCount,
   changeStudentPassword,
+  getClassesByStudentId,
 };

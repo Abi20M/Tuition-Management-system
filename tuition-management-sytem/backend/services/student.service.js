@@ -1,10 +1,10 @@
 import student from "../models/student.model";
 // import exam from "../models/Exam.model";
-// import classes from "../models/Classes.model";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 import studentMail from "../Mails/student.mail";
+import Class from '../models/class.model';
 
 //generate student Id
 const generateStudentId = async () => {
@@ -219,6 +219,15 @@ export const verifyStudent = async (token) => {
   });
 };
 
+const getClassesByStudentId = async(id)=>{ 
+  return await Class.find({students : {_id : id}}).then((data)=>{
+    return data;
+  }).catch((error) =>{
+    throw new Error("Invalid student ID")
+  })
+}
+
+
 // export const getExamsByStudentId = async (id) => {
 //   let allExams = await exam.find();
 //   //check if student id is in marks array
@@ -230,6 +239,7 @@ export const verifyStudent = async (token) => {
 //   return studentExams;
 // };
 
+
 module.exports = {
   createStudent,
   getStudent,
@@ -239,6 +249,7 @@ module.exports = {
   getStudentCountService,
   loginStudent,
   changeStudentPassword,
+  getClassesByStudentId
   //   verifyStudent,
   //   getExamsByStudentId,
 };
