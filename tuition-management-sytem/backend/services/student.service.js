@@ -235,6 +235,44 @@ export const genderDistribution = async() =>{
   return studentGender;
 }
 
+export const getStudentsGradeService = async() =>{
+  const studentGradeCount = {
+    "6" : 0,
+    "7" : 0,
+    "8" : 0,
+    "9" : 0,
+    "10" : 0,
+    "11" : 0,
+    "12" : 0,
+    "13" : 0,
+  }
+
+  await student.find().then((result) =>{
+    result.map((student)=>{
+      if(student.grade === "6"){
+        studentGradeCount[6]++;
+      }else if(student.grade === "7"){
+        studentGradeCount[7]++;
+      }else if(student.grade === "8"){
+        studentGradeCount[8]++;
+      }else if(student.grade === "9"){
+        studentGradeCount[9]++;
+      }else if(student.grade === "10"){
+        studentGradeCount[10]++;
+      }else if(student.grade === "11"){
+        studentGradeCount[11]++;
+      }else if(student.grade === "12"){
+        studentGradeCount[12]++;
+      }else{
+        studentGradeCount[13]++;
+      }
+    });
+  });
+
+  return studentGradeCount;
+
+}
+
 // export const getExamsByStudentId = async (id) => {
 //   let allExams = await exam.find();
 //   //check if student id is in marks array
@@ -255,7 +293,8 @@ module.exports = {
   getStudentCountService,
   loginStudent,
   changeStudentPassword,
-  genderDistribution
+  genderDistribution,
+  getStudentsGradeService
   //   verifyStudent,
   //   getExamsByStudentId,
 };

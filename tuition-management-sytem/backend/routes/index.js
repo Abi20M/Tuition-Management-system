@@ -140,12 +140,18 @@ const Routes = (app) => {
     protect.adminOrTeacherProtect,
     studentController.getAllStudents
   );
-    // get student gender distribution
-    app.get(
-      "/student/gender",
-      protect.adminProtect,
-      studentController.getStudentsGenderDistribution
-    );
+  // get student gender distribution
+  app.get(
+    "/student/gender",
+    protect.adminProtect,
+    studentController.getStudentsGenderDistribution
+  );
+  // get student grade distribution
+  app.get(
+    "/student/grade",
+    protect.adminProtect,
+    studentController.getStudentsGrade
+  );
   app.get(
     "/students/count",
     protect.adminProtect,
@@ -170,7 +176,6 @@ const Routes = (app) => {
     protect.studentProtect,
     studentController.changeStudentPassword
   );
-
 
   //Subject Routes
   app.post("/subject", protect.adminProtect, subjectController.createSubject);

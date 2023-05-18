@@ -146,17 +146,27 @@ export const changeStudentPassword = async (req, res) => {
     });
 };
 
-export const getStudentsGenderDistribution = (req,res)=>{
+export const getStudentsGenderDistribution = (req, res) => {
   studentService
-  .genderDistribution()
-  .then((data) => {
-    req.handleResponse.successRespond(res)(data);
-  })
-  .catch((err) => {
-    req.handleResponse.errorRespond(res)(err);
-  });
-}
+    .genderDistribution()
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+    })
+    .catch((err) => {
+      req.handleResponse.errorRespond(res)(err);
+    });
+};
 
+export const getStudentsGrade = (req, res) => {
+  studentService
+    .getStudentsGradeService()
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+    })
+    .catch((err) => {
+      req.handleResponse.errorRespond(res)(err);
+    });
+};
 module.exports = {
   createStudent,
   getStudent,
@@ -167,5 +177,6 @@ module.exports = {
   getExamsByStudentId,
   getStudentCount,
   changeStudentPassword,
-  getStudentsGenderDistribution
+  getStudentsGenderDistribution,
+  getStudentsGrade,
 };

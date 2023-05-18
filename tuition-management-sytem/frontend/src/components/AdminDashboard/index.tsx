@@ -1,4 +1,4 @@
-import { Avatar, Divider, Group, Paper, Text } from "@mantine/core";
+import { Avatar, Box, Divider, Group, Paper, Text } from "@mantine/core";
 import { IconSchool, IconUser, IconUsers, IconX } from "@tabler/icons";
 import { IconUserBolt } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
@@ -8,7 +8,7 @@ import TeacherAPI from "../../API/teacherAPI";
 import StudentAPI from "../../API/studentAPI";
 import ParentAPI from "../../API/ParentAPI";
 import aos from "aos";
-import { Pie } from "react-chartjs-2";
+import { Bar, Pie } from "react-chartjs-2";
 
 export interface GenderDistribution {
   Male: number;
@@ -23,6 +23,16 @@ const AdminStats = () => {
   const [GenderDistribution, setGenderDistribution] = useState({
     Male: 0,
     Female: 0,
+  });
+  const [gradeDistribution, SetGradeDistribution] = useState({
+    "6": 0,
+    "7": 0,
+    "8": 0,
+    "9": 0,
+    "10": 0,
+    "11": 0,
+    "12": 0,
+    "13": 0,
   });
 
   const fetchUserCounts = async () => {
@@ -95,12 +105,13 @@ const AdminStats = () => {
         });
       });
 
-
-      await StudentAPI.getStudentGender().then((res)=>{
-        console.log(res.data)
-        setGenderDistribution(res.data[0])
-        console.log(GenderDistribution)
-      }).catch((error)=>{
+    await StudentAPI.getStudentGender()
+      .then((res) => {
+        console.log(res.data);
+        setGenderDistribution(res.data[0]);
+        console.log(GenderDistribution);
+      })
+      .catch((error) => {
         showNotification({
           id: "while-fetching-halls",
           disallowClose: false,
@@ -111,8 +122,13 @@ const AdminStats = () => {
           icon: <IconX />,
           loading: false,
         });
-      })
+      });
 
+    await StudentAPI.getStudentGrade().then((res) => {
+      console.log(res.data);
+      SetGradeDistribution(res.data);
+      console.log(gradeDistribution);
+    });
   };
 
   useEffect(() => {
@@ -122,6 +138,49 @@ const AdminStats = () => {
 
   //call above function in every 5mins to collect updated data
   // setInterval(fetchUserCounts,300000)
+
+  const gradeDistributionLabels = ["6", "7", "8", "9", "10", "11", "12", "13"];
+
+  const gradeDistributionOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top" as const,
+      },
+      title: {
+        display: true,
+        text: "Grade Distribution",
+        position: "top" as const,
+        font: {
+          size: 20,
+        },
+      },
+    },
+  };
+
+  const gradeDistributionData = {
+    labels: gradeDistributionLabels,
+
+    datasets: [
+      {
+        label: "Children Count",
+        data: [
+          gradeDistribution[6],
+          gradeDistribution[7],
+          gradeDistribution[8],
+          gradeDistribution[9],
+          gradeDistribution[10],
+          gradeDistribution[11],
+          gradeDistribution[12],
+          gradeDistribution[13],
+        ],
+
+        backgroundColor: `rgba(${Math.floor(Math.random() * 255)},${Math.floor(
+          Math.random() * 255
+        )},${Math.floor(Math.random() * 255)},0.5)`,
+      },
+    ],
+  };
 
   const genderDistribution: GenderDistribution = {
     Male: GenderDistribution.Male,
@@ -141,7 +200,7 @@ const AdminStats = () => {
       },
       title: {
         display: true,
-        text: "Geneder Distribution",
+        text: "Gender Distribution",
         font: {
           size: 20,
         },
@@ -266,20 +325,44 @@ const AdminStats = () => {
           </Group>
         </Paper>
       </Group>
+
+      {/* Pie chart */}
       <Group position="apart" mt={30}>
-        <Paper
+        {/* <Paper
           shadow="xl"
           radius={"md"}
           withBorder
           sx={{
             width: "450px",
-            paddingLeft: 40,
+            paddingLeft: 25,
             paddingTop: "20px",
             paddingBottom: "20px",
           }}
-        >
+        > */}
+        <Paper sx={{ width: "305px", height: "400px" }}>
           <Pie data={pieChartData} options={pieChartOptions} />
         </Paper>
+        {/* </Paper> */}
+
+        {/* barchart */}
+        {/* <Paper
+          shadow="xl"
+          radius={"md"}
+          withBorder
+          sx={{
+            width: "450px",
+            paddingLeft: 10,
+            height: "465px",
+            paddingTop: 30,
+          }}
+        > */}
+        <Paper sx={{ width: "600px", height: "400px" }}>
+          <Bar
+            data={gradeDistributionData}
+            options={gradeDistributionOptions}
+          />
+        </Paper>
+        {/* </Paper> */}
       </Group>
     </>
   );
