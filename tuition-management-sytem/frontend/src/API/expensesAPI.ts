@@ -64,6 +64,15 @@ class ExpensesAPI {
   }) => {
     return axios.post(`${BASE_URL}/admin/details`,values, requestConfig);
   };
+
+  //get expense categories
+  static getExpensesCategories = () => {
+    return axios.get(`${BASE_URL}/expenses/categories`,requestConfig)
+  }
+
+
+
+
 }
 
 export default ExpensesAPI;

@@ -80,6 +80,7 @@ const Routes = (app) => {
     expenseController.getLastFixedValue
   );
   app.post("/admin/details",protect.adminProtect,expenseController.getAdminInfo)
+  app.get("/expenses/categories",protect.adminProtect,expenseController.getCategories)
 
   //teacher Routes
   app.get("/teacher", protect.adminProtect, teacherController.getAllTeacher);

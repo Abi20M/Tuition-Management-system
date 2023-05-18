@@ -1,6 +1,7 @@
 import { Group } from "@mantine/core";
 import { ExpenseCount } from "../expenseOverview";
 import { ProgressCardColored } from "../expenseOverview";
+import { DoughnutChart } from "../expenseOverview";
 
 interface propType {
     totalExpenses: number
@@ -12,14 +13,21 @@ const ExpenseStatus = (prop: propType) => {
         
             <Group 
             position="apart"
-            style={{marginBottom : "500px"}}>
+            >
                 <ExpenseCount />
+                <DoughnutChart />
+
                 <ProgressCardColored
                     totalExpense={prop.totalExpenses}
                     lastFixed={prop.lastFixed}
 
                 />
+
+                
+
+                
             </Group>
+            
 
 
            

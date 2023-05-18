@@ -133,6 +133,21 @@ export const getAdminInfo = (req,res) => {
   
 };
 
+//get expense category for doughnut chart
+export const getCategories = async (req, res,next) =>{
+
+  await expenseServices
+  .getCategories()
+  .then((data) => {
+
+    req.handleResponse.successRespond(res)(data);
+    next();
+  })
+  .catch((error) => {
+    req.handleResponse.errorRespond(res)(error);
+    next();
+  });
+};
 
 module.exports = {
   createExpense,
@@ -142,5 +157,6 @@ module.exports = {
   getExpenseCount,
   addFixedValue,
   getLastFixedValue,
-  getAdminInfo
+  getAdminInfo,
+  getCategories
 };

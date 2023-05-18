@@ -112,7 +112,21 @@ export const sendMail = async (name,email) => {
     return error.message;
   }
 
-}
+};
+
+//get expense category
+export const getCategories = async () => {
+
+  try{
+    // Fetch all expenses and select only the category field
+    const expenses = await Expense.find({}, 'category'); 
+
+    return expenses;
+  }catch(error){
+
+    throw new Error("Failed to reach data");
+  }
+};
 
 
 module.exports = {
@@ -124,4 +138,5 @@ module.exports = {
   addFixedValueService,
   getLastFixedValue,
   sendMail,
+  getCategories,
 };

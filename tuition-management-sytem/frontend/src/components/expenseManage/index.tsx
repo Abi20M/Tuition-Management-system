@@ -34,6 +34,7 @@ import { IconCheck, IconAlertTriangle } from "@tabler/icons";
 import { useForm } from "@mantine/form";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { ExpensePDF } from "../PDFRender/ExpensePDFTemplate";
+import { ExpenseCount } from "../expenseOverview";
 
 //Interface for expense data - (Raw data)
 interface RowData {
@@ -341,7 +342,6 @@ const ExpenseManage = (props: adminName) => {
         if (remainingAmount <= 0) {
           sendAdminDetalis();
         }
-
       })
       .catch((error) => {
         updateNotification({
@@ -394,6 +394,7 @@ const ExpenseManage = (props: adminName) => {
         if (remainingAmount <= 0) {
           sendAdminDetalis();
         }
+
       })
       .catch((error) => {
         updateNotification({
@@ -975,7 +976,8 @@ const ExpenseManage = (props: adminName) => {
         {/* monthly fixed value,total value and remaining value section */}
 
         <Table
-          verticalSpacing="xs" fontSize="sm" withBorder withColumnBorders
+        style={{marginBottom:"-100px"}}
+          verticalSpacing="xs" fontSize="sm" withBorder 
           sx={{ tableLayout: "auto", width: "100%", marginTop: 30 }}
         >
           <tbody>
@@ -1009,30 +1011,7 @@ const ExpenseManage = (props: adminName) => {
                     >
                       Add
                     </Menu.Item>
-
-                    {/* <Menu.Label>edit fixed value</Menu.Label> */}
-                    <Menu.Item
-                      lh={0}
-                      color={"green"}
-                      icon={<IconEdit size={14} />}
-                    // onClick={() => {
-                    //   editForm.setValues({
-                    //     _id: row._id,
-                    //     name: row.name,
-                    //     day: row.day,
-                    //     teacher: row.teacher,
-                    //     subject: row.subject,
-                    //     startTime: new Date(),
-                    //     endTime: new Date(),
-                    //     venue: row.venue,
-                    //   });
-                    //   setOpenEditClassModal(true);
-                    // }}
-                    >
-                      Edit
-                    </Menu.Item>
                     <Menu.Divider />
-
                   </Menu.Dropdown>
                 </Menu>
               </td>
