@@ -146,6 +146,27 @@ export const changeStudentPassword = async (req, res) => {
     });
 };
 
+export const getStudentsGenderDistribution = (req, res) => {
+  studentService
+    .genderDistribution()
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+    })
+    .catch((err) => {
+      req.handleResponse.errorRespond(res)(err);
+    });
+};
+
+export const getStudentsGrade = (req, res) => {
+  studentService
+    .getStudentsGradeService()
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+    })
+    .catch((err) => {
+      req.handleResponse.errorRespond(res)(err);
+    });
+};
 export const updateFee = async (req, res, next) => {
   await studentService
     .updateStudent(req.params.id, req.body)
@@ -169,5 +190,7 @@ module.exports = {
   getExamsByStudentId,
   getStudentCount,
   changeStudentPassword,
+  getStudentsGenderDistribution,
+  getStudentsGrade,
   updateFee,
 };

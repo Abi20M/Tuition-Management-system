@@ -48,6 +48,10 @@ import {
     parent: string;
   }
   
+  const teacher = JSON.parse(localStorage.getItem("teacher") || "{}");
+  const teacherID = teacher._id;
+  
+
   //Get all students records from the database
   const getAllStudents = async () => {
     const response = await TeacherAPI.getStudents();
@@ -61,6 +65,15 @@ import {
     const data = await response.data;
     return data;
   };
+
+  // //get class count
+  // const getClassCount = async () =>  {
+  //   const response = await ClassAPI.getClassCount(teacher.name);
+  //   const data = await response.data;
+
+  //   return data;
+  // }
+
   
   export const options = {
     responsive: true,
@@ -71,13 +84,13 @@ import {
       },
     },
     scales: {
-      xAxes: {
+      x : {
         title: {
           display: true,
           text: "Results",
         },
       },
-      yAxes: {
+      y : {
         title: {
           display: true,
           text: "No Of Students",
@@ -95,13 +108,13 @@ import {
       },
     },
     scales: {
-      xAxes: {
+      x : {
         title: {
           display: true,
           text: "Grades",
         },
       },
-      yAxes: {
+      y : {
         title: {
           display: true,
           text: "No Of Students",
@@ -157,95 +170,98 @@ import {
       0, 0, 0, 0, 0, 0, 0, 0,
     ]);
   
-    // useEffect(() => {
-    //   const fetchData = async () => {
-    //     showNotification({
-    //       id: "loding-data",
-    //       loading: true,
-    //       title: "Loading Teacher Dashboard Data",
-    //       message: "Please wait while we load the data",
-    //       autoClose: false,
-    //       disallowClose: true,
-    //     });
+    useEffect(() => {
+      const fetchData = async () => {
+        showNotification({
+          id: "loding-data",
+          loading: true,
+          title: "Loading Teacher Dashboard Data",
+          message: "Please wait while we load the data",
+          autoClose: false,
+          disallowClose: true,
+        });
   
-    //     const studentResult = await getAllStudents();
-    //     const studentData = studentResult.map((item: any) => {
-    //       return {
-    //         id: item._id,
-    //         name: item.name,
-    //         email: item.email,
-    //         phone: item.phone,
-    //         school: item.school,
-    //         grade: item.grade,
-    //         birthDate: item.birthDate,
-    //         address: item.address,
-    //         gender: item.gender,
-    //         parent: item.parent,
-    //       };
-    //     });
+        const studentResult = await getAllStudents();
+        const studentData = studentResult.map((item: any) => {
+          return {
+            id: item._id,
+            name: item.name,
+            email: item.email,
+            phone: item.phone,
+            school: item.school,
+            grade: item.grade,
+            birthDate: item.birthDate,
+            address: item.address,
+            gender: item.gender,
+            parent: item.parent,
+          };
+        });
   
-    //     const resultClasses = await getAllClasses();
-    //     const classes = resultClasses.map((item: any) => ({
-    //       id: item._id,
-    //       name: item.name,
-    //       description: item.description,
-    //       teacher: item.teacher,
-    //       subject: item.subject,
-    //       date: item.date,
-    //       time: item.time,
-    //     }));
-    //     //filter classes by teacher id
-    //     const teacher = JSON.parse(localStorage.getItem("teacher") || "{}");
-    //     const teacherID = teacher._id;
-    //     const filteredClasses = classes.filter(
-    //       (item: any) => item.teacher === teacherID
-    //     );
-    //     setClasses(filteredClasses.length);
-    //     setStudents(studentData.length);
+        const resultClasses = await getAllClasses();
+        const classes = resultClasses.map((item: any) => ({
+          id: item._id,
+          name: item.name,
+          description: item.description,
+          teacher: item.teacher,
+          subject: item.subject,
+          date: item.date,
+          time: item.time,
+        }));
+
+        //class count
+        // const classCount = await getClassCount();
+        // setClasses(classCount);
+        //filter classes by teacher id
+     
+        const filteredClasses = classes.filter(
+          (item: any) => item.teacher === teacherID
+        );
+        setClasses(filteredClasses.length);
+        setStudents(studentData.length);
   
-    //     //create grade distribution data array - grade 6 to 13
-    //     const gradeDisData = [0, 0, 0, 0, 0, 0, 0, 0];
-    //     studentData.forEach((item: RowDataStudents) => {
-    //       if (item.grade === "6") {
-    //         gradeDisData[0] = gradeDisData[0] + 1;
-    //       } else if (item.grade === "7") {
-    //         gradeDisData[1] = gradeDisData[1] + 1;
-    //       } else if (item.grade === "8") {
-    //         gradeDisData[2] = gradeDisData[2] + 1;
-    //       } else if (item.grade === "9") {
-    //         gradeDisData[3] = gradeDisData[3] + 1;
-    //       } else if (item.grade === "10") {
-    //         gradeDisData[4] = gradeDisData[4] + 1;
-    //       } else if (item.grade === "11") {
-    //         gradeDisData[5] = gradeDisData[5] + 1;
-    //       } else if (item.grade === "12") {
-    //         gradeDisData[6] = gradeDisData[6] + 1;
-    //       } else if (item.grade === "13") {
-    //         gradeDisData[7] = gradeDisData[7] + 1;
-    //       }
-    //     });
-    //     setGradeDistributionData(gradeDisData);
+        //create grade distribution data array - grade 6 to 13
+        const gradeDisData = [0, 0, 0, 0, 0, 0, 0, 0];
+        studentData.forEach((item: RowDataStudents) => {
+          if (item.grade === "6") {
+            gradeDisData[0] = gradeDisData[0] + 1;
+          } else if (item.grade === "7") {
+            gradeDisData[1] = gradeDisData[1] + 1;
+          } else if (item.grade === "8") {
+            gradeDisData[2] = gradeDisData[2] + 1;
+          } else if (item.grade === "9") {
+            gradeDisData[3] = gradeDisData[3] + 1;
+          } else if (item.grade === "10") {
+            gradeDisData[4] = gradeDisData[4] + 1;
+          } else if (item.grade === "11") {
+            gradeDisData[5] = gradeDisData[5] + 1;
+          } else if (item.grade === "12") {
+            gradeDisData[6] = gradeDisData[6] + 1;
+          } else if (item.grade === "13") {
+            gradeDisData[7] = gradeDisData[7] + 1;
+          }
+        });
+        setGradeDistributionData(gradeDisData);
   
-    //     const male = studentData.filter((item: RowDataStudents) => {
-    //       return item.gender === "male";
-    //     });
-    //     setMaleCount(male.length);
-    //     const female = studentData.filter((item: RowDataStudents) => {
-    //       return item.gender === "female";
-    //     });
-    //     setFemaleCount(female.length);
+        const male = studentData.filter((item: RowDataStudents) => {
+          return item.gender === "male";
+        });
+        setMaleCount(male.length);
+        const female = studentData.filter((item: RowDataStudents) => {
+          return item.gender === "female";
+        });
+        setFemaleCount(female.length);
   
-    //     updateNotification({
-    //       id: "loding-data",
-    //       color: "teal",
-    //       title: "Teacher Dashboard data loaded",
-    //       message: "Teacher Dashboard data loaded successfully",
-    //       icon: <IconCheck size={16} />,
-    //       autoClose: 3000,
-    //     });
-    //   };
-    //   fetchData();
-    // }, []);
+        updateNotification({
+          id: "loding-data",
+          color: "teal",
+          title: "Teacher Dashboard data loaded",
+          message: "Teacher Dashboard data loaded successfully",
+          icon: <IconCheck size={16} />,
+          autoClose: 3000,
+        });
+      };
+      fetchData();
+    }, []);
   
     const data = [
       {
@@ -255,7 +271,7 @@ import {
       },
       {
         title: "My Classes",
-        value: classes,
+        value: 5,
         icon: TeacherIcon,
       },
     ];
@@ -389,4 +405,3 @@ import {
   };
   
   export default TeacherOverview;
-  

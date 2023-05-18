@@ -219,6 +219,59 @@ export const verifyStudent = async (token) => {
   });
 };
 
+export const genderDistribution = async() =>{
+
+  let studentGender = [{Male : 0, Female : 0}];
+  await student.find().then((data)=>{
+    data.map((student)=>{
+      if(student.gender === 'male'){
+        studentGender[0].Male += 1;
+      }else{
+        studentGender[0].Female += 1;
+      }
+    });
+  });
+
+  return studentGender;
+}
+
+export const getStudentsGradeService = async() =>{
+  const studentGradeCount = {
+    "6" : 0,
+    "7" : 0,
+    "8" : 0,
+    "9" : 0,
+    "10" : 0,
+    "11" : 0,
+    "12" : 0,
+    "13" : 0,
+  }
+
+  await student.find().then((result) =>{
+    result.map((student)=>{
+      if(student.grade === "6"){
+        studentGradeCount[6]++;
+      }else if(student.grade === "7"){
+        studentGradeCount[7]++;
+      }else if(student.grade === "8"){
+        studentGradeCount[8]++;
+      }else if(student.grade === "9"){
+        studentGradeCount[9]++;
+      }else if(student.grade === "10"){
+        studentGradeCount[10]++;
+      }else if(student.grade === "11"){
+        studentGradeCount[11]++;
+      }else if(student.grade === "12"){
+        studentGradeCount[12]++;
+      }else{
+        studentGradeCount[13]++;
+      }
+    });
+  });
+
+  return studentGradeCount;
+
+}
 export const updateFee = async (id, studentObj) => {
   return await student
     .findByIdAndUpdate(id, studentObj, { new: true })
@@ -254,6 +307,9 @@ module.exports = {
   getStudentCountService,
   loginStudent,
   changeStudentPassword,
+  updateFee,
+  genderDistribution,
+  getStudentsGradeService,
   updateFee,
   //   verifyStudent,
      getExamsByStudentId,

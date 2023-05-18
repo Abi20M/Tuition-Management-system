@@ -46,7 +46,6 @@ const useStyles = createStyles((theme) => ({
 const tabs = [
   "Overview",
   "Manage Expenses",
-  "Past Expenses Details"
 ];
 
 export const ExpenseDashboard = () => {
@@ -111,9 +110,7 @@ export const ExpenseDashboard = () => {
         <Tabs.Panel value="Manage Expenses">
           <ExpenseManage onTotalExpenseChange={handleTotalAmountExpense} user = {user} onLastFixedChange = {handleLastFixedAmountExpense}/>
         </Tabs.Panel>
-        <Tabs.Panel value="Past Expenses Details">
-          <h1>Hello Past details</h1>
-        </Tabs.Panel>   
+          
       </Tabs>
     </Container>
 

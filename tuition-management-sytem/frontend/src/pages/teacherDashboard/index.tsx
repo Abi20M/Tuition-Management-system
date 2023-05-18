@@ -46,8 +46,6 @@ const tabs = [
   "Dashboard",
   "My Students",
   "My Classes",
-  "Schedule",
-  "Students prograss"
 ];
 
 export const TeacherDashboard = () => {
@@ -100,13 +98,7 @@ export const TeacherDashboard = () => {
         </Tabs.Panel>
         <Tabs.Panel value="My Classes">
         <MyClassesTeacher/>
-        </Tabs.Panel>   
-        <Tabs.Panel value="Schedule">
-          <h1>Hello Past details</h1>
-        </Tabs.Panel>  
-        <Tabs.Panel value="Students prograss">
-          <h1>Hello </h1>
-        </Tabs.Panel>  
+        </Tabs.Panel>    
       </Tabs>
     </Container>
 

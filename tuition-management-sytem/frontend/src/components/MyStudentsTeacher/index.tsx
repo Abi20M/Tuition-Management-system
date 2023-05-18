@@ -82,6 +82,7 @@ export const performanceDataSample = {
 
 //Interface for student data - (Raw data)
 interface RowData {
+  _id:string;
   id: string;
   name: string;
   email: string;
@@ -220,62 +221,63 @@ const MyStudentsTeacher: React.FC = () => {
   const [performanceData, setPerformanceData] = useState(performanceDataSample);
 
   // fetch student data
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     showNotification({
-  //       id: "loding-data",
-  //       loading: true,
-  //       title: "Loading data",
-  //       message: "Please wait while we load the data",
-  //       autoClose: false,
-  //       disallowClose: true,
-  //     });
-  //     const result = await getAllStudents();
-  //     const resultParent = await getAllParents();
-  //     const data = result.map((item: any) => {
-  //       return {
-  //         id: item._id,
-  //         name: item.name,
-  //         email: item.email,
-  //         phone: item.phone,
-  //         school: item.school,
-  //         grade: item.grade,
-  //         birthDate: item.birthDate,
-  //         gender:item.gender,
-  //         address: item.address,
-  //         parent: item.parent,
-  //       };
-  //     });
-  //     const dataParent = resultParent.map((item: any) => {
-  //       return {
-  //         id: item._id,
-  //         name: item.name,
-  //         email: item.email,
-  //         phone: item.phone,
-  //       };
-  //     });
+  useEffect(() => {
+    const fetchData = async () => {
+      showNotification({
+        id: "loding-data",
+        loading: true,
+        title: "Loading data",
+        message: "Please wait while we load the data",
+        autoClose: false,
+        disallowClose: true,
+      });
+      const result = await getAllStudents();
+      const resultParent = await getAllParents();
+      const data = result.map((item: any) => {
+        return {
+          _id: item._id,
+          id:item.id,
+          name: item.name,
+          email: item.email,
+          phone: item.phone,
+          school: item.school,
+          grade: item.grade,
+          birthDate: item.birthDate,
+          gender: item.gender,
+          address: item.address,
+          parent: item.parent,
+        };
+      });
+      const dataParent = resultParent.map((item: any) => {
+        return {
+          id: item._id,
+          name: item.name,
+          email: item.email,
+          phone: item.phone,
+        };
+      });
 
-  //     setData(data);
-  //     setParents(dataParent);
-  //     setLoading(false);
-  //     const payload = {
-  //       sortBy: null,
-  //       reversed: false,
-  //       search: "",
-  //     };
-  //     setSortedData(sortData(data, payload));
-  //     updateNotification({
-  //       id: "loding-data",
-  //       color: "teal",
-  //       title: "Data loaded successfully",
-  //       message:
-  //         "You can now manage students by adding, editing or deleting them.",
-  //       icon: <IconCheck size={16} />,
-  //       autoClose: 3000,
-  //     });
-  //   };
-  //   fetchData();
-  // }, []);
+      setData(data);
+      setParents(dataParent);
+      setLoading(false);
+      const payload = {
+        sortBy: null,
+        reversed: false,
+        search: "",
+      };
+      setSortedData(sortData(data, payload));
+      updateNotification({
+        id: "loding-data",
+        color: "teal",
+        title: "Data loaded successfully",
+        message:
+          "You can now manage students by adding, editing or deleting them.",
+        icon: <IconCheck size={16} />,
+        autoClose: 3000,
+      });
+    };
+    fetchData();
+  }, []);
 
   const [search, setSearch] = useState("");
   const [sortedData, setSortedData] = useState(data);
@@ -308,35 +310,35 @@ const MyStudentsTeacher: React.FC = () => {
       disallowClose: true,
     });
 
-      const resultExams = await getExamsByStudentId(id);
-      const exams = resultExams.map((item: any) => ({
-        id: item._id,
-        name: item.name,
-        description: item.description,
-        subject: item.subject,
-        date: item.date,
-        time: item.time,
-        marks: item.marks,
-      }));
+    const resultExams = await getExamsByStudentId(id);
+    const exams = resultExams.map((item: any) => ({
+      id: item._id,
+      name: item.name,
+      description: item.description,
+      subject: item.subject,
+      date: item.date,
+      time: item.time,
+      marks: item.marks,
+    }));
 
-      //get the last 6 exams
-      const lastSixExams = exams.slice(Math.max(exams.length - 6, 0));
-      //get the last 6 exams marks of logged in student
-      const studentID = id;
-      const studentMarks = [0, 0, 0, 0, 0, 0];
+    //get the last 6 exams
+    const lastSixExams = exams.slice(Math.max(exams.length - 6, 0));
+    //get the last 6 exams marks of logged in student
+    const studentID = id;
+    const studentMarks = [0, 0, 0, 0, 0, 0];
 
-      for (let i = 0; i < lastSixExams.length; i++) {
-        for (let j = 0; j < lastSixExams[i].marks.length; j++) {
-          if (lastSixExams[i].marks[j].id === studentID) {
-            studentMarks[i] = lastSixExams[i].marks[j].marks;
-          }
+    for (let i = 0; i < lastSixExams.length; i++) {
+      for (let j = 0; j < lastSixExams[i].marks.length; j++) {
+        if (lastSixExams[i].marks[j].id === studentID) {
+          studentMarks[i] = lastSixExams[i].marks[j].marks;
         }
       }
+    }
 
-      //reverse the array to show the latest exam first
-      studentMarks.reverse();
+    //reverse the array to show the latest exam first
+    studentMarks.reverse();
 
-      const performanceData = {
+    const performanceData = {
       labels,
       datasets: [
         {
@@ -361,8 +363,8 @@ const MyStudentsTeacher: React.FC = () => {
 
   //create rows
   const rows = sortedData.map((row) => (
-    <tr key={row.id}>
-      <td>{row.id.slice(0, 8)}</td>
+    <tr key={row._id}>
+      <td>{row.id}</td>
       <td>{row.name}</td>
       <td>{row.email}</td>
       <td>{row.phone}</td>
@@ -425,11 +427,19 @@ const MyStudentsTeacher: React.FC = () => {
             sx={{ width: "600px" }}
           />
         </Box>
-        <ScrollArea>
+        <ScrollArea
+          sx={{
+            height: 700,
+            width: 1500,
+            marginLeft: -300,
+            marginBottom: -163,
+          }}
+        >
           <Table
+            highlightOnHover
             horizontalSpacing="md"
             verticalSpacing="xs"
-            sx={{ tableLayout: "fixed", width: "100%" }}
+            sx={{ minwidth: 700 }}
           >
             <thead>
               <tr>
