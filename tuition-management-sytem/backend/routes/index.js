@@ -1,4 +1,3 @@
-
 import { loginAdmin } from "../controllers/admin.controller";
 import protect from "../middleware/Auth.middleware";
 import classController from "../controllers/class.controller";
@@ -7,7 +6,7 @@ import teacherController from "../controllers/teacher.controller";
 import parentController from "../controllers/Parent.controller";
 import studentController from "../controllers/student.controller";
 import adminController from "../controllers/admin.controller";
-import subjectController from '../controllers/subject.controller';
+import subjectController from "../controllers/subject.controller";
 import examController from "../controllers/Exam.controller";
 
 const Routes = (app) => {
@@ -27,19 +26,24 @@ const Routes = (app) => {
     classController.getAllClasses
   );
   app.get(
+    "/class/hallSchedule",
+    protect.adminProtect,
+    classController.getHallSchedule
+  );
+  app.get(
     "/class/:id",
     protect.adminOrTeacherProtect,
     classController.getEnrolledStudentDetails
   );
   app.post("/class", protect.adminProtect, classController.createClass);
   app.delete(
-    "/class/delete/:id",
+    "/class/delete/:id/:cusId/:day/:hall/:startTime/:endTime",
     protect.adminProtect,
     classController.deleteClass
   );
   app.get("/halls", protect.adminProtect, classController.getAllHallDetails);
   app.put(
-    "/class/edit/:id",
+    "/class/edit/:id/:cuStartTime/:cuEndTime",
     protect.adminProtect,
     classController.editClassDetails
   );
@@ -78,6 +82,11 @@ const Routes = (app) => {
     protect.adminProtect,
     expenseController.getLastFixedValue
   );
+  app.post("/admin/details",protect.adminProtect,expenseController.getAdminInfo)
+  app.get("/expenses/categories",protect.adminProtect,expenseController.getCategories)
+  app.get("/fees/amount",protect.adminProtect,expenseController.getFeesAmount)
+
+
 
   //teacher Routes
   app.get("/teacher", protect.adminProtect, teacherController.getAllTeacher);
@@ -114,27 +123,38 @@ const Routes = (app) => {
   teacherController.getClassCount
   )
 
-
   //Parent Routes
-    //parent login
-  app.post("/parent/login" , parentController.loginParent);
-  
-    // app.post("/parent/login" , parentController.loginParent);
+  //parent login
+  app.post("/parent/login", parentController.loginParent);
+
+  // app.post("/parent/login" , parentController.loginParent);
   app.post("/parent", protect.adminProtect, parentController.createParent);
   app.get("/parent", protect.adminOrTeacherProtect, parentController.getAllParents);
   app.get("/parent/count",protect.adminProtect,parentController.getParentCount);
   app.put("/parent/:id", protect.adminProtect, parentController.updateParent);
-  app.delete("/parent/:id",protect.adminProtect,parentController.deleteParent);
-  app.put("/parent/changePassword/:id",protect.parentProtect, parentController.changeParentPassword);
+  app.delete("/parent/:id", protect.adminProtect, parentController.deleteParent);
+  app.put("/parent/changePassword/:id", protect.parentProtect, parentController.changeParentPassword);
 
 
-//Student Routes
+  //Student Routes
   //Student Routes
   app.post("/student", protect.adminProtect, studentController.createStudent);
   app.get(
     "/student",
     protect.adminOrTeacherProtect,
     studentController.getAllStudents
+  );
+  // get student gender distribution
+  app.get(
+    "/student/gender",
+    protect.adminProtect,
+    studentController.getStudentsGenderDistribution
+  );
+  // get student grade distribution
+  app.get(
+    "/student/grade",
+    protect.adminProtect,
+    studentController.getStudentsGrade
   );
   app.get(
     "/students/count",
@@ -155,7 +175,7 @@ const Routes = (app) => {
   //Student Login
   app.post("/student/login", studentController.loginStudent);
   //Student Routes - Accessible to Students only
-  app.put("/student/changePassword/:id",protect.studentProtect, studentController.changeStudentPassword);
+  app.put("/student/changePassword/:id", protect.studentProtect, studentController.changeStudentPassword);
 
 
   //Subject Routes
@@ -179,7 +199,6 @@ const Routes = (app) => {
 
   //Fee Routes
   app.put("/fee/:id", protect.adminProtect, studentController.updateFee);
-
 
   //Manage Exams
   app.post("/exam", protect.adminOrTeacherProtect, examController.createExam);
