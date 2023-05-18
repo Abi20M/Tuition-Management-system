@@ -102,4 +102,8 @@ export class ClassAPI {
         }
         return axios.put(`${BASE_URL}/class/unenroll`,unEnrollDetails,requestConfig);
     } 
+
+    static getHallSchedule = async() =>{
+        return axios.get(`${BASE_URL}/class/hallSchedule`,requestConfig);
+    }
 }

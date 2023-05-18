@@ -219,6 +219,22 @@ export const verifyStudent = async (token) => {
   });
 };
 
+export const genderDistribution = async() =>{
+
+  let studentGender = [{Male : 0, Female : 0}];
+  await student.find().then((data)=>{
+    data.map((student)=>{
+      if(student.gender === 'male'){
+        studentGender[0].Male += 1;
+      }else{
+        studentGender[0].Female += 1;
+      }
+    });
+  });
+
+  return studentGender;
+}
+
 // export const getExamsByStudentId = async (id) => {
 //   let allExams = await exam.find();
 //   //check if student id is in marks array
@@ -239,6 +255,7 @@ module.exports = {
   getStudentCountService,
   loginStudent,
   changeStudentPassword,
+  genderDistribution
   //   verifyStudent,
   //   getExamsByStudentId,
 };

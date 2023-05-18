@@ -103,6 +103,10 @@ class StudentAPI {
     return axios.put(`${BASE_URL}/student/changePassword/${values.documentId}`,password,  requestConfigJson);
     
   }
+
+  static getStudentGender = ()=>{
+    return axios.get(`${BASE_URL}/student/gender`,requestConfigJson)
+  }
 }
 
 export default StudentAPI;

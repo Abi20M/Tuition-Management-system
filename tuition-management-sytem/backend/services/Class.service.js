@@ -1,6 +1,5 @@
 import Class from "../models/class.model";
 import Hall from "../models/hall.model";
-import Student from "../models/student.model";
 import classMails from "../Mails/class.mails";
 import Schedule from "../models/hallSchedule.model";
 
@@ -187,8 +186,6 @@ export const editClassDetails = async (
   currentStartTime,
   currentEndTime
 ) => {
-
-
   const newScheduleObj = {
     id: classCustomId,
     startTime: editedDetails.startTime,
@@ -215,15 +212,21 @@ export const editClassDetails = async (
     hour12: false,
   });
 
-   return await Schedule.findOneAndUpdate(
+  return await Schedule.findOneAndUpdate(
     { hallId: editedDetails.venue, day: editedDetails.day },
     {
-      $pull: { classes: { id: classCustomId, startTime: currentStartTime, endTime: currentEndTime } },
+      $pull: {
+        classes: {
+          id: classCustomId,
+          startTime: currentStartTime,
+          endTime: currentEndTime,
+        },
+      },
     },
     { new: true }
   ).then(async (result) => {
-    console.log(result)
-    
+    console.log(result);
+
     return Schedule.find({
       hallId: editedDetails.venue,
       day: editedDetails.day,
@@ -322,6 +325,45 @@ export const unEnrollStudent = async (
     });
 };
 
+export const getHallScheduleService = async () => {
+  return await Schedule.find().then((data) => {
+    // loop through all the schedules
+    for (let i = 0; i < data.length; i++) {
+      // sort classes in ascending order by its startTime
+      data[i].classes.sort(({ startTime: a }, { startTime: b }) => {
+        return new Date(a).toLocaleTimeString("en-Us", {
+          hour: "numeric",
+          minute: "numeric",
+          hour12: false,
+        }) >
+          new Date(b).toLocaleTimeString("en-Us", {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: false,
+          })
+          ? 1
+          : new Date(a).toLocaleTimeString("en-Us", {
+              hour: "numeric",
+              minute: "numeric",
+              hour12: false,
+            }) <
+            new Date(b).toLocaleTimeString("en-Us", {
+              hour: "numeric",
+              minute: "numeric",
+              hour12: false,
+            })
+          ? -1
+          : 0;
+      });
+
+    }
+    // return sorted schedule details
+    return data;
+  }).catch((error)=>{
+    throw new Error("Error while fetching schedule details");
+  });
+};
+
 module.exports = {
   createClass,
   getAllClasses,
@@ -332,4 +374,5 @@ module.exports = {
   enrollStudent,
   getEnrolledStudentsData,
   unEnrollStudent,
+  getHallScheduleService,
 };

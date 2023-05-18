@@ -11,6 +11,7 @@ import { ManageExamsAdmin } from "../../components";
 
 import ManageSubjects from "../../components/manageSubjects";
 import ManageFees from "../../components/manageFees";
+import HallSchedule from "../../components/HallSchedule";
 
 const useStyles = createStyles((theme) => ({
   tabs: {
@@ -131,6 +132,7 @@ export const AdminDashboard = () => {
           <Tabs.Panel value="Exam">
             <ManageExamsAdmin />
           </Tabs.Panel>
+
         </Tabs>
       </Container>
 

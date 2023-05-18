@@ -18,11 +18,11 @@ export const createClass = async (req, res, next) => {
   await classServices
     .createClass(classObj)
     .then((data) => {
-      console.log("then"+data)
+      console.log("then" + data);
       req.handleResponse.successRespond(res)(data);
     })
     .catch((error) => {
-      console.log(error.message)
+      console.log(error.message);
       req.handleResponse.errorRespond(res)(error.message);
     });
 };
@@ -67,7 +67,7 @@ export const deleteClass = async (req, res, next) => {
   const endTime = req.params.endTime;
 
   await classServices
-    .deleteClass(id,cusId,day,hall,startTime,endTime)
+    .deleteClass(id, cusId, day, hall, startTime, endTime)
     .then((data) => {
       req.handleResponse.successRespond(res)(data);
       next();
@@ -107,10 +107,14 @@ export const editClassDetails = async (req, res, next) => {
     venue: req.body.venue,
   };
 
-
-
   await classServices
-    .editClassDetails(classId, classCustomId ,classObj,currentStartTime,currentEndTime)
+    .editClassDetails(
+      classId,
+      classCustomId,
+      classObj,
+      currentStartTime,
+      currentEndTime
+    )
     .then((data) => {
       req.handleResponse.successRespond(res)(data);
       next();
@@ -124,10 +128,10 @@ export const editClassDetails = async (req, res, next) => {
 export const enrollStudent = async (req, res, next) => {
   const enrollStudent = {
     studentID: req.body.studentid,
-    studentName : req.body.studentname,
-    studentEmail : req.body.studentemail,
+    studentName: req.body.studentname,
+    studentEmail: req.body.studentemail,
     classId: req.body.classid,
-    className : req.body.classname
+    className: req.body.classname,
   };
 
   classServices
@@ -160,6 +164,17 @@ export const unEnrollStudent = (req, res, next) => {
       next();
     });
 };
+
+export const getHallSchedule = (req, res) => {
+  classServices
+    .getHallScheduleService()
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+    })
+    .catch((error) => {
+      req.handleResponse.errorRespond(res)(error);
+    });
+};
 module.exports = {
   createClass,
   getAllClasses,
@@ -169,4 +184,5 @@ module.exports = {
   enrollStudent,
   getEnrolledStudentDetails,
   unEnrollStudent,
+  getHallSchedule,
 };
