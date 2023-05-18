@@ -1,3 +1,4 @@
+
 import { loginAdmin } from "../controllers/admin.controller";
 import protect from "../middleware/Auth.middleware";
 import classController from "../controllers/class.controller";
@@ -8,7 +9,6 @@ import studentController from "../controllers/student.controller";
 import adminController from "../controllers/admin.controller";
 import subjectController from '../controllers/subject.controller';
 import examController from "../controllers/Exam.controller";
-import feeController from "../controllers/Fee.controller";
 
 const Routes = (app) => {
   //normal validation root of the user
@@ -78,6 +78,8 @@ const Routes = (app) => {
     protect.adminProtect,
     expenseController.getLastFixedValue
   );
+  app.post("/admin/details",protect.adminProtect,expenseController.getAdminInfo)
+  app.get("/expenses/categories",protect.adminProtect,expenseController.getCategories)
 
   //teacher Routes
   app.get("/teacher", protect.adminProtect, teacherController.getAllTeacher);
@@ -95,25 +97,29 @@ const Routes = (app) => {
   app.put("/teacher/:id", protect.adminProtect, teacherController.editTeacher);
   app.post("/teacher/login", teacherController.teacherLogin);
 
+  // //Teacher Routes - Accessible to Teachers only
+  // //get students of the specific teacher by teacher id
+  // app.get(
+  //   "/teacher/:id/students",
+  //   protect.teacherProtect,
+  //   teacherController.getStudents
+  // );
 
 
   //Parent Routes
-    //parent login
-    // app.post("/parent/login" , parentController.loginParent);
+  //parent login
+  app.post("/parent/login", parentController.loginParent);
+
+  // app.post("/parent/login" , parentController.loginParent);
   app.post("/parent", protect.adminProtect, parentController.createParent);
   app.get("/parent", protect.adminProtect, parentController.getAllParents);
-  app.get(
-    "/parent/count",
-    protect.adminProtect,
-    parentController.getParentCount
-  );
+  app.get("/parent/count", protect.adminProtect, parentController.getParentCount);
   app.put("/parent/:id", protect.adminProtect, parentController.updateParent);
-  app.delete(
-    "/parent/:id",
-    protect.adminProtect,
-    parentController.deleteParent
-  );
+  app.delete("/parent/:id", protect.adminProtect, parentController.deleteParent);
+  app.put("/parent/changePassword/:id", protect.parentProtect, parentController.changeParentPassword);
 
+
+  //Student Routes
   //Student Routes
   app.post("/student", protect.adminProtect, studentController.createStudent);
   app.get(
@@ -140,7 +146,7 @@ const Routes = (app) => {
   //Student Login
   app.post("/student/login", studentController.loginStudent);
   //Student Routes - Accessible to Students only
-  app.put("/student/changePassword/:id",protect.studentProtect, studentController.changeStudentPassword);
+  app.put("/student/changePassword/:id", protect.studentProtect, studentController.changeStudentPassword);
 
 
   //Subject Routes
@@ -163,11 +169,7 @@ const Routes = (app) => {
   );
 
   //Fee Routes
-  app.post("/fee", protect.adminProtect, feeController.createFee);
-  app.get("/fee", protect.adminProtect, feeController.getAllFees);
-  app.get("/fee/count", protect.adminProtect, feeController.getFeeCount);
-  app.put("/fee/:id", protect.adminProtect, feeController.updateFee);
-  app.delete("/fee/:id", protect.adminProtect, feeController.deleteFee);
+  app.put("/fee/:id", protect.adminProtect, studentController.updateFee);
 
 
   //Manage Exams

@@ -4,6 +4,7 @@ const StudentSchema = new Schema({
   id: {
     type: String,
     required : true,
+    unique : true,
   },
   name: {
     type: String,
@@ -50,6 +51,18 @@ const StudentSchema = new Schema({
   parent: {
     type: Schema.Types.ObjectId,
     ref: "Parent",
+  },
+
+  //student fees calculation
+  amount: {
+    type: String,
+    required: false,
+    default: '00.00'
+  },
+  status: {
+    type: String,
+    required: false,
+    default: 'Not-Paid'
   },
 });
 

@@ -1,11 +1,13 @@
 import Expense from "../models/expense.model";
 import FixedValue from '../models/expense.fixed.value.model';
 
+import ExpenseMail from "../Mails/expense.mails"
+
 //generate expense Id
 const generateExpenseId = async () => {
   //get last expense object, if there is a expense, then return that expense object, otherwise return empty array
   const lastExpenseDetails = await Expense.find().sort({ _id: -1 }).limit(1);
-  
+
   //check if the result array is empty or not, if its empty then return first expense Id
   if (lastExpenseDetails.length == 0) {
     return "EXP-001";
@@ -35,56 +37,56 @@ export const createExpense = async (expenseObj) => {
   //generate the expense ID  
   const id = await generateExpenseId();
 
-//create a new object by adding generated ID
+  //create a new object by adding generated ID
   const newExpenseObj = {
-    id : id,
-    name : expenseObj.name,
-    description : expenseObj.description,
-    category : expenseObj.category,
-    amount : expenseObj.amount,
+    id: id,
+    name: expenseObj.name,
+    description: expenseObj.description,
+    category: expenseObj.category,
+    amount: expenseObj.amount,
   }
 
-  return await Expense.create(newExpenseObj).then(async (obj) =>{
-      await obj.save();
-      return obj;
-  }).catch((error) =>{
+  return await Expense.create(newExpenseObj).then(async (obj) => {
+    await obj.save();
+    return obj;
+  }).catch((error) => {
     throw new Error(error.message);
   })
 };
 
-export const getAllExpenses = async () =>{
+export const getAllExpenses = async () => {
   return await Expense.find();
-  
+
 }
 
-export const deleteExpense = async(id) =>{
+export const deleteExpense = async (id) => {
   return await Expense.findByIdAndDelete(id);
 }
 
-export const editExpense = async (id,updatedExpense) => {
+export const editExpense = async (id, updatedExpense) => {
 
   return await Expense.findByIdAndUpdate(id, updatedExpense, { new: true });
 };
 
-//get admin count 
+//get expense count 
 export const getExpenseCountService = async () => {
   return await Expense
-   .countDocuments()
-   .then((data) => {
-     return data;
-   })
-   .catch((error) =>{
-     throw new Error(error.message);
-   });
-   
+    .countDocuments()
+    .then((data) => {
+      return data;
+    })
+    .catch((error) => {
+      throw new Error(error.message);
+    });
+
 };
 
 //add fixed value
 const addFixedValueService = async (fixedvalue) => {
-  return await FixedValue.create(fixedvalue).then((res)=>{
+  return await FixedValue.create(fixedvalue).then((res) => {
     res.save();
     return res;
-  }).catch((error) =>{
+  }).catch((error) => {
     return error.message;
   })
 };
@@ -97,7 +99,33 @@ const getLastFixedValue = async () => {
   } catch (error) {
     return error.message;
   }
-  
+
+};
+
+//expense exceeded function
+export const sendMail = async (name,email) => {
+  try {
+
+    ExpenseMail.sendExceedMail(name, email)
+
+  } catch (error) {
+    return error.message;
+  }
+
+};
+
+//get expense category
+export const getCategories = async () => {
+
+  try{
+    // Fetch all expenses and select only the category field
+    const expenses = await Expense.find({}, 'category'); 
+
+    return expenses;
+  }catch(error){
+
+    throw new Error("Failed to reach data");
+  }
 };
 
 
@@ -109,4 +137,6 @@ module.exports = {
   getExpenseCountService,
   addFixedValueService,
   getLastFixedValue,
+  sendMail,
+  getCategories,
 };
