@@ -129,7 +129,6 @@ export const changeParentPassword = async (req, res) => {
 
 //get students by parent id
 export const getStudents = async (req, res, next) => {
-  console.log("Hello")
   await parentService
     .getStudents(req.params.id)    
     .then((data) => {
@@ -141,6 +140,8 @@ export const getStudents = async (req, res, next) => {
       next();
     });
 };
+
+
 
 
 

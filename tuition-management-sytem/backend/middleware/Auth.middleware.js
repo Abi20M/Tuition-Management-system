@@ -159,10 +159,42 @@ export const parentProtect = async (req, res, next) => {
   }
 };
 
+export const adminOrTeacherOrParent = async (req, res, next) => {
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    try {
+      token = req.headers.authorization.split(" ")[1];
+      const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+      if (decoded.role !== "admin" && decoded.role !== "teacher" && decoded.role !== "parent") {
+        return res
+          .status(401)
+          .json({ message: "Not authorized to access this route" });
+      } else {
+        next();
+      }
+    } catch (error) {
+      res.status(401);
+      req.handleResponse.unauthorizedRespond(res)(
+        "Not authorized to access this route"
+      );
+    }
+  }
+  if (!token) {
+    res.status(401);
+    req.handleResponse.unauthorizedRespond(res)(
+      "Not authorized to access this route"
+    );
+  }
+};
+
 module.exports = {
   adminProtect,
   studentProtect,
   adminOrTeacherProtect,
   teacherProtect,
   parentProtect,
+  adminOrTeacherOrParent
 };

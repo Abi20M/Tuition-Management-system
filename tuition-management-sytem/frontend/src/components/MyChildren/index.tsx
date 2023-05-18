@@ -344,7 +344,7 @@ const MyChildren: React.FC = () => {
       <td>{row.fee}</td>
       <td>{row.grade}</td>
       <td>
-        <Button
+        {/* <Button
           color="green"
           leftIcon={<IconChartBar size={8} />}
           sx={{ margin: "5px", width: "130px" }}
@@ -353,7 +353,7 @@ const MyChildren: React.FC = () => {
           }}
         >
           Performance
-        </Button>
+        </Button> */}
       </td>
     </tr>
   ));
@@ -380,7 +380,7 @@ const MyChildren: React.FC = () => {
             sx={{ width: "300px" }}
           />
         </Box>
-        <ScrollArea>
+        <ScrollArea style={{marginBottom:"200px"}}>
           <Table
             horizontalSpacing="md"
             verticalSpacing="xs"
@@ -437,7 +437,7 @@ const MyChildren: React.FC = () => {
                 >
                   Birth Date
                 </Th> */}
-                <th>Action</th>
+                {/* <th>Action</th> */}
               </tr>
             </thead>
             <tbody>
