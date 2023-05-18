@@ -51,7 +51,8 @@ export const ExpenseCount = () => {
   }, []);
 
   //call above function in every 5mins to collect updated data
-  setInterval(fetchUserCounts, 100000)
+  setInterval(fetchUserCounts, 200000)
+
 
   return (
     <Group position="center" p={5}>
@@ -160,7 +161,8 @@ export const DoughnutChart = () => {
     fetchExpenseCategories();
   }, [])
 
-  setInterval(fetchExpenseCategories, 100000)
+  setInterval(fetchExpenseCategories, 200000)
+
 
 
   var category1 = 0, category2 = 0, category3 = 0, category4 = 0, category5 = 0, category6 = 0, category7 = 0, category8 = 0;
@@ -188,14 +190,6 @@ export const DoughnutChart = () => {
     }
   });
 
-  console.log("cat 1: "+category1)
-  console.log("cat 2: "+category2)
-  console.log("cat 3: "+category3)
-  console.log("cat 4: "+category4)
-  console.log("cat 5: "+category5)
-  console.log("cat 6: "+category6)
-  console.log("cat 7: "+category7)
-  console.log("cat 8: "+category8)
 
   const data = {
     labels: ['Building',

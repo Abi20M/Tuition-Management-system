@@ -1,5 +1,8 @@
 import Expense from "../models/expense.model";
 import FixedValue from '../models/expense.fixed.value.model';
+import ExpenseMail from "../Mails/expense.mails"
+import Student from "../models/student.model"
+
 
 import ExpenseMail from "../Mails/expense.mails"
 
@@ -99,7 +102,6 @@ const getLastFixedValue = async () => {
   } catch (error) {
     return error.message;
   }
-
 };
 
 //expense exceeded function
@@ -128,6 +130,44 @@ export const getCategories = async () => {
   }
 };
 
+//expense exceeded function
+export const sendMail = async (name,email) => {
+  try {
+
+    ExpenseMail.sendExceedMail(name, email)
+
+  } catch (error) {
+    return error.message;
+  }
+
+};
+
+//get expense category
+export const getCategories = async () => {
+
+  try{
+    // Fetch all expenses and select only the category field
+    const expenses = await Expense.find({}, 'category'); 
+
+    return expenses;
+  }catch(error){
+
+    throw new Error("Failed to reach data");
+  }
+};
+
+//get fees
+const getFeesAmount = async () => {
+  try {
+    const students = await Student.find();
+    const totalFees = students.reduce((total, student) => total + parseFloat(student.amount), 0);
+
+    return totalFees;
+  } catch (error) {
+    return error.message;
+  }
+};
+
 
 module.exports = {
   createExpense,
@@ -139,4 +179,5 @@ module.exports = {
   getLastFixedValue,
   sendMail,
   getCategories,
+  getFeesAmount
 };
