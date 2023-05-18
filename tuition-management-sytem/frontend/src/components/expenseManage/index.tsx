@@ -34,6 +34,7 @@ import { IconCheck, IconAlertTriangle } from "@tabler/icons";
 import { useForm } from "@mantine/form";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { ExpensePDF } from "../PDFRender/ExpensePDFTemplate";
+import { ExpenseCount } from "../expenseOverview";
 
 //Interface for expense data - (Raw data)
 interface RowData {
@@ -336,6 +337,11 @@ const ExpenseManage = (props: adminName) => {
         setTotalExpense(newTotal);
         props.onTotalExpenseChange(newTotal);
 
+        //get remaining amount 
+        var remainingAmount = lastFixedValue - newTotal;
+        if (remainingAmount <= 0) {
+          sendAdminDetalis();
+        }
       })
       .catch((error) => {
         updateNotification({
@@ -382,6 +388,13 @@ const ExpenseManage = (props: adminName) => {
         const newDeleteExpenseTotal = totalExpense - parseFloat(response.data.amount);
         setTotalExpense(newDeleteExpenseTotal);
         props.onTotalExpenseChange(newDeleteExpenseTotal);
+
+        //get remaining amount 
+        var remainingAmount = lastFixedValue - newDeleteExpenseTotal;
+        if (remainingAmount <= 0) {
+          sendAdminDetalis();
+        }
+
       })
       .catch((error) => {
         updateNotification({
@@ -447,16 +460,26 @@ const ExpenseManage = (props: adminName) => {
 
         //pass total expense amount to overview
         props.onTotalExpenseChange(TotalExpenseValue);
+
       });
 
     };
     fetchData();
     getLastFixedValue();
-   // const val = getCurrentAamout();
-    //setCurrentValue(val);
 
   }, []);
 
+
+  //pass the admin details
+  const sendAdminDetalis = async () => {
+
+    //store the loged admin details 
+    const admin = JSON.parse(localStorage.getItem("admin") || "{}");
+    const { name, email } = admin;
+
+    ExpensesAPI.getAdminDetails({ name, email })
+
+  };
 
   //declare edit form
   const editForm = useForm({
@@ -583,12 +606,12 @@ const ExpenseManage = (props: adminName) => {
   ));
 
   //get current value
-  function getCurrentAamout (amount : number) {
+  function getCurrentAamout(amount: number) {
 
     setCurrentValue(amount);
   };
 
-  
+
 
   //edit expense function
   const editExpenses = async (values: {
@@ -644,10 +667,16 @@ const ExpenseManage = (props: adminName) => {
         //update total value of expense
         const updatedVal = parseFloat(response.data.amount);
         const newUpdatedTotal = (totalExpense + (updatedVal - currentValue));
-       
+
         //pase to the overview tab
         setTotalExpense(newUpdatedTotal);
         props.onTotalExpenseChange(newUpdatedTotal);
+
+        //get remaining amount 
+        var remainingAmount = lastFixedValue - newUpdatedTotal;
+        if (remainingAmount <= 0) {
+          sendAdminDetalis();
+        }
       })
       .catch((error) => {
         updateNotification({
@@ -947,7 +976,8 @@ const ExpenseManage = (props: adminName) => {
         {/* monthly fixed value,total value and remaining value section */}
 
         <Table
-          verticalSpacing="xs" fontSize="sm" withBorder withColumnBorders
+        style={{marginBottom:"-100px"}}
+          verticalSpacing="xs" fontSize="sm" withBorder 
           sx={{ tableLayout: "auto", width: "100%", marginTop: 30 }}
         >
           <tbody>
@@ -981,30 +1011,7 @@ const ExpenseManage = (props: adminName) => {
                     >
                       Add
                     </Menu.Item>
-
-                    {/* <Menu.Label>edit fixed value</Menu.Label> */}
-                    <Menu.Item
-                      lh={0}
-                      color={"green"}
-                      icon={<IconEdit size={14} />}
-                    // onClick={() => {
-                    //   editForm.setValues({
-                    //     _id: row._id,
-                    //     name: row.name,
-                    //     day: row.day,
-                    //     teacher: row.teacher,
-                    //     subject: row.subject,
-                    //     startTime: new Date(),
-                    //     endTime: new Date(),
-                    //     venue: row.venue,
-                    //   });
-                    //   setOpenEditClassModal(true);
-                    // }}
-                    >
-                      Edit
-                    </Menu.Item>
                     <Menu.Divider />
-
                   </Menu.Dropdown>
                 </Menu>
               </td>
