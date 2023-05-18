@@ -73,6 +73,7 @@ const useStyles = createStyles((theme) => ({
     backgroundColor:
       theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
     transition: "box-shadow 150ms ease",
+    zIndex:100,
 
     "&::after": {
       content: '""',
@@ -291,6 +292,11 @@ const ClassManage = ({ user }: adminName) => {
     []
   );
 
+  // set crurrent classs start time and end time
+  const [currentStartTime, setCurrentStartTime] = useState("");
+  const [currentEndTime,setCurrentEndTime] = useState("");
+
+
   //set admin name
   const adminName = user.name;
 
@@ -314,7 +320,7 @@ const ClassManage = ({ user }: adminName) => {
   };
 
   // delete class modal
-  const openDeleteModal = (name: string, id: string) =>
+  const openDeleteModal = (name: string, id: string,cusId:string,day:string,hall:string,startTime:string,endTime:string) =>
     openConfirmModal({
       title: `Do you want to delete ${name} ? `,
       centered: true,
@@ -326,7 +332,7 @@ const ClassManage = ({ user }: adminName) => {
       ),
       labels: { confirm: "Delete class", cancel: "No don't delete it" },
       confirmProps: { color: "red", leftIcon: <IconTrash size={16} /> },
-      onConfirm: () => deleteClass(name, id),
+      onConfirm: () => deleteClass(name, id,cusId,day,hall,startTime,endTime),
       onCancel: () => {
         showNotification({
           id: "cancel-delete",
@@ -340,14 +346,14 @@ const ClassManage = ({ user }: adminName) => {
     });
 
   // delete class
-  const deleteClass = (name: string, id: string) => {
+  const deleteClass = (name: string, id: string,cusId:string,day:string,hall:string,startTime:string,endTime:string) => {
     showNotification({
       id: "class-delete",
       title: "Deleting....",
       message: `We are trying to delete ${name}`,
       loading: true,
     });
-    ClassAPI.deleteClass(id)
+    ClassAPI.deleteClass(id,cusId,day,hall,startTime,endTime)
       .then((data) => {
         const newClassData = classDetails.filter((value) => {
           return value._id !== id;
@@ -385,6 +391,7 @@ const ClassManage = ({ user }: adminName) => {
   // Edit class function
   const editClass = async (values: {
     _id: string;
+    id:string;
     name: string;
     teacher: string;
     subject: string;
@@ -400,7 +407,7 @@ const ClassManage = ({ user }: adminName) => {
       loading: true,
     });
 
-    await ClassAPI.editClassDetails(values)
+    await ClassAPI.editClassDetails(values,currentStartTime,currentEndTime)
       .then((data) => {
         updateNotification({
           id: "class-edit",
@@ -445,7 +452,7 @@ const ClassManage = ({ user }: adminName) => {
           id: "class-edit",
           autoClose: 3000,
           title: `${values.name} was not edited!`,
-          message: `There is an error while editing ${values.name}!`,
+          message: `${error.response.data.message}!`,
           color: "red",
           icon: <IconAlertTriangle />,
         });
@@ -661,6 +668,7 @@ const ClassManage = ({ user }: adminName) => {
               onClick={() => {
                 editForm.setValues({
                   _id: row._id,
+                  id : row.id,
                   name: row.name,
                   day: row.day,
                   teacher: row.teacher,
@@ -672,6 +680,8 @@ const ClassManage = ({ user }: adminName) => {
                 setOpenEditClassModal(true);
                 getTeacherDetails();
                 getSubjectDetails();
+                setCurrentStartTime(row.startTime)
+                setCurrentEndTime(row.endTime)
               }}
             >
               Edit
@@ -682,7 +692,7 @@ const ClassManage = ({ user }: adminName) => {
               lh={0}
               color={"red"}
               icon={<IconTrash size={14} />}
-              onClick={() => openDeleteModal(row.name, row._id)}
+              onClick={() => openDeleteModal(row.name, row._id,row.id,row.day,row.venue,row.startTime,row.endTime)}
             >
               Delete{" "}
             </Menu.Item>
@@ -1092,6 +1102,7 @@ const ClassManage = ({ user }: adminName) => {
     validateInputOnChange: true,
     initialValues: {
       _id: "",
+      id : "",
       name: "",
       teacher: "",
       subject: "",
@@ -1107,28 +1118,28 @@ const ClassManage = ({ user }: adminName) => {
           ? null
           : "Invalid class name, Class name should have more than 3 characters!",
 
-      startTime: (time) =>
-        time.toLocaleTimeString("en-US", {
-          hour: "numeric",
-          minute: "numeric",
-        }) <
-        new Date("1970-01-01T" + "08:00:00").toLocaleTimeString("en-US", {
-          hour: "numeric",
-          minute: "numeric",
-        })
-          ? "Class start time should be withing working hours"
-          : null,
-      endTime: (time) =>
-        time.toLocaleTimeString("en-US", {
-          hour: "numeric",
-          minute: "numeric",
-        }) >
-        new Date("1970-01-01T" + "23:00:00").toLocaleTimeString("en-US", {
-          hour: "numeric",
-          minute: "numeric",
-        })
-          ? "Class end time should be withing working hours"
-          : null,
+      // startTime: (time) =>
+      //   time.toLocaleTimeString("en-US", {
+      //     hour: "numeric",
+      //     minute: "numeric",
+      //   }) <
+      //   new Date("1970-01-01T" + "08:00:00").toLocaleTimeString("en-US", {
+      //     hour: "numeric",
+      //     minute: "numeric",
+      //   })
+      //     ? "Class start time should be withing working hours"
+      //     : null,
+      // endTime: (time) =>
+      //   time.toLocaleTimeString("en-US", {
+      //     hour: "numeric",
+      //     minute: "numeric",
+      //   }) >
+      //   new Date("1970-01-01T" + "23:00:00").toLocaleTimeString("en-US", {
+      //     hour: "numeric",
+      //     minute: "numeric",
+      //   })
+      //     ? "Class end time should be withing working hours"
+      //     : null,
     },
   });
 

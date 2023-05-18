@@ -60,9 +60,14 @@ export const getAllClasses = async (req, res, next) => {
 // delete a class
 export const deleteClass = async (req, res, next) => {
   const id = req.params.id;
+  const cusId = req.params.cusId;
+  const day = req.params.day;
+  const hall = req.params.hall;
+  const startTime = req.params.startTime;
+  const endTime = req.params.endTime;
 
   await classServices
-    .deleteClass(id)
+    .deleteClass(id,cusId,day,hall,startTime,endTime)
     .then((data) => {
       req.handleResponse.successRespond(res)(data);
       next();
@@ -88,6 +93,9 @@ export const getAllHallDetails = async (req, res, next) => {
 
 export const editClassDetails = async (req, res, next) => {
   const classId = req.params.id;
+  const currentStartTime = req.params.cuStartTime;
+  const currentEndTime = req.params.cuEndTime;
+  const classCustomId = req.body.id;
 
   const classObj = {
     name: req.body.name,
@@ -99,14 +107,16 @@ export const editClassDetails = async (req, res, next) => {
     venue: req.body.venue,
   };
 
+
+
   await classServices
-    .editClassDetails(classId, classObj)
+    .editClassDetails(classId, classCustomId ,classObj,currentStartTime,currentEndTime)
     .then((data) => {
       req.handleResponse.successRespond(res)(data);
       next();
     })
     .catch((error) => {
-      req.handleResponse.errorRespond(res)(error);
+      req.handleResponse.errorRespond(res)(error.message);
       next();
     });
 };

@@ -34,13 +34,13 @@ const Routes = (app) => {
   );
   app.post("/class", protect.adminProtect, classController.createClass);
   app.delete(
-    "/class/delete/:id",
+    "/class/delete/:id/:cusId/:day/:hall/:startTime/:endTime",
     protect.adminProtect,
     classController.deleteClass
   );
   app.get("/halls", protect.adminProtect, classController.getAllHallDetails);
   app.put(
-    "/class/edit/:id",
+    "/class/edit/:id/:cuStartTime/:cuEndTime",
     protect.adminProtect,
     classController.editClassDetails
   );

@@ -40,32 +40,34 @@ export const validateNewClass = (data, nS, nE) => {
   console.log(nS);
   console.log(nE);
 
-  data.map((data) => {
-    // convert exsiting class start date to 24Hr time format
-    const oS = new Date(data.startTime).toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: false,
+  data.map((classObj) => {
+    classObj.classes.map((Schedule) => {
+      // convert exsiting class start date to 24Hr time format
+      const oS = new Date(Schedule.startTime).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: false,
+      });
+
+      // convert exsiting class start date to 24Hr time format
+      const oE = new Date(Schedule.endTime).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: false,
+      });
+
+      console.log(oS);
+      console.log(oE);
+
+      // validate class
+      if (nS < oS && nE > oS) {
+        allocatedSlotCount++;
+      } else if (nS >= oS && nE <= oE) {
+        allocatedSlotCount++;
+      } else if (nS < oE && nE >= oE) {
+        allocatedSlotCount++;
+      }
     });
-
-    // convert exsiting class start date to 24Hr time format
-    const oE = new Date(data.endTime).toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: false,
-    });
-
-    console.log(oS);
-    console.log(oE);
-
-    // validate class
-    if (nS < oS && nE > oS) {
-      allocatedSlotCount++;
-    } else if (nS >= oS && nE <= oE) {
-      allocatedSlotCount++;
-    } else if (nS < oE && nE >= oE) {
-      allocatedSlotCount++;
-    }
   });
 
   // return true when class can shedule withing given time period
@@ -90,11 +92,15 @@ export const createClass = async (classobj) => {
   };
 
   const newScheduleObj = {
-    classId : newClassObj.id,
-    hallId: newClassObj.venue,
-    day: newClassObj.day,
+    id: newClassObj.id,
     startTime: newClassObj.startTime,
     endTime: newClassObj.endTime,
+  };
+
+  const scheduleStructure = {
+    hallId: newClassObj.venue,
+    day: newClassObj.day,
+    classes: [newScheduleObj],
   };
 
   //extract start time from newclass object and then it convert into 24hour format for comparing
@@ -112,83 +118,41 @@ export const createClass = async (classobj) => {
   });
 
   //todo here we have to validate class data and add return statements to the else part
-  return Schedule.find({ hallId: newClassObj.venue, day: newClassObj.day })
-    .then(async (data) => {
-      // filter hall using hallId and day, if there is no data, then we can create a class directly without validation
-      if (data.length !== 0) {
-        //validate new class
-        if (validateNewClass(data, nS, nE)) {
-          // create schedule object and save in the database
-          return Schedule.create(newScheduleObj).then(async (data) => {
-            await data.save();
-            // create class object and save and return saved class object
-            return Class.create(newClassObj).then(async (data) => {
-              await data.save();
-              return data;
-            });
-          });
-        } else {
-          throw new Error("Timeslot is already alocated for another class");
-        }
-      } else {
+  return Schedule.find({
+    hallId: newClassObj.venue,
+    day: newClassObj.day,
+  }).then(async (data) => {
+    // filter hall using hallId and day, if there is no data, then we can create a class directly without validation
+    if (data.length !== 0) {
+      //validate new class
+      if (validateNewClass(data, nS, nE)) {
         // create schedule object and save in the database
-        return await Schedule.create(newScheduleObj).then(async (data) => {
-          await data.save();
+        return Schedule.findOneAndUpdate(
+          { hallId: newClassObj.venue, day: newClassObj.day },
+          { $push: { classes: newScheduleObj } },
+          { new: true }
+        ).then(async (scheduleObj) => {
           // create class object and save and return saved class object
-          return Class.create(newClassObj).then(async (obj) => {
-            await obj.save();
-            return obj;
+          return Class.create(newClassObj).then(async (data) => {
+            await data.save();
+            return data;
           });
         });
+      } else {
+        throw new Error("Timeslot is already alocated for another class");
       }
-    })
-    .catch((error) => {
-      throw new Error("Timeslot is already alocated for another class");
-    });
-
-  // return await Class.create(newClassObj)
-  // .then(async (obj) => {
-  //   await obj.save();
-  //   return obj;
-  // })
-  // .catch((error) => {
-  //   throw new Error(error.message);
-  // });
-  // query for checking if the hall is already assigned at the specified time
-  // const query = {
-  //   hallName: classobj.venue,
-  //   day: classobj.day,
-  //   $or: [
-  //     {
-  //       startTime: { $lte: classobj.startTime },
-  //       endTime: { $gte: classobj.startTime },
-  //     }, // check if the class start time is within the assigned time
-  //     {
-  //       startTime: { $lte: classobj.endTime },
-  //       endTime: { $gte: classobj.endTime },
-  //     }, // check if the class end time is within the assigned time
-  //     {
-  //       startTime: { $gte: classobj.startTime },
-  //       endTime: { $lte: classobj.endTime },
-  //     }, // check if the assigned time is within the class start and end time
-  //   ],
-  // };
-
-  // try {
-  //   // execute the query to find any conflicting classes
-  //   const conflictClassCount = await Class.find(query).count();
-
-  //   //if there not any conflict class, we are going to add the class
-  //   if (conflictClassCount === 0) {
-  //     const obj = await Class.create(newClassObj);
-  //     await obj.save();
-  //     return obj;
-  //   } else {
-  //     throw new Error("This hall is allocated for this time slot!");
-  //   }
-  // } catch (error) {
-  //   return error;
-  // }
+    } else {
+      // create schedule object and save in the database
+      return await Schedule.create(scheduleStructure).then(async (data) => {
+        await data.save();
+        // create class object and save and return saved class object
+        return Class.create(newClassObj).then(async (obj) => {
+          await obj.save();
+          return obj;
+        });
+      });
+    }
+  });
 };
 
 export const getAllClasses = async () => {
@@ -199,8 +163,15 @@ export const getClassById = async (id) => {
   return await Class.findById(id);
 };
 
-export const deleteClass = async (id) => {
-  return await Class.findByIdAndDelete(id);
+export const deleteClass = async (id, cusId, day, hall, startTime, endTime) => {
+  return await Schedule.findOneAndUpdate(
+    { hallId: hall, day: day },
+    {
+      $pull: { classes: { id: cusId, startTime: startTime, endTime: endTime } },
+    }
+  ).then(async (result) => {
+    return await Class.findByIdAndDelete(id);
+  });
 };
 
 // get hall details
@@ -209,42 +180,92 @@ export const getAllHallDetails = async () => {
 };
 
 // edit class details
-export const editClassDetails = async (id, editedDetails) => {
-  // query for checking if the hall is already assigned at the specified time
-  // const query = {
-  //   hallName: classobj.venue,
-  //   day: classobj.day,
-  //   $or: [
-  //     {
-  //       startTime: { $lte: classobj.startTime },
-  //       endTime: { $gte: classobj.startTime },
-  //     }, // check if the class start time is within the assigned time
-  //     {
-  //       startTime: { $lte: classobj.endTime },
-  //       endTime: { $gte: classobj.endTime },
-  //     }, // check if the class end time is within the assigned time
-  //     {
-  //       startTime: { $gte: classobj.startTime },
-  //       endTime: { $lte: classobj.endTime },
-  //     }, // check if the assigned time is within the class start and end time
-  //   ],
-  // };
+export const editClassDetails = async (
+  id,
+  classCustomId,
+  editedDetails,
+  currentStartTime,
+  currentEndTime
+) => {
 
-  // try {
-  //   // execute the query to find any conflicting classes
-  //   const conflictClassCount = await Class.find(query).count();
 
-  //   //if there not any conflict class, we are going to add the class
-  //   if (conflictClassCount === 0) {
-  //     return await Class.findByIdAndUpdate(id, editedDetails, { new: true });
-  //   } else {
-  //     throw new Error("This hall is allocated for this time slot!");
-  //   }
-  // } catch (error) {
-  //   return error;
-  // }
+  const newScheduleObj = {
+    id: classCustomId,
+    startTime: editedDetails.startTime,
+    endTime: editedDetails.endTime,
+  };
 
-  return await Class.findByIdAndUpdate(id, editedDetails, { new: true });
+  const scheduleStructure = {
+    hallId: editedDetails.venue,
+    day: editedDetails.day,
+    classes: [newScheduleObj],
+  };
+
+  //extract start time from newclass object and then it convert into 24hour format for comparing
+  const nS = new Date(newScheduleObj.startTime).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: false,
+  });
+
+  //extract end time from newclass object and then it convert into 24hour format for comparing
+  const nE = new Date(newScheduleObj.endTime).toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: false,
+  });
+
+   return await Schedule.findOneAndUpdate(
+    { hallId: editedDetails.venue, day: editedDetails.day },
+    {
+      $pull: { classes: { id: classCustomId, startTime: currentStartTime, endTime: currentEndTime } },
+    },
+    { new: true }
+  ).then(async (result) => {
+    console.log(result)
+    
+    return Schedule.find({
+      hallId: editedDetails.venue,
+      day: editedDetails.day,
+    }).then(async (data) => {
+      // filter hall using hallId and day, if there is no data, then we can create a class directly without validation
+      if (data.length !== 0) {
+        //validate new class
+        if (validateNewClass(data, nS, nE)) {
+          // create schedule object and save in the database
+          return Schedule.findOneAndUpdate(
+            { hallId: editedDetails.venue, day: editedDetails.day },
+            { $push: { classes: newScheduleObj } },
+            { new: true }
+          ).then(async (scheduleObj) => {
+            // create class object and save and return saved class object
+            return Class.findByIdAndUpdate(id, editedDetails, {
+              new: true,
+            }).then(async (data) => {
+              await data.save();
+              return data;
+            });
+          });
+        } else {
+          throw new Error("Timeslot is already alocated for another class");
+        }
+      } else {
+        // create schedule object and save in the database
+        return await Schedule.create(scheduleStructure).then(async (data) => {
+          await data.save();
+          // create class object and save and return saved class object
+          return Class.findByIdAndUpdate(id, editedDetails).then(
+            async (obj) => {
+              await obj.save();
+              return obj;
+            }
+          );
+        });
+      }
+    });
+  });
+
+  // return await Class.findByIdAndUpdate(id, editedDetails, { new: true });
 };
 
 export const enrollStudent = async (enrollmentData) => {
