@@ -270,7 +270,6 @@ const ManageTeachers = ({ user }: adminName) => {
   const addTeacher = async (values: {
     name: string;
     email: string;
-    password: string;
     phone: string;
   }) => {
     showNotification({
@@ -396,7 +395,6 @@ const ManageTeachers = ({ user }: adminName) => {
     initialValues: {
       name: "",
       email: "",
-      password: "",
       phone: "",
     },
     validate: {
@@ -412,8 +410,6 @@ const ManageTeachers = ({ user }: adminName) => {
         /^\d{10}$/.test(value)
           ? null
           : "Phone number must be 10 digits long number",
-      password: (value) =>
-        value.length < 8 ? "Password must have at least 8 characters" : null,
     },
   });
 
@@ -518,12 +514,6 @@ const ManageTeachers = ({ user }: adminName) => {
             label="Email"
             placeholder="Enter email"
             {...addForm.getInputProps("email")}
-            required
-          />
-          <PasswordInput
-            placeholder="Your password"
-            label="Password"
-            {...addForm.getInputProps("password")}
             required
           />
           <TextInput

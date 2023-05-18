@@ -13,7 +13,6 @@ class TeacherAPI {
   static addTeacher = (values: {
     name: string;
     email: string;
-    password: string;
     phone: string;
   }) => {
     return axios.post(`${BASE_URL}/teacher`, values, requestConfig);
@@ -24,7 +23,7 @@ class TeacherAPI {
   };
   //update teacher
   static editTeacher = (values: {
-    _id : string,
+    _id: string,
     id: string;
     name: string;
     email: string;
@@ -76,31 +75,31 @@ class TeacherAPI {
     return axios.get(`${BASE_URL}/student/${id}/exams`, requestConfig);
   };
 
-  
+
 
 
   // get Teacher count
-  static getTeacherCount = () =>{
-    return axios.get(`${BASE_URL}/teacher/count`,requestConfig);
+  static getTeacherCount = () => {
+    return axios.get(`${BASE_URL}/teacher/count`, requestConfig);
   }
-  static getTeacherClasses = async () =>{
-    return axios.get(`${BASE_URL}teacher/class`,requestConfig);
-}
-static setNewPassword = (values : {
-    documentId : string,
-    teacherId : string,
-    currentPassword : string,
-    newPassword : string
-    
-  }) =>{
+  static getTeacherClasses = async () => {
+    return axios.get(`${BASE_URL}teacher/class`, requestConfig);
+  }
+  static setNewPassword = (values: {
+    documentId: string,
+    teacherId: string,
+    currentPassword: string,
+    newPassword: string
+
+  }) => {
 
     let password = {
-      teacherId : values.teacherId,
-      currentPassword : values.currentPassword,
-      newPassword : values.newPassword
+      teacherId: values.teacherId,
+      currentPassword: values.currentPassword,
+      newPassword: values.newPassword
     }
-     return axios.put(`${BASE_URL}/teacher/changePassword/${values.documentId}`,password,  requestConfig);
-}
+    return axios.put(`${BASE_URL}/teacher/changePassword/${values.documentId}`, password, requestConfig);
+  }
 }
 
 export default TeacherAPI;

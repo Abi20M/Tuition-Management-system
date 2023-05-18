@@ -80,7 +80,7 @@ import TeacherAPI from "../../../API/teacherAPI";
           });
         }, 1000);
   
-        //store admin details to local storage for further use
+        //store teacher details to local storage for further use
         localStorage.setItem("teacher", JSON.stringify(response.data));
   
         //store Role key and value as admin in the localStorage, after 2sec browser will be redirected to the admin Dashboard

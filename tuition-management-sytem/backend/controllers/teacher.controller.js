@@ -1,15 +1,17 @@
 import Teacher from "../models/teacher.model";
 import teacherServices from "../services/Teacher.service";
 import bcrypt from 'bcrypt';
+import generatePassword from "../utils/passowrdGenerator";
+
 // import generatePassword from "../utils/passowrdGenerator";
 
 //create teacher function
 export const createTeacher = async (req, res, next) => {
 // //genarate password
-//   const autoPassword = generatePassword();
+  const autoPassword = generatePassword();
 
   const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+  const hashedPassword = await bcrypt.hash(autoPassword, salt);
 
     // create a teacher object with details
     const teacherObj = new Teacher({
@@ -21,7 +23,7 @@ export const createTeacher = async (req, res, next) => {
 
   //call to createTeacher function to create a object in the database
   await teacherServices
-    .createTeacher(teacherObj)
+    .createTeacher(teacherObj,autoPassword)
     .then((data) => {
       req.handleResponse.successRespond(res)(data);
       next();
@@ -152,8 +154,27 @@ export const getClassCount = async (req, res,next) => {
       });
   };
 
+  // change password controller
+  const changeTeacherPassword = async(req,res) =>{
+    const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(req.body.newPassword, salt);
 
-  
+  const teacherId = req.params.id;
+  const password = {
+    currentPassword: req.body.currentPassword,
+    newPassword: hashedPassword,
+  };
+
+  await teacherServices
+    .changeTeacherPassword(teacherId, password)
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+    })
+    .catch((err) => {
+      req.handleResponse.errorRespond(res)(err);
+    }); 
+  }
+
   
   module.exports = {
     createTeacher,
@@ -165,4 +186,5 @@ export const getClassCount = async (req, res,next) => {
     getStudents,
     getAllClasses,
     getClassCount,
+    changeTeacherPassword
 }
