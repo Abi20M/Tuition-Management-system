@@ -246,4 +246,3 @@ module.exports = {
   getStudentsGrade,
   updateFee,
 };
-
