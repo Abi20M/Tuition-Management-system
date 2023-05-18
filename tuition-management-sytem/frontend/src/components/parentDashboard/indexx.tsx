@@ -201,9 +201,7 @@ ChartJS.register(
     }, []);
   
     
-  
 
-  
     //validate confirm parent password
     const validatePassword = (confirmPassword: string) => {
       if (confirmPassword.length != 0) {
