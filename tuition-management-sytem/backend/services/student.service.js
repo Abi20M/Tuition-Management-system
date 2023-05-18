@@ -219,6 +219,21 @@ export const verifyStudent = async (token) => {
   });
 };
 
+export const updateFee = async (id, studentObj) => {
+  return await student
+    .findByIdAndUpdate(id, studentObj, { new: true })
+    .then((data) => {
+      if (data) {
+        return data;
+      } else {
+        throw new Error("Student not found");
+      }
+    })
+    .catch((err) => {
+      throw new Error(err.message);
+    });
+};
+
 // export const getExamsByStudentId = async (id) => {
 //   let allExams = await exam.find();
 //   //check if student id is in marks array
@@ -239,6 +254,7 @@ module.exports = {
   getStudentCountService,
   loginStudent,
   changeStudentPassword,
+  updateFee
   //   verifyStudent,
   //   getExamsByStudentId,
 };

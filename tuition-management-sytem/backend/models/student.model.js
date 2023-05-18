@@ -52,6 +52,18 @@ const StudentSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Parent",
   },
+
+  //student fees calculation
+  amount: {
+    type: String,
+    required: false,
+    default: '00.00'
+  },
+  status: {
+    type: String,
+    required: false,
+    default: 'Not-Paid'
+  },
 });
 
 export default model("Student", StudentSchema);

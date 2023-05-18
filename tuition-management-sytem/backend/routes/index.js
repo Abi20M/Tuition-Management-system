@@ -9,7 +9,6 @@ import studentController from "../controllers/student.controller";
 import adminController from "../controllers/admin.controller";
 import subjectController from '../controllers/subject.controller';
 import examController from "../controllers/Exam.controller";
-import feeController from "../controllers/Fee.controller";
 
 const Routes = (app) => {
   //normal validation root of the user
@@ -170,11 +169,7 @@ const Routes = (app) => {
   );
 
   //Fee Routes
-  app.post("/fee", protect.adminProtect, feeController.createFee);
-  app.get("/fee", protect.adminProtect, feeController.getAllFees);
-  app.get("/fee/count", protect.adminProtect, feeController.getFeeCount);
-  app.put("/fee/:id", protect.adminProtect, feeController.updateFee);
-  app.delete("/fee/:id", protect.adminProtect, feeController.deleteFee);
+  app.put("/fee/:id", protect.adminProtect, studentController.updateFee);
 
 
   //Manage Exams
