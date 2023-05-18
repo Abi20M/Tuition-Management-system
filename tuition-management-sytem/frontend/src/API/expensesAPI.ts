@@ -56,6 +56,26 @@ class ExpensesAPI {
   static getLastFixedValue = () => {
     return axios.get(`${BASE_URL}/expense/getFixed`, requestConfig);
   };
+
+  //pass the admin details
+  static getAdminDetails = (values:{
+    name : string
+    email : string
+  }) => {
+    return axios.post(`${BASE_URL}/admin/details`,values, requestConfig);
+  };
+
+  //get expense categories
+  static getExpensesCategories = () => {
+    return axios.get(`${BASE_URL}/expenses/categories`,requestConfig)
+  };
+
+
+  //get fees amount
+  static getFeeAmount = () => {
+    return axios.get(`${BASE_URL}/fees/amount`,requestConfig)
+  };
+
 }
 
 export default ExpensesAPI;

@@ -108,10 +108,51 @@ export const addFixedValue = async (req, res ,next) => {
     });
 };
 
-
+//get last fixed value
 export const getLastFixedValue = async (req, res, next) => {
   expenseServices
     .getLastFixedValue()
+    .then((data) => {
+      
+      req.handleResponse.successRespond(res)(data);
+      next();
+    })
+    .catch((error) => {
+      req.handleResponse.errorRespond(res)(error);
+      next();
+    });
+};
+
+//get admin name and email
+export const getAdminInfo = (req,res) => {
+  const adminName = req.body.name;
+  const adminEmail = req.body.email;
+
+  expenseServices
+  .sendMail(adminName, adminEmail)
+  
+};
+
+//get expense category for doughnut chart
+export const getCategories = async (req, res,next) =>{
+
+  await expenseServices
+  .getCategories()
+  .then((data) => {
+
+    req.handleResponse.successRespond(res)(data);
+    next();
+  })
+  .catch((error) => {
+    req.handleResponse.errorRespond(res)(error);
+    next();
+  });
+};
+
+//get fees 
+export const getFeesAmount = async (req, res, next) => {
+  expenseServices
+    .getFeesAmount()
     .then((data) => {
       
       req.handleResponse.successRespond(res)(data);
@@ -131,4 +172,8 @@ module.exports = {
   getExpenseCount,
   addFixedValue,
   getLastFixedValue,
+  getAdminInfo,
+  getCategories,
+  getFeesAmount,
+  
 };

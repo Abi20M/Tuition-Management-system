@@ -43,8 +43,8 @@ export class ClassAPI {
     return axios.get(`${BASE_URL}/class/${id}/students`, requestConfig);
   };
 
-    static deleteClass = async(id : string) =>{
-        return axios.delete(`${BASE_URL}/class/delete/${id}`,requestConfig)
+    static deleteClass = async(id : string,cusId:string,day:string,hall:string,startTime:string,endTime:string) =>{
+        return axios.delete(`${BASE_URL}/class/delete/${id}/${cusId}/${day}/${hall}/${startTime}/${endTime}`,requestConfig)
     }
     
     //get hall Details function
@@ -55,6 +55,7 @@ export class ClassAPI {
     //edit class details function
     static editClassDetails = async (values : {
         _id : string,
+        id:string,
         name : string,
         teacher : string,
         subject : string,
@@ -62,9 +63,10 @@ export class ClassAPI {
         startTime : Date,
         venue:string,
         endTime : Date
-    }) =>{
+    },currentStartTime : string,currentEndTime:string) =>{
         //create a new object with class details
         const updatedClassDetails = {
+            id: values.id,
             name : values.name,
             teacher : values.teacher,
             subject : values.subject,
@@ -74,7 +76,7 @@ export class ClassAPI {
             endTime : values.endTime
         }
 
-        return axios.put(`${BASE_URL}/class/edit/${values._id}`,updatedClassDetails,requestConfig);
+        return axios.put(`${BASE_URL}/class/edit/${values._id}/${currentStartTime}/${currentEndTime}`,updatedClassDetails,requestConfig);
     }
 
     static getClassById = async (classId : string) => {
@@ -105,4 +107,8 @@ export class ClassAPI {
         }
         return axios.put(`${BASE_URL}/class/unenroll`,unEnrollDetails,requestConfig);
     } 
+
+    static getHallSchedule = async() =>{
+        return axios.get(`${BASE_URL}/class/hallSchedule`,requestConfig);
+    }
 }
