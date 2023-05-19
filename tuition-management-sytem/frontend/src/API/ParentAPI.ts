@@ -87,6 +87,10 @@ class ParentAPI {
     return axios.put(`${BASE_URL}/parent/changePassword/${values.documentId}`,password,  requestConfig);
     
   }
+
+  static getExamMarksByStudentId = (childrenId : string[])=>{
+    return axios.get(`${BASE_URL}/parent/children/marks/${childrenId}`,requestConfig)
+  }
 }
 
 export default ParentAPI;

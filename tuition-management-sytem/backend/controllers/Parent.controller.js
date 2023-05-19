@@ -118,19 +118,19 @@ export const changeParentPassword = async (req, res) => {
     newPassword: hashedPassword,
   };
   await parentService
-  .changeParentPassword(parentId, password)
-  .then((data) => {
-    req.handleResponse.successRespond(res)(data);
-  })
-  .catch((err) => {
-    req.handleResponse.errorRespond(res)(err);
-  });
+    .changeParentPassword(parentId, password)
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+    })
+    .catch((err) => {
+      req.handleResponse.errorRespond(res)(err);
+    });
 };
 
 //get students by parent id
 export const getStudents = async (req, res, next) => {
   await parentService
-    .getStudents(req.params.id)    
+    .getStudents(req.params.id)
     .then((data) => {
       req.handleResponse.successRespond(res)(data);
       next();
@@ -141,9 +141,22 @@ export const getStudents = async (req, res, next) => {
     });
 };
 
+export const getChildrenExamMarks = (req, res) => {
+  console.log("hello Controller");
+  console.log(req.params.id.split(","));
 
+  const childrenIds = req.params.id.split(",");
 
-
+  parentService
+    .getChildrenExamMarks(childrenIds)
+    .then((data) => {
+      console.log(data)
+      req.handleResponse.successRespond(res)(data);
+    })
+    .catch((err) => {
+      req.handleResponse.errorRespond(res)(err);
+    });
+};
 
 module.exports = {
   createParent,
@@ -155,4 +168,5 @@ module.exports = {
   getParentCount,
   changeParentPassword,
   getStudents,
+  getChildrenExamMarks,
 };
