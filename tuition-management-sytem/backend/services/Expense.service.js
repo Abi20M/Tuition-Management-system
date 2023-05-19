@@ -1,7 +1,8 @@
 import Expense from "../models/expense.model";
 import FixedValue from '../models/expense.fixed.value.model';
-
 import ExpenseMail from "../Mails/expense.mails"
+import Student from "../models/student.model"
+
 
 //generate expense Id
 const generateExpenseId = async () => {
@@ -99,7 +100,6 @@ const getLastFixedValue = async () => {
   } catch (error) {
     return error.message;
   }
-
 };
 
 //expense exceeded function
@@ -128,6 +128,18 @@ export const getCategories = async () => {
   }
 };
 
+//get fees
+const getFeesAmount = async () => {
+  try {
+    const students = await Student.find();
+    const totalFees = students.reduce((total, student) => total + parseFloat(student.amount), 0);
+
+    return totalFees;
+  } catch (error) {
+    return error.message;
+  }
+};
+
 
 module.exports = {
   createExpense,
@@ -139,4 +151,5 @@ module.exports = {
   getLastFixedValue,
   sendMail,
   getCategories,
+  getFeesAmount
 };

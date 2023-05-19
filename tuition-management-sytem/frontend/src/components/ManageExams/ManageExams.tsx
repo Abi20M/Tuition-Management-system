@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   createStyles,
   Table,
@@ -15,6 +15,7 @@ import {
   ActionIcon,
   Tooltip,
   Checkbox,
+  NumberInput,
 } from "@mantine/core";
 import { keys } from "@mantine/utils";
 import {
@@ -155,7 +156,7 @@ function filterData(data: ExamData[], search: string) {
   const query = search.toLowerCase().trim();
   return data.filter((item) =>
     keys(data[0]).some((key) => {
-      if (key === "marks" || key === "attendance") {
+      if (key === "marks" || key === "attendance" || key === "duration") {
         return false;
       }
       return item[key].toLowerCase().includes(query);
@@ -200,7 +201,11 @@ export function sortData(
 
   return filterData(
     [...data].sort((a, b) => {
-      if (sortBy === "marks" || sortBy === "attendance") {
+      if (
+        sortBy === "marks" ||
+        sortBy === "attendance" ||
+        sortBy === "duration"
+      ) {
         return 0;
       }
       if (payload.reversed) {
@@ -509,6 +514,8 @@ const ManageExams = ({
     status: string;
     date: string;
     time: string;
+    duration: number;
+    durationUnit: string;
   }) => {
     showNotification({
       id: "edit-exam",
@@ -542,6 +549,9 @@ const ManageExams = ({
               time: values.time,
               attendance: response.data.attendance,
               marks: response.data.marks,
+              className: item.className,
+              duration: values.duration,
+              durationUnit: values.durationUnit,
             };
           } else {
             return item;
@@ -575,6 +585,8 @@ const ManageExams = ({
     status: string;
     date: string;
     time: string;
+    duration: number;
+    durationUnit: string;
   }) => {
     showNotification({
       id: "add-exam",
@@ -583,6 +595,8 @@ const ManageExams = ({
       message: "Please wait while we add exam record..",
       autoClose: false,
     });
+    const className =
+      classes.find((item) => item.id === values.class)?.name || "";
     ExamAPI.addExam(values)
       .then((response) => {
         updateNotification({
@@ -608,6 +622,9 @@ const ManageExams = ({
             time: values.time,
             attendance: response.data.attendance,
             marks: response.data.marks,
+            className: className,
+            duration: values.duration,
+            durationUnit: values.durationUnit,
           },
         ];
         const payload = {
@@ -739,6 +756,8 @@ const ManageExams = ({
       status: "",
       date: "",
       time: "",
+      duration: 30,
+      durationUnit: "minutes",
     },
     validate: {
       name: (value) =>
@@ -758,6 +777,8 @@ const ManageExams = ({
       status: "",
       date: "",
       time: "",
+      duration: 30,
+      durationUnit: "minutes",
     },
     validate: {
       name: (value) =>
@@ -766,6 +787,22 @@ const ManageExams = ({
         value.length < 5 ? "Must have a description" : null,
     },
   });
+
+  useEffect(() => {
+    if (addForm.values.durationUnit === "minutes") {
+      addForm.setFieldValue("duration", 30);
+    } else {
+      addForm.setFieldValue("duration", 1);
+    }
+  }, [addForm.values.durationUnit]);
+
+  useEffect(() => {
+    if (editForm.values.durationUnit === "minutes") {
+      editForm.setFieldValue("duration", 30);
+    } else {
+      editForm.setFieldValue("duration", 1);
+    }
+  }, [editForm.values.durationUnit]);
 
   //declare add marks form
   const addMarksForm = useForm({
@@ -908,13 +945,107 @@ const ManageExams = ({
       },
     });
 
+  const validateExamTimeInAddForm = (
+    startTime: string,
+    endTime: string,
+    time: Date[]
+  ) => {
+    const duration = addForm.values.duration;
+    const durationUnit = addForm.values.durationUnit;
+
+    if (startTime < "08:00" || endTime > "20:00") {
+      addForm.setFieldError("time", "Exam time should be between 8am and 8pm");
+      return false;
+    }
+
+    if (startTime > endTime) {
+      addForm.setFieldError(
+        "time",
+        "Exam end time can't be before exam start time"
+      );
+      return false;
+    }
+
+    if (durationUnit === "minutes") {
+      const diff = time[1].getTime() - time[0].getTime();
+      const diffInMinutes = diff / (1000 * 60);
+      if (diffInMinutes < duration || diffInMinutes > duration) {
+        addForm.setFieldError(
+          "time",
+          "Exam duration should be " + duration + " " + durationUnit
+        );
+        return false;
+      }
+    }
+
+    if (durationUnit === "hours") {
+      const diff = time[1].getTime() - time[0].getTime();
+      const diffInHours = diff / (1000 * 60 * 60);
+      if (diffInHours < duration || diffInHours > duration) {
+        addForm.setFieldError(
+          "time",
+          "Exam duration should be " + duration + " " + durationUnit
+        );
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const validateExamTimeInEditForm = (
+    startTime: string,
+    endTime: string,
+    time: Date[]
+  ) => {
+    const duration = editForm.values.duration;
+    const durationUnit = editForm.values.durationUnit;
+
+    if (startTime < "08:00" || endTime > "20:00") {
+      editForm.setFieldError("time", "Exam time should be between 8am and 8pm");
+      return false;
+    }
+
+    if (startTime > endTime) {
+      editForm.setFieldError(
+        "time",
+        "Exam end time can't be before exam start time"
+      );
+      return false;
+    }
+
+    if (durationUnit === "minutes") {
+      const diff = time[1].getTime() - time[0].getTime();
+      const diffInMinutes = diff / (1000 * 60);
+      if (diffInMinutes < duration || diffInMinutes > duration) {
+        editForm.setFieldError(
+          "time",
+          "Exam duration should be " + duration + " " + durationUnit
+        );
+        return false;
+      }
+    }
+
+    if (durationUnit === "hours") {
+      const diff = time[1].getTime() - time[0].getTime();
+      const diffInHours = diff / (1000 * 60 * 60);
+      if (diffInHours < duration || diffInHours > duration) {
+        editForm.setFieldError(
+          "time",
+          "Exam duration should be " + duration + " " + durationUnit
+        );
+        return false;
+      }
+    }
+    return true;
+  };
+
   //create rows
   const rows = sortedData.map((row) => (
     <tr key={row.id}>
       <td>{row.examId}</td>
       <td>{row.name}</td>
       <td>{row.description}</td>
-      <td>{classes.find((item) => item.id === row.class)?.name || "N/A"}</td>
+      <td>{row.className ? row.className : "N/A"}</td>
       <td>{row.status}</td>
       <td>{row.date.slice(0, 10)}</td>
       <td>{row.time}</td>
@@ -939,6 +1070,8 @@ const ManageExams = ({
                   status: row.status,
                   date: row.date.slice(0, 10),
                   time: row.time,
+                  duration: row.duration,
+                  durationUnit: row.durationUnit,
                 });
                 setEditOpened(true);
               }}
@@ -1141,6 +1274,17 @@ const ManageExams = ({
             required
             onChange={(date) => {
               if (date) {
+                const today = new Date();
+                if (
+                  date < today &&
+                  date.toString().slice(0, 15) !== today.toString().slice(0, 15)
+                ) {
+                  addForm.setFieldError(
+                    "date",
+                    "Exam date can't be a past date"
+                  );
+                  return;
+                }
                 const formattedDate = date
                   .toString()
                   .slice(0, 10)
@@ -1148,24 +1292,71 @@ const ManageExams = ({
                 addForm.setFieldValue("date", formattedDate);
               }
             }}
+            error={addForm.errors.date}
           />
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <NumberInput
+              label="Duration"
+              placeholder="Enter duration"
+              {...addForm.getInputProps("duration")}
+              required
+              sx={{ width: "70%" }}
+              error={addForm.errors.duration}
+              pattern="[0-9]*"
+              min={addForm.values.durationUnit === "minutes" ? 30 : 1}
+              max={addForm.values.durationUnit === "minutes" ? 300 : 5}
+            />
+            <Select
+              label=" "
+              placeholder="Select duration unit"
+              {...addForm.getInputProps("durationUnit")}
+              required
+              sx={{ width: "25%" }}
+              data={[
+                { label: "minutes", value: "minutes" },
+                { label: "hours", value: "hours" },
+              ]}
+              defaultValue={addForm.values.durationUnit}
+              withAsterisk={false}
+            />
+          </Box>
           <TimeRangeInput
             label="Time"
             icon={<IconClock size={16} />}
-            format="12"
+            format="24"
             clearable
             onChange={(time) => {
               if (time[0] && time[1]) {
                 const startTime = time[0].toString().slice(16, 21);
                 const endTime = time[1].toString().slice(16, 21);
-                addForm.setFieldValue("time", startTime + " - " + endTime);
+
+                if (validateExamTimeInAddForm(startTime, endTime, time)) {
+                  addForm.setFieldValue("time", startTime + " - " + endTime);
+                }
               }
             }}
+            required
+            error={addForm.errors.time}
           />
           <Button
             color="teal"
             sx={{ marginTop: "10px", width: "100%" }}
             type="submit"
+            onClick={(e) => {
+              if (
+                addForm.errors.date ||
+                addForm.errors.duration ||
+                addForm.errors.time
+              ) {
+                e.preventDefault();
+              }
+            }}
           >
             Create
           </Button>
@@ -1230,7 +1421,7 @@ const ManageExams = ({
               },
               {
                 label: "Results Released - Official",
-                value: "Results Released - official",
+                value: "Results Released - Official",
               },
               { label: "Cancelled", value: "Cancelled" },
             ]}
@@ -1244,6 +1435,17 @@ const ManageExams = ({
             required
             onChange={(date) => {
               if (date) {
+                const today = new Date();
+                if (
+                  date < today &&
+                  date.toString().slice(0, 15) !== today.toString().slice(0, 15)
+                ) {
+                  editForm.setFieldError(
+                    "date",
+                    "Exam date can't be a past date"
+                  );
+                  return;
+                }
                 const formattedDate = date
                   .toString()
                   .slice(0, 10)
@@ -1254,17 +1456,54 @@ const ManageExams = ({
             defaultValue={
               editForm.values.date ? new Date(editForm.values.date) : undefined
             }
+            error={editForm.errors.date}
           />
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <NumberInput
+              label="Duration"
+              placeholder="Enter duration"
+              {...editForm.getInputProps("duration")}
+              required
+              sx={{ width: "70%" }}
+              error={editForm.errors.duration}
+              pattern="[0-9]*"
+              min={editForm.values.durationUnit === "minutes" ? 30 : 1}
+              max={editForm.values.durationUnit === "minutes" ? 300 : 5}
+              defaultValue={editForm.values.duration}
+            />
+            <Select
+              label=" "
+              placeholder="Select duration unit"
+              {...editForm.getInputProps("durationUnit")}
+              required
+              sx={{ width: "25%" }}
+              data={[
+                { label: "minutes", value: "minutes" },
+                { label: "hours", value: "hours" },
+              ]}
+              defaultValue={editForm.values.durationUnit}
+              withAsterisk={false}
+            />
+          </Box>
           <TimeRangeInput
             label="Time"
             icon={<IconClock size={16} />}
-            format="12"
+            format="24"
             clearable
             onChange={(time) => {
               if (time[0] && time[1]) {
                 const startTime = time[0].toString().slice(16, 21);
                 const endTime = time[1].toString().slice(16, 21);
-                editForm.setFieldValue("time", startTime + " - " + endTime);
+
+                if (validateExamTimeInEditForm(startTime, endTime, time)) {
+                  editForm.setFieldValue("time", startTime + " - " + endTime);
+                }
               }
             }}
             defaultValue={
@@ -1275,11 +1514,22 @@ const ManageExams = ({
                   ]
                 : undefined
             }
+            error={editForm.errors.time}
+            required
           />
           <Button
             color="teal"
             sx={{ marginTop: "10px", width: "100%" }}
             type="submit"
+            onClick={(e) => {
+              if (
+                editForm.errors.date ||
+                editForm.errors.duration ||
+                editForm.errors.time
+              ) {
+                e.preventDefault();
+              }
+            }}
           >
             Save
           </Button>
@@ -1477,9 +1727,9 @@ const ManageExams = ({
                   Description
                 </Th>
                 <Th
-                  sorted={sortBy === "class"}
+                  sorted={sortBy === "className"}
                   reversed={reverseSortDirection}
-                  onSort={() => setSorting("class")}
+                  onSort={() => setSorting("className")}
                 >
                   Class
                 </Th>

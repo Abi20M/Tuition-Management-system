@@ -74,7 +74,7 @@ export const updateExam = async (id, examObj) => {
           classObj.name,
           data
         );
-        if (oldExam.class !== "Cancelled" && examObj.class === "Cancelled") {
+        if (oldExam.status !== "Cancelled" && examObj.status === "Cancelled") {
           await examMailService.sendExamCancelNotification(
             students,
             classObj.name,
@@ -283,6 +283,8 @@ export const getExamsByStudent = async (id) => {
           result: "Not Released",
           marks: exam.marks,
           attendance: exam.attendance,
+          duration: exam.duration,
+          durationUnit: exam.durationUnit,
         });
       } else {
         examData.push({
@@ -297,6 +299,8 @@ export const getExamsByStudent = async (id) => {
           result: result,
           marks: exam.marks,
           attendance: exam.attendance,
+          duration: exam.duration,
+          durationUnit: exam.durationUnit,
         });
       }
     });

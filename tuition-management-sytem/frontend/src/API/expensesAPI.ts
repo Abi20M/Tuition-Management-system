@@ -68,10 +68,13 @@ class ExpensesAPI {
   //get expense categories
   static getExpensesCategories = () => {
     return axios.get(`${BASE_URL}/expenses/categories`,requestConfig)
-  }
+  };
 
 
-
+  //get fees amount
+  static getFeeAmount = () => {
+    return axios.get(`${BASE_URL}/fees/amount`,requestConfig)
+  };
 
 }
 

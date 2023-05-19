@@ -1,10 +1,10 @@
 import student from "../models/student.model";
 // import exam from "../models/Exam.model";
-// import classes from "../models/Classes.model";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import "dotenv/config";
 import studentMail from "../Mails/student.mail";
+import Class from "../models/class.model";
 
 //generate student Id
 const generateStudentId = async () => {
@@ -200,6 +200,44 @@ export const changeStudentPassword = async (studentId, password) => {
           { password: password.newPassword, isPasswordChanged: true },
           { new: true }
         )
+        .then((updateStudent) => {
+          const accessToken = jwt.sign(
+            {
+              _id: updateStudent._id,
+              email: updateStudent.email,
+              role: "student",
+            },
+            process.env.ACCESS_TOKEN_SECRET,
+            {
+              expiresIn: "1d",
+            }
+          );
+
+          // check if user already changed password or not
+          if (data.isPasswordChanged === false) {
+            //create response object
+            const responseObj = {
+              _id: updateStudent._id,
+              name: updateStudent.name,
+              id: updateStudent.id,
+              email: updateStudent.email,
+              isChangedPassoword: updateStudent.isPasswordChanged,
+              accessToken: accessToken,
+            };
+            return responseObj;
+          } else {
+            //create response object
+            const responseObj = {
+              _id: data._id,
+              name: data.name,
+              id: data.id,
+              email: data.email,
+              isChangedPassoword: data.isPasswordChanged,
+              accessToken: accessToken,
+            };
+            return responseObj;
+          }
+        })
         .catch((error) => {
           throw new Error("Error while updating document");
         });
@@ -219,6 +257,67 @@ export const verifyStudent = async (token) => {
   });
 };
 
+export const getClassesByStudentId = async (id) => {
+  return await Class.find({ students: { _id: id } })
+    .then((data) => {
+      return data;
+    })
+    .catch((error) => {
+      throw new Error("Invalid student ID");
+    });
+};
+
+export const genderDistribution = async () => {
+  let studentGender = [{ Male: 0, Female: 0 }];
+  await student.find().then((data) => {
+    data.map((student) => {
+      if (student.gender === "male") {
+        studentGender[0].Male += 1;
+      } else {
+        studentGender[0].Female += 1;
+      }
+    });
+  });
+
+  return studentGender;
+};
+
+export const getStudentsGradeService = async () => {
+  const studentGradeCount = {
+    6: 0,
+    7: 0,
+    8: 0,
+    9: 0,
+    10: 0,
+    11: 0,
+    12: 0,
+    13: 0,
+  };
+
+  await student.find().then((result) => {
+    result.map((student) => {
+      if (student.grade === "6") {
+        studentGradeCount[6]++;
+      } else if (student.grade === "7") {
+        studentGradeCount[7]++;
+      } else if (student.grade === "8") {
+        studentGradeCount[8]++;
+      } else if (student.grade === "9") {
+        studentGradeCount[9]++;
+      } else if (student.grade === "10") {
+        studentGradeCount[10]++;
+      } else if (student.grade === "11") {
+        studentGradeCount[11]++;
+      } else if (student.grade === "12") {
+        studentGradeCount[12]++;
+      } else {
+        studentGradeCount[13]++;
+      }
+    });
+  });
+
+  return studentGradeCount;
+};
 export const updateFee = async (id, studentObj) => {
   return await student
     .findByIdAndUpdate(id, studentObj, { new: true })
@@ -234,16 +333,16 @@ export const updateFee = async (id, studentObj) => {
     });
 };
 
-// export const getExamsByStudentId = async (id) => {
-//   let allExams = await exam.find();
-//   //check if student id is in marks array
-//   let studentExams = allExams.filter((exam) => {
-//     return exam.marks.some((mark) => {
-//       return mark.id == id;
-//     });
-//   });
-//   return studentExams;
-// };
+export const getExamsByStudentId = async (id) => {
+  let allExams = await exam.find();
+  //check if student id is in marks array
+  let studentExams = allExams.filter((exam) => {
+    return exam.marks.some((mark) => {
+      return mark.id == id;
+    });
+  });
+  return studentExams;
+};
 
 module.exports = {
   createStudent,
@@ -254,7 +353,11 @@ module.exports = {
   getStudentCountService,
   loginStudent,
   changeStudentPassword,
-  updateFee
+  getClassesByStudentId,
+  updateFee,
+  genderDistribution,
+  getStudentsGradeService,
+  updateFee,
   //   verifyStudent,
-  //   getExamsByStudentId,
+  getExamsByStudentId,
 };
