@@ -63,24 +63,25 @@ export const getAllExams = async () => {
 
 export const updateExam = async (id, examObj) => {
   const oldExam = await exam.findById(id);
+  console.log(oldExam);
   return await exam
     .findByIdAndUpdate(id, examObj, { new: true })
     .then(async (data) => {
       if (data) {
         const students = await classService.getEnrolledStudentsData(data.class);
         const classObj = await classService.getClassById(data.class);
-        await examMailService.sendExamUpdateNotification(
-          students,
-          classObj.name,
-          data
-        );
-        if (oldExam.status !== "Cancelled" && examObj.status === "Cancelled") {
-          await examMailService.sendExamCancelNotification(
-            students,
-            classObj.name,
-            data
-          );
-        }
+        // await examMailService.sendExamUpdateNotification(
+        //   students,
+        //   classObj.name,
+        //   data
+        // );
+        // if (oldExam.status !== "Cancelled" && examObj.status === "Cancelled") {
+        //   await examMailService.sendExamCancelNotification(
+        //     students,
+        //     classObj.name,
+        //     data
+        //   );
+        // }
         return data;
       } else {
         throw new Error("Exam not found");

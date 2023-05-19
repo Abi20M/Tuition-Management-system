@@ -49,6 +49,8 @@ class ExamAPI {
       status: values.status,
       date: values.date,
       time: values.time,
+      duration: values.duration,
+      durationUnit: values.durationUnit,
     };
     return axios.put(`${BASE_URL}/exam/${values.id}`, exam, requestConfig);
   };
