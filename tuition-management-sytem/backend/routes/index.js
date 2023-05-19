@@ -147,6 +147,11 @@ const Routes = (app) => {
     parentController.getStudents
   );
 
+  app.get("/parent/children/marks/:id",protect.parentProtect,parentController.getChildrenExamMarks)
+
+
+
+
   app.get("/student/exams/:id",protect.parentProtect,studentController.getExamsByStudentId)
 
   //Student Routes
