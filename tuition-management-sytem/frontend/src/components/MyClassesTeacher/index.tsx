@@ -381,7 +381,7 @@ const MyClassesTeacher: React.FC = () => {
         size="1000px"
       >
         <Box sx={{ margin: "20px", width: "100%" }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+          {/* <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <TextInput
               placeholder="Search by any field"
               mb="md"
@@ -390,7 +390,7 @@ const MyClassesTeacher: React.FC = () => {
               onChange={() => {}}
               sx={{ width: "300px" }}
             />
-          </Box>
+          </Box> */}
           <ScrollArea>
             <Table
               horizontalSpacing="md"
@@ -420,16 +420,16 @@ const MyClassesTeacher: React.FC = () => {
         </Box>
       </Modal>
       <Box sx={{ margin: "20px", width: "100%" }}>
-        <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        {/* <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <TextInput
-            placeholder="Search by any field"
+           placeholder="Search by any field"
             mb="md"
             icon={<IconSearch size={14} stroke={1.5} />}
             value={search}
             onChange={handleSearchChange}
-            sx={{ width: "600px" }}
+            sx={{ width: "300px" }}
           />
-        </Box>
+        </Box> */}
         <ScrollArea>
           <Table
             horizontalSpacing="md"
