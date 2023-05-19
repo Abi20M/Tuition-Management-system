@@ -76,10 +76,12 @@ export const sendNewExamNotification = async (students, className, examObj) => {
     await mailTransporter
       .sendMail(details)
       .then((data) => {
-        console.log(students[i].email + "- Exam Notification Sent");
+        console.log(students[i].email + "- New Exam Notification Sent");
       })
       .catch((error) => {
-        console.log(students[i].email + "- Exam Notification Failed-" + error);
+        console.log(
+          students[i].email + "- New Exam Notification Failed-" + error
+        );
       });
   }
 };
@@ -162,10 +164,12 @@ export const sendExamUpdateNotification = async (
     await mailTransporter
       .sendMail(details)
       .then((data) => {
-        console.log(students[i].email + "- Exam Notification Sent");
+        console.log(students[i].email + "- Update Exam Notification Sent");
       })
       .catch((error) => {
-        console.log(students[i].email + "- Exam Notification Failed-" + error);
+        console.log(
+          students[i].email + "- Update Exam Notification Failed-" + error
+        );
       });
   }
 };
@@ -248,10 +252,12 @@ export const sendExamCancelNotification = async (
     await mailTransporter
       .sendMail(details)
       .then((data) => {
-        console.log(students[i].email + "- Exam Notification Sent");
+        console.log(students[i].email + "- Cancel Exam Notification Sent");
       })
       .catch((error) => {
-        console.log(students[i].email + "- Exam Notification Failed-" + error);
+        console.log(
+          students[i].email + "- Cancel Exam Notification Failed-" + error
+        );
       });
   }
 };
@@ -307,10 +313,12 @@ export const sendExamResultNotification = async (
     await mailTransporter
       .sendMail(details)
       .then((data) => {
-        console.log(students[i].email + "- Exam Notification Sent");
+        console.log(students[i].email + "- Exam Results Notification Sent");
       })
       .catch((error) => {
-        console.log(students[i].email + "- Exam Notification Failed-" + error);
+        console.log(
+          students[i].email + "- Exam Results Notification Failed-" + error
+        );
       });
   }
 };

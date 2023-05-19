@@ -28,6 +28,9 @@ export interface ExamData {
   time: string;
   marks: ExamMarksData[];
   attendance: AttendanceData[];
+  className: string;
+  duration: number;
+  durationUnit: string;
 }
 
 export interface ClassData {
@@ -144,6 +147,19 @@ const TeacherExamPortalDashboard = () => {
       message: "exam data is loading..",
       autoClose: false,
     });
+
+    const resultClasses = await getAllClasses();
+    const classes = resultClasses.map((item: any) => ({
+      id: item._id,
+      classId: item.id,
+      name: item.name,
+      description: item.description,
+      teacher: item.teacher,
+      subject: item.subject,
+      date: item.date,
+      time: item.time,
+    }));
+
     const examResult = await getAllExams();
     const examDataFetched = examResult.map((item: any) => {
       return {
@@ -157,20 +173,12 @@ const TeacherExamPortalDashboard = () => {
         time: item.time,
         attendance: item.attendance,
         marks: item.marks,
+        className: classes.find((classItem: any) => classItem.id === item.class)
+          .name,
+        duration: item.duration,
+        durationUnit: item.durationUnit,
       };
     });
-
-    const resultClasses = await getAllClasses();
-    const classes = resultClasses.map((item: any) => ({
-      id: item._id,
-      classId: item.id,
-      name: item.name,
-      description: item.description,
-      teacher: item.teacher,
-      subject: item.subject,
-      date: item.date,
-      time: item.time,
-    }));
 
     const studentsResult = await getAllStudents();
     const studentsData = studentsResult.map((item: any) => {

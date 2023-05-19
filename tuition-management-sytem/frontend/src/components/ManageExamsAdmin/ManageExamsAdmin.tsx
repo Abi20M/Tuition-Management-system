@@ -150,7 +150,7 @@ function filterData(data: ExamData[], search: string) {
   const query = search.toLowerCase().trim();
   return data.filter((item) =>
     keys(data[0]).some((key) => {
-      if (key === "marks" || key === "attendance") {
+      if (key === "marks" || key === "attendance" || key === "duration") {
         return false;
       }
       return item[key].toLowerCase().includes(query);
@@ -195,7 +195,11 @@ export function sortData(
 
   return filterData(
     [...data].sort((a, b) => {
-      if (sortBy === "marks" || sortBy === "attendance") {
+      if (
+        sortBy === "marks" ||
+        sortBy === "attendance" ||
+        sortBy === "duration"
+      ) {
         return 0;
       }
 
@@ -380,6 +384,18 @@ const ManageExamsAdmin = () => {
         message: "exam data is loading..",
         autoClose: false,
       });
+      const resultClasses = await getAllClasses();
+      const classes = resultClasses.map((item: any) => ({
+        id: item._id,
+        classId: item.id,
+        name: item.name,
+        description: item.description,
+        teacher: item.teacher,
+        subject: item.subject,
+        date: item.date,
+        time: item.time,
+      }));
+
       const examResult = await getAllExams();
       const examDataFetched = examResult.map((item: any) => {
         return {
@@ -393,20 +409,11 @@ const ManageExamsAdmin = () => {
           time: item.time,
           attendance: item.attendance,
           marks: item.marks,
+          className: classes.find(
+            (classItem: ClassData) => classItem.id === item.class
+          ).name,
         };
       });
-
-      const resultClasses = await getAllClasses();
-      const classes = resultClasses.map((item: any) => ({
-        id: item._id,
-        classId: item.id,
-        name: item.name,
-        description: item.description,
-        teacher: item.teacher,
-        subject: item.subject,
-        date: item.date,
-        time: item.time,
-      }));
 
       const studentsResult = await getAllStudents();
       const studentsData = studentsResult.map((item: any) => {
@@ -721,7 +728,7 @@ const ManageExamsAdmin = () => {
       <td>{row.examId}</td>
       <td>{row.name}</td>
       <td>{row.description}</td>
-      <td>{classes.find((item) => item.id === row.class)?.name || "N/A"}</td>
+      <td>{row.className ? row.className : "N/A"}</td>
       <td>{row.status}</td>
       <td>{row.date.slice(0, 10)}</td>
       <td>{row.time}</td>
@@ -944,9 +951,9 @@ const ManageExamsAdmin = () => {
                   Description
                 </Th>
                 <Th
-                  sorted={sortBy === "class"}
+                  sorted={sortBy === "className"}
                   reversed={reverseSortDirection}
-                  onSort={() => setSorting("class")}
+                  onSort={() => setSorting("className")}
                 >
                   Class
                 </Th>
