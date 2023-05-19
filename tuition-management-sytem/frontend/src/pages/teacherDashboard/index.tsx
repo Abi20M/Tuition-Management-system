@@ -79,7 +79,7 @@ export const TeacherDashboard = () => {
     {/* Tabs */}
     <Container>
       <Tabs
-        defaultValue="Overview"
+        defaultValue="Dashboard"
         variant="outline"
         classNames={{
           root: classes.tabs,
