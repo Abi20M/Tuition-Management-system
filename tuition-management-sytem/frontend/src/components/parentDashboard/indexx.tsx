@@ -22,32 +22,14 @@ import { Line } from "react-chartjs-2";
 import { IconAlertTriangle, IconCheck } from "@tabler/icons";
 
 //Line graph and password change model
-export const  LineGraph = () =>{
-    const [data, setData] = useState({
-        labels:["Exam 01","Exam 02","Exam 03","Exam 04","Exam 05"],
-        datasets:[
-            {
-                label: "Student Marks",
-                data : [38,56,47,87,98,67,97],
-                backgroundColor : 'blue',
-                 borderColor: "red",
-                // borderJoinStyle:"bevel",
-                 showLine:true,
-                // tension:0.4,
-                 //fill:true,
-                 pointBackgroundColor: '#fff',
-                 pointBorderColor :'blue',
-                 pointStyle : 'star'
-                 
-            }
-        ]
-    })
-    return(
-        <div className="App" style={{width:'800px',height:'800px'}}>
-            <Line data={data}>Hello</Line>
-        </div>
-    );
-}
+// export const  LineGraph = () =>{
+//     const [data, setData] = useState({
+       
+//     })
+//     return(
+
+//     );
+// }
 
 ChartJS.register(
     CategoryScale,

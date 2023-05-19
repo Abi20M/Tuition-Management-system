@@ -1,4 +1,13 @@
-import { Text, SimpleGrid, Paper, Group, Box, Modal,PasswordInput,Button } from "@mantine/core";
+import {
+  Text,
+  SimpleGrid,
+  Paper,
+  Group,
+  Box,
+  Modal,
+  PasswordInput,
+  Button,
+} from "@mantine/core";
 import StudentIcon from "../../assets/student.png";
 import TeacherIcon from "../../assets/teacher.png";
 import {
@@ -13,7 +22,7 @@ import {
   Legend,
   ArcElement,
 } from "chart.js";
-import { Bar, Doughnut } from "react-chartjs-2";
+import { Bar, Doughnut, Line } from "react-chartjs-2";
 import { useState } from "react";
 import { showNotification, updateNotification } from "@mantine/notifications";
 import { useEffect } from "react";
@@ -37,7 +46,7 @@ ChartJS.register(
 
 interface RowDataClasses {
   _id: string;
-  id : string;
+  id: string;
   name: string;
   description: string;
   teacher: string;
@@ -82,6 +91,13 @@ const getAllClasses = async () => {
   return data;
 };
 
+// get exam data
+const getExamMarksByStudentId = async (studentId: string[]) => {
+  const response = await ParentAPI.getExamMarksByStudentId(studentId);
+  const data = await response.data;
+  return data;
+};
+
 export const options = {
   responsive: true,
   plugins: {
@@ -91,18 +107,17 @@ export const options = {
     },
   },
   scales: {
-    x : {
+    x: {
       title: {
         display: true,
         text: "Results",
       },
     },
-    y : {
+    y: {
       title: {
         display: true,
         text: "No Of Students",
       },
-      
     },
   },
 };
@@ -138,7 +153,7 @@ export const examResultsData = {
   datasets: [
     {
       label: "Exam Results",
-      data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      data: [10, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       backgroundColor: "rgba(255, 99, 132, 0.2)",
       borderColor: "rgba(255, 99, 132, 1)",
       borderWidth: 1,
@@ -174,7 +189,7 @@ export const examResultsData1 = {
   datasets: [
     {
       label: "Exam Results",
-      data: [0, 2, 1, 0, 1, 2, 0, 1, 0, 1],
+      data: [1, 2, 1, 0, 1, 2, 0, 1, 0, 1],
       backgroundColor: "rgba(255, 99, 132, 0.2)",
       borderColor: "rgba(255, 255, 255, 1)",
       borderWidth: 1,
@@ -182,11 +197,26 @@ export const examResultsData1 = {
   ],
 };
 
+interface studentDetails {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  school: string;
+  grade: string;
+  birthDate: string;
+  address: string;
+  gender: string;
+  parent: string;
+}
+
 const ParentOverview: React.FC = () => {
   const [classes, setClasses] = useState(5);
   const [students, setStudents] = useState(0);
+  const [studentDetails, setStudentDetails] = useState<studentDetails[]>([]);
   const [subjects, setSubjects] = useState([]);
   const [examData, setExamData] = useState(examResultsData1);
+  const [examResultData, setExamResultData] = useState([]);
   const [maleCount, setMaleCount] = useState(0);
   const [femaleCount, setFemaleCount] = useState(0);
   const [openedPasswordModal, setOpenedPasswordModal] = useState(false);
@@ -223,7 +253,7 @@ const ParentOverview: React.FC = () => {
         };
       });
       setStudents(studentData.length);
-
+      setStudentDetails(studentData);
       //create grade distribution data array - grade 6 to 13
       const gradeDisData = [0, 0, 0, 0, 0, 0, 0, 0];
       studentData.forEach((item: RowDataStudents) => {
@@ -267,7 +297,7 @@ const ParentOverview: React.FC = () => {
       const resultClasses = await getAllClasses();
       const classes = resultClasses.map((item: any) => ({
         _id: item._id,
-        id:item.id,
+        id: item.id,
         name: item.name,
         description: item.description,
         teacher: item.teacher,
@@ -293,6 +323,13 @@ const ParentOverview: React.FC = () => {
 
       setClasses(classCount);
 
+      //get exam data
+      getExamMarksByStudentId(
+        studentData.map((student: any) => student.id)
+      ).then((data) => {
+        setExamResultData(data);
+      });
+
       updateNotification({
         id: "loding-data",
         color: "teal",
@@ -317,7 +354,6 @@ const ParentOverview: React.FC = () => {
       icon: TeacherIcon,
     },
   ];
-
 
   const gradeData = {
     labels: ["6", "7", "8", "9", "10", "11", "12", "13"],
@@ -368,6 +404,40 @@ const ParentOverview: React.FC = () => {
     );
   });
 
+  const marksOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top" as const,
+      },
+      title: {
+        display: true,
+        text: "Results (Last 6 Exams)",
+        font: {
+          size: 20,
+        },
+      },
+    },
+  }
+  const lineChartLabels = ["Exam 01","Exam 02","Exam 03","Exam 04","Exam 05","Exam 06"];
+  let count = 0;
+  const LineGraphData = {
+   
+      labels : lineChartLabels,
+      datasets: examResultData.map((result: any) => ({
+          label: (count+=1).toString(),
+          data: result.marks,
+          backgroundColor: `rgba(${Math.floor(Math.random() * 255)},${Math.floor(
+            Math.random() * 255
+          )},${Math.floor(Math.random() * 255)},0.5)`,
+          borderColor: `rgba(${Math.floor(Math.random() * 255)},${Math.floor(
+            Math.random() * 255
+          )},${Math.floor(Math.random() * 255)},1)`,
+          borderWidth: 3
+        })),
+  };
+
+
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between" }}>
       <Box
@@ -390,35 +460,15 @@ const ParentOverview: React.FC = () => {
           cols={2}
           breakpoints={[{ maxWidth: "sm", cols: 1 }]}
           sx={{ width: "100%", marginTop: "2%" }}
-        >
-         
-        </SimpleGrid>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            width: "85%",
-            marginTop: "2%",
-          }}
-        >
-          <Text size="xl" weight={700} sx={{ fontSize: "2rem" }}>
-            Exam Results Statistics of My Children
-          </Text>
-        </Box>
-        <Box
-          sx={{
-            width: "85%",
-          }}
-          id="bar-chart"
-        >
-          <Bar data={examData} options={options} />
+        ></SimpleGrid>
+        <Box>
+          <div  style={{ width: "800px", height: "800px" }}>
+            <Line data={LineGraphData} options={marksOptions}/>
+          </div>
         </Box>
       </Box>
     </Box>
   );
-  
 };
-
 
 export default ParentOverview;

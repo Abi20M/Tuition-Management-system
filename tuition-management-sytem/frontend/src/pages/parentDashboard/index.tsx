@@ -6,7 +6,6 @@ import WebsiteFooter from "../../components/Footer";
 import ParentOverview from "../../components/parentDashboard"
 import MyChildren from "../../components/MyChildren";
 import  MyExams  from "../../components/ManageExams/index";
-import { LineGraph } from "../../components/parentDashboard/indexx";
 import { ParentOver } from "../../components/parentDashboard/indexx";
 
 
@@ -105,7 +104,7 @@ export const ParentDashboard = () => {
         <Tabs.Panel value="Dashboard">
           <ParentOver/>
           <ParentOverview/>
-          <LineGraph/>
+          {/* <LineGraph/> */}
         </Tabs.Panel>
         <Tabs.Panel value="My Children">
           <MyChildren/>

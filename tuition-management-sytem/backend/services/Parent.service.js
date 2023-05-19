@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import "dotenv/config";
 import parentMail from "../Mails/parent.mails";
 import Student from '../models/student.model'
+import Exam from '../models/Exam.model';
 
 //generate Parent Id
 const generateParentId = async () => {
@@ -223,6 +224,30 @@ export const getStudents = async (id) => {
 export const getParentCountService = async () => {
   return await parent.countDocuments();
 };
+
+export const getChildrenExamMarks = async(childrenIds)=>{
+
+  let childResults = [];
+
+  return await Exam.find({status : "Results Released - Official"}).then((exam)=>{
+
+    for(let i =0; i < childrenIds.length; i++){
+
+      const studentMarksStructure = {
+        "studentId" : childrenIds[i],
+        "marks" : []
+      }
+
+      exam.map((examWithMarks)=>{
+        examWithMarks.marks.map((examResults) => examResults.id.toString() === childrenIds[i] ? studentMarksStructure.marks.push(examResults.marks):null)
+      })
+
+      childResults.push(studentMarksStructure)
+    }
+
+    return childResults;
+  })
+}
 module.exports = {
   createParent,
   getParent,
@@ -234,4 +259,5 @@ module.exports = {
   getParentCountService,
   changeParentPassword,
   getStudents,
+  getChildrenExamMarks
 };
