@@ -226,7 +226,12 @@ const ExamsReport = ({
             />
           </Box>
         </Box>
-        <Box sx={{ width: "90%", textAlign: "center" }} mr="auto" ml="auto">
+        <Box
+          sx={{ width: "90%", textAlign: "center" }}
+          mr="auto"
+          ml="auto"
+          mt={75}
+        >
           <MantineTitle>Exams</MantineTitle>
         </Box>
         {exams.length > 0 ? (
