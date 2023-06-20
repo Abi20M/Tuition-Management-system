@@ -35,6 +35,9 @@ const Routes = (app) => {
     protect.adminOrTeacherProtect,
     classController.getEnrolledStudentDetails
   );
+  app.get(
+    "/class/day/:day",protect.adminProtect,classController.getClassByDay
+  )
   app.post("/class", protect.adminProtect, classController.createClass);
   app.delete(
     "/class/delete/:id/:cusId/:day/:hall/:startTime/:endTime",

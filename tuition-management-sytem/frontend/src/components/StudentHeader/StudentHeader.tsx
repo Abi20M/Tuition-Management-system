@@ -128,7 +128,7 @@ const StudentHeader = () => {
                 </UnstyledButton>
               </Menu.Target>
               <Menu.Dropdown>
-                <Menu.Label>TEACHER</Menu.Label>
+                <Menu.Label>{user.name.toUpperCase()}</Menu.Label>
                 <Menu.Label>{user.email.toUpperCase()}</Menu.Label>
                 <Menu.Divider />
                 <Menu.Item icon={<IconLogout size={14} stroke={1.5} />}>

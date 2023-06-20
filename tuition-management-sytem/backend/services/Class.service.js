@@ -364,6 +364,14 @@ export const getHallScheduleService = async () => {
   });
 };
 
+export const getClassByDay = async (day) =>{
+  return await Class.find({day : day}).then((result) =>{
+    return result;
+  }).catch((error) =>{
+    throw new Error("There is an error while fetching class data")
+  })
+}
+
 module.exports = {
   createClass,
   getAllClasses,
@@ -375,4 +383,5 @@ module.exports = {
   getEnrolledStudentsData,
   unEnrollStudent,
   getHallScheduleService,
+  getClassByDay
 };

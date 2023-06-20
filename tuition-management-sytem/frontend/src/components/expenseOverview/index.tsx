@@ -241,7 +241,7 @@ export const DoughnutChart = () => {
       <div style={{ width: '400px', height: '400px', textAlign:"center" }}>
         <Doughnut
           data={data}
-          options={options}
+          // options={options}
         ></Doughnut>
       </div>
     </div>

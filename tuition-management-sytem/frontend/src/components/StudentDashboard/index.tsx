@@ -17,6 +17,7 @@ import {
   IconChartLine,
   IconCheck,
   IconFilePencil,
+  IconQrcode,
   IconSchool,
 } from "@tabler/icons";
 import { useEffect, useState } from "react";
@@ -26,6 +27,7 @@ import { sortData } from "../../components/MyExams/MyExams";
 import StudentClasses from "./studentClasses";
 import StudentAPI from "../../API/studentAPI";
 import { useForm } from "@mantine/form";
+import StudentQrCode from "./studentQrCode";
 
 export interface ExamData {
   id: string;
@@ -435,6 +437,9 @@ const StudentDashboard = () => {
             <Tabs.Tab icon={<IconSchool />} value={"classes"}>
               My classes
             </Tabs.Tab>
+            <Tabs.Tab icon={<IconQrcode/>} value={"qrCode"}>
+              My QR
+            </Tabs.Tab>
           </Tabs.List>
 
           <Tabs.Panel value="dashboard">
@@ -446,6 +451,9 @@ const StudentDashboard = () => {
           </Tabs.Panel>
           <Tabs.Panel value="classes">
             <StudentClasses />
+          </Tabs.Panel>
+          <Tabs.Panel value="qrCode">
+            <StudentQrCode/>
           </Tabs.Panel>
         </Tabs>
       </Container>
