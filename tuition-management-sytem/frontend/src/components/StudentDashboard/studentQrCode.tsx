@@ -1,7 +1,7 @@
 import { Group, Paper, Tooltip } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { IconX } from "@tabler/icons";
-import QRCODE from "qrcode";
+import QRCODE from 'qrcode';
 import { useState, useEffect } from "react";
 
 const StudentQrCode = () => {

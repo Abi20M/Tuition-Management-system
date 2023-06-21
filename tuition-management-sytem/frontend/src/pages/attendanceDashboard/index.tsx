@@ -3,6 +3,7 @@ import AdminHeader from "../../components/adminHeader";
 import WebsiteFooter from "../../components/Footer";
 import React, { useState } from 'react';
 import MarkAttendence from "../../components/AttendanceManage/markAttendance";
+import AttendanceHeader from "../../components/AttendanceHeader";
 
 
 const useStyles = createStyles((theme) => ({
@@ -75,7 +76,7 @@ export const AttendanceDashboard = () => {
   return (
     <div>
       {/* import admin Header */}
-    <AdminHeader user ={user}/>
+    <AttendanceHeader user ={user}/>
 
     {/* Tabs */}
     <Container>

@@ -33,9 +33,11 @@
     "chartjs": "^0.3.24",
     "dayjs": "^1.11.7",
     "file-saver": "^2.0.5",
+    "qrcode": "^1.5.3",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
+    "react-qr-reader": "^2.2.1",
     "react-router-dom": "^6.7.0",
     "react-scripts": "5.0.1",
     "react-to-print": "^2.14.12",
@@ -65,5 +67,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/react-qr-reader": "^2.1.4"
   }
 }

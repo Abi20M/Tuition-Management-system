@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { IconCalendar, IconCheck, IconSchool, IconX } from "@tabler/icons";
 import { Title, Group, Paper, Text, Badge,Button  } from "@mantine/core";
 import { IconCalendarCheck } from "@tabler/icons-react";
+import {Link} from 'react-router-dom';
 
 interface RowClass {
   _id: string;
@@ -18,6 +19,27 @@ interface RowClass {
   venue: string;
 }
 
+const handleClick = (classId : string,className : string, startTime : string, endTime : string, objectId : string) =>{
+
+  let convertedStartTime = new Date(Date.parse(startTime)).toLocaleTimeString(
+    "en-US",
+    {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: false,
+    });
+  
+    let converetedEndTime = new Date(Date.parse(endTime)).toLocaleTimeString('en-US',{
+      hour:"numeric",
+      minute : "numeric",
+      hour12 : false
+      
+    })
+  const timeRange = `${convertedStartTime}-${converetedEndTime}`;
+
+  window.open(`/attendance/qr/${classId}/${className}/${timeRange}/${objectId}`,"Attendance QR");
+  
+}
 const getTodayClasses = async () => {
   return await ClassAPI.getClassByDate()
     .then((data) => {
@@ -105,7 +127,7 @@ const MarkAttendence = () => {
       </Group>
 
       <Group position="center">
-        {classes.map((item) => (
+        {classes.map((item,_) => (
           <Paper shadow="md" w={400} h={265} p={20} mt={20}>
             <Group position="apart">
               <Text weight={800}>{item.name}</Text>
@@ -138,7 +160,7 @@ const MarkAttendence = () => {
             </Text>
             <Text><b>Venue : </b>{item.venue}</Text>
             <Group position="center">
-                <Button variant="light" color="blue" fullWidth mt="lg" mb={"lg"} radius="md">Mark Attendance</Button>
+                <Button variant="light" color="blue" fullWidth mt="lg" mb={"lg"} radius="md" onClick={() => handleClick(item.id,item.name,item.startTime,item.endTime,item._id)}>Mark Attendance</Button>
             </Group>
           </Paper>
         ))}
