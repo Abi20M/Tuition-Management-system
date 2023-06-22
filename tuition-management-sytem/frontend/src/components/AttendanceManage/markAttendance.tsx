@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { IconCalendar, IconCheck, IconSchool, IconX } from "@tabler/icons";
 import { Title, Group, Paper, Text, Badge,Button  } from "@mantine/core";
 import { IconCalendarCheck } from "@tabler/icons-react";
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 
 interface RowClass {
   _id: string;
@@ -19,27 +19,7 @@ interface RowClass {
   venue: string;
 }
 
-const handleClick = (classId : string,className : string, startTime : string, endTime : string, objectId : string) =>{
 
-  let convertedStartTime = new Date(Date.parse(startTime)).toLocaleTimeString(
-    "en-US",
-    {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: false,
-    });
-  
-    let converetedEndTime = new Date(Date.parse(endTime)).toLocaleTimeString('en-US',{
-      hour:"numeric",
-      minute : "numeric",
-      hour12 : false
-      
-    })
-  const timeRange = `${convertedStartTime}-${converetedEndTime}`;
-
-  window.open(`/attendance/qr/${classId}/${className}/${timeRange}/${objectId}`,"Attendance QR");
-  
-}
 const getTodayClasses = async () => {
   return await ClassAPI.getClassByDate()
     .then((data) => {
@@ -51,9 +31,10 @@ const getTodayClasses = async () => {
 };
 
 const MarkAttendence = () => {
+
   const [classes, setClasses] = useState<RowClass[]>([]);
   const [day, setDay] = useState("");
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetch = async () => {
       const weekday = [
@@ -108,6 +89,27 @@ const MarkAttendence = () => {
 
     fetch();
   }, []);
+
+
+  const handleClick = (classId : string,className : string, startTime : string, endTime : string, objectId : string) =>{
+
+    let convertedStartTime = new Date(Date.parse(startTime)).toLocaleTimeString(
+      "en-US",
+      {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: false,
+      });
+    
+      let converetedEndTime = new Date(Date.parse(endTime)).toLocaleTimeString('en-US',{
+        hour:"numeric",
+        minute : "numeric",
+        hour12 : false
+        
+      })
+    const timeRange = `${convertedStartTime}-${converetedEndTime}`;
+    window.open(`/attendance/qr?classID=${classId}&clsName=${className}&Time=${timeRange}&objectID=${objectId}`);
+  }
 
   return (
     <>

@@ -108,7 +108,7 @@ export const AllRoutes = () => {
 
         <Route path="/attendance/" element={<AttendancePrivateRoute />}>
           <Route path="/attendance/dashboard" element={<AttendanceDashboard />} />
-          <Route path="/attendance/qr/:classId/:className/:time/:objId" element = {<AttendanceQR/>}/>
+          <Route path="/attendance/qr" element = {<AttendanceQR/>}/>
         </Route>
 
       </Routes>

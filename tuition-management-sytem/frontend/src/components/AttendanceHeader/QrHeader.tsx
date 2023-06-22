@@ -68,6 +68,23 @@ const QrHeader = () => {
   const dark = colorScheme === "dark";
   const [sidePanelOpened, setSidePanelOpened] = useState(false); //use to open and close the side pannel of the admin details
 
+
+  // calculate the week
+  const calculateWeek = () =>{
+    const d = new Date();
+    const date = d.getDate();
+
+    if(date>=1 && date <=7){
+      return 1;
+    }else if( date >7 && date <= 14){
+      return 2;
+    }else if( date > 14 && date <=21){
+     return 3; 
+    }else{
+      return 4;
+    }
+  };
+
   return (
     <div className={classes.header}>
       <Container className={classes.mainSection}>
@@ -77,7 +94,7 @@ const QrHeader = () => {
             src={dark ? adminDashboardLogoDark : adminDashboardLogoLight}
             width={100}
           />
-        <Text weight={500} size={30}>Marking Attendance</Text>
+        <Text weight={500} size={30}>{`Marking Attendance (${calculateWeek()}th Week)`}</Text>
           {/* dark mode button implementation */}
           <LightDarkButton marginLeft={10} marginTop={10} marginBottom={10} />
         </Group>
