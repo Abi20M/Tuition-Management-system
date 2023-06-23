@@ -2,6 +2,7 @@ import Class from "../models/class.model";
 import Hall from "../models/hall.model";
 import classMails from "../Mails/class.mails";
 import Schedule from "../models/hallSchedule.model";
+import Attendance from "../models/Attendance.model";
 
 //generate Class Id
 const generateClassId = async () => {
@@ -169,7 +170,10 @@ export const deleteClass = async (id, cusId, day, hall, startTime, endTime) => {
       $pull: { classes: { id: cusId, startTime: startTime, endTime: endTime } },
     }
   ).then(async (result) => {
-    return await Class.findByIdAndDelete(id);
+    return await Class.findByIdAndDelete(id).then((data)=>{
+      Attendance.findOneAndDelete({classId : data._id});
+    });
+
   });
 };
 
@@ -277,11 +281,43 @@ export const enrollStudent = async (enrollmentData) => {
     enrollmentData.studentEmail,
     enrollmentData.className
   );
+
   return await Class.findByIdAndUpdate(
     { _id: enrollmentData.classId },
     { $push: { students: enrollmentData.studentID } },
     { new: true }
-  );
+  ).then(async (result) => {
+    const AttendanceObj = {
+      classId: enrollmentData.classId,
+      students: [
+        {
+          studentId: enrollmentData.studentID,
+        },
+      ],
+    };
+    await Attendance.find({ classId: enrollmentData.classId }).then(
+      async (data) => {
+        console.log(data);
+        console.log(data.length);
+        if (data.length > 0) {
+          Attendance.findByIdAndUpdate(
+            { _id: data[0]._id },
+            { $push: { students: { studentId: enrollmentData.studentID } } },
+            { new: true }
+          ).then((data) => {
+            console.log(data);
+            console.log("Student added to Attendance Form Successfully!");
+          });
+        } else {
+          await Attendance.create(AttendanceObj).then((data) => {
+            data.save();
+          });
+        }
+      }
+    ).catch((error)=>{
+      console.log(error)
+    });
+  });
 };
 
 export const getEnrolledStudentsData = async (classID) => {
@@ -306,15 +342,38 @@ export const unEnrollStudent = async (
   classId,
   className
 ) => {
-  await classMails.sendUnenrollEmail(studentName, studentEmail, className);
   return await Class.findByIdAndUpdate(
     { _id: classId },
     { $pull: { students: studentId } },
     { new: true }
   )
     .populate("students")
-    .then((data) => {
+    .then(async (data) => {
       if (data) {
+        //send an unenrollment email to the student
+        await classMails.sendUnenrollEmail(
+          studentName,
+          studentEmail,
+          className
+        );
+
+        // delete class Attendance According to the relevent class and student
+        await Attendance.find({ classId: classId }).then(async (data) => {
+          await Attendance.findByIdAndUpdate(
+            { _id: data[0]._id },
+            { $pull: { students: { studentId: studentId } } },
+            { new: true }
+          )
+            .then((data) => {
+              console.log(data);
+              console.log("Student removed from attendance form!");
+            })
+            .catch((error) => {
+              console.log(error);
+              console.log(error.message);
+            });
+        });
+
         return data.students;
       } else {
         throw new Error("Class not found");
@@ -326,42 +385,53 @@ export const unEnrollStudent = async (
 };
 
 export const getHallScheduleService = async () => {
-  return await Schedule.find().then((data) => {
-    // loop through all the schedules
-    for (let i = 0; i < data.length; i++) {
-      // sort classes in ascending order by its startTime
-      data[i].classes.sort(({ startTime: a }, { startTime: b }) => {
-        return new Date(a).toLocaleTimeString("en-Us", {
-          hour: "numeric",
-          minute: "numeric",
-          hour12: false,
-        }) >
-          new Date(b).toLocaleTimeString("en-Us", {
+  return await Schedule.find()
+    .then((data) => {
+      // loop through all the schedules
+      for (let i = 0; i < data.length; i++) {
+        // sort classes in ascending order by its startTime
+        data[i].classes.sort(({ startTime: a }, { startTime: b }) => {
+          return new Date(a).toLocaleTimeString("en-Us", {
             hour: "numeric",
             minute: "numeric",
             hour12: false,
-          })
-          ? 1
-          : new Date(a).toLocaleTimeString("en-Us", {
-              hour: "numeric",
-              minute: "numeric",
-              hour12: false,
-            }) <
+          }) >
             new Date(b).toLocaleTimeString("en-Us", {
               hour: "numeric",
               minute: "numeric",
               hour12: false,
             })
-          ? -1
-          : 0;
-      });
+            ? 1
+            : new Date(a).toLocaleTimeString("en-Us", {
+                hour: "numeric",
+                minute: "numeric",
+                hour12: false,
+              }) <
+              new Date(b).toLocaleTimeString("en-Us", {
+                hour: "numeric",
+                minute: "numeric",
+                hour12: false,
+              })
+            ? -1
+            : 0;
+        });
+      }
+      // return sorted schedule details
+      return data;
+    })
+    .catch((error) => {
+      throw new Error("Error while fetching schedule details");
+    });
+};
 
-    }
-    // return sorted schedule details
-    return data;
-  }).catch((error)=>{
-    throw new Error("Error while fetching schedule details");
-  });
+export const getClassByDay = async (day) => {
+  return await Class.find({ day: day })
+    .then((result) => {
+      return result;
+    })
+    .catch((error) => {
+      throw new Error("There is an error while fetching class data");
+    });
 };
 
 module.exports = {
@@ -375,4 +445,5 @@ module.exports = {
   getEnrolledStudentsData,
   unEnrollStudent,
   getHallScheduleService,
+  getClassByDay,
 };

@@ -175,6 +175,20 @@ export const getHallSchedule = (req, res) => {
       req.handleResponse.errorRespond(res)(error);
     });
 };
+
+export const getClassByDay = (req, res) => {
+
+  const day = req.params.day;
+
+  classServices
+    .getClassByDay(day)
+    .then((data) => {
+      req.handleResponse.successRespond(res)(data);
+    })
+    .catch((error) => {
+      req.handleResponse.errorRespond(res)(error.message);
+    });
+};
 module.exports = {
   createClass,
   getAllClasses,
@@ -185,4 +199,5 @@ module.exports = {
   getEnrolledStudentDetails,
   unEnrollStudent,
   getHallSchedule,
+  getClassByDay,
 };

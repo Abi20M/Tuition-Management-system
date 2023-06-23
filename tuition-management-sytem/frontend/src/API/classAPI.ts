@@ -111,4 +111,12 @@ export class ClassAPI {
     static getHallSchedule = async() =>{
         return axios.get(`${BASE_URL}/class/hallSchedule`,requestConfig);
     }
+
+    static getClassByDate = async () =>{
+        const weekday = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+        const date = new Date();
+        const day = date.getDay();
+
+        return axios.get(`${BASE_URL}/class/day/${weekday[day]}`,requestConfig);
+    }
 }

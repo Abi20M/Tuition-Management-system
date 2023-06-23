@@ -8,6 +8,7 @@ import studentController from "../controllers/student.controller";
 import adminController from "../controllers/admin.controller";
 import subjectController from "../controllers/subject.controller";
 import examController from "../controllers/Exam.controller";
+import attendanceController from '../controllers/Attendance.controller';
 
 const Routes = (app) => {
   //normal validation root of the user
@@ -35,6 +36,9 @@ const Routes = (app) => {
     protect.adminOrTeacherProtect,
     classController.getEnrolledStudentDetails
   );
+  app.get(
+    "/class/day/:day",protect.adminProtect,classController.getClassByDay
+  )
   app.post("/class", protect.adminProtect, classController.createClass);
   app.delete(
     "/class/delete/:id/:cusId/:day/:hall/:startTime/:endTime",
@@ -269,6 +273,10 @@ const Routes = (app) => {
     protect.studentProtect,
     examController.getExamsByStudent
   );
+
+  // attendance Routes
+  app.get("/attendance/:id/students",protect.adminProtect,attendanceController.getStudentDetailsFromAttendance);
+  app.put("/attendance/update",protect.adminProtect,attendanceController.updateStudentsAttendance);
 };
 
 module.exports = Routes;

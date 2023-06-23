@@ -51,7 +51,7 @@ export const ExpenseCount = () => {
   }, []);
 
   //call above function in every 5mins to collect updated data
-  setInterval(fetchUserCounts, 200000)
+  //setInterval(fetchUserCounts, 200000)
 
 
   return (
@@ -161,7 +161,7 @@ export const DoughnutChart = () => {
     fetchExpenseCategories();
   }, [])
 
-  setInterval(fetchExpenseCategories, 200000)
+  //setInterval(fetchExpenseCategories, 200000)
 
 
 
@@ -241,7 +241,7 @@ export const DoughnutChart = () => {
       <div style={{ width: '400px', height: '400px', textAlign:"center" }}>
         <Doughnut
           data={data}
-          options={options}
+          // options={options}
         ></Doughnut>
       </div>
     </div>
