@@ -170,7 +170,10 @@ export const deleteClass = async (id, cusId, day, hall, startTime, endTime) => {
       $pull: { classes: { id: cusId, startTime: startTime, endTime: endTime } },
     }
   ).then(async (result) => {
-    return await Class.findByIdAndDelete(id);
+    return await Class.findByIdAndDelete(id).then((data)=>{
+      Attendance.findOneAndDelete({classId : data._id});
+    });
+
   });
 };
 
@@ -311,7 +314,9 @@ export const enrollStudent = async (enrollmentData) => {
           });
         }
       }
-    );
+    ).catch((error)=>{
+      console.log(error)
+    });
   });
 };
 
