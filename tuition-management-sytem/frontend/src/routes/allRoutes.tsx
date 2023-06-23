@@ -31,6 +31,8 @@ import {
 } from "../pages";
 import StudentExamPortalPrivateRoute from "./StudentExamPortalPrivateRoute";
 import TeacherExamPortalPrivateRoute from "./TeacherExamPortalPrivateRoute";
+import AttendanceMarking from "../components/AttendanceManage/AttendanceQR";
+import AttendanceQR from "../components/AttendanceManage/AttendanceQR";
 
 export const AllRoutes = () => {
   return (
@@ -106,6 +108,7 @@ export const AllRoutes = () => {
 
         <Route path="/attendance/" element={<AttendancePrivateRoute />}>
           <Route path="/attendance/dashboard" element={<AttendanceDashboard />} />
+          <Route path="/attendance/qr" element = {<AttendanceQR/>}/>
         </Route>
 
       </Routes>

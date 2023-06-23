@@ -71,8 +71,6 @@ import StudentAPI from "../../../API/studentAPI";
     StudentAPI
       .studentLogin(values.email, values.password)
       .then((response) => {
-        console.log(response);
-        console.log(response.data.accessToken);
         //show success Notification
         setTimeout(() => {
           updateNotification({
