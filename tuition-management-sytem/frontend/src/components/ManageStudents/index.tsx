@@ -972,9 +972,14 @@ const ManageStudents = ({ user }: adminName) => {
           }}
         >
           <Table
+            highlightOnHover
             horizontalSpacing="md"
             verticalSpacing="xs"
+<<<<<<< Updated upstream
             sx={{ minWidth: 700 }}
+=======
+            sx={{ minWidth:900}}
+>>>>>>> Stashed changes
           >
             <thead>
               <tr>
