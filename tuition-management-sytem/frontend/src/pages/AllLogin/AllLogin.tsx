@@ -117,40 +117,6 @@ export const AllLogin = () => {
   }
   return (
     <Box>
-      {/* <Box>
-        <Grid>
-          <Grid.Col mt={20} mr={-20}>
-            <AdminLoginDarkMode />
-          </Grid.Col>
-          <Grid.Col>
-            <Image
-              src={dark ? darkMianLogo : MainLogo}
-              style={{
-                width: 100,
-                height: 95,
-                marginLeft: "auto",
-                marginRight: "auto",
-                marginTop: "-10px",
-              }}
-              alt="Business Logo"
-              radius="lg"
-            />
-          </Grid.Col>
-          <Grid.Col mt={-10}>
-            <Title
-              order={1}
-              style={{
-                fontSize: "30px",
-                textAlign: "center",
-                marginTop: "5px",
-              }}
-            >
-              Tuition Management System
-            </Title>
-          </Grid.Col>
-        </Grid>
-      </Box> */}
-
       <div className={classes.wrapper}>
         <Overlay color="#000" opacity={0.65} zIndex={1} />
         <div className={classes.inner}>

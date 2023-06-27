@@ -233,10 +233,9 @@ export const SelectLogin = React.forwardRef((props, ref: any) => {
                 Attendance Management
               </Text>
               <Text align="center" size="sm" weight="lighter" mt="md">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Repellendus qui alias commodi quo nam nesciunt dicta ab. Totam
-                officia quas qui. Eaque reprehenderit nemo autem hic velit?
-                Consequatur, dolor voluptatem.
+                Effective attendance management is crucial for organizational
+                success, ensuring optimal workforce utilization and productivity
+                while promoting accountability and timely completion of tasks
               </Text>
               <Button
                 color="red"
